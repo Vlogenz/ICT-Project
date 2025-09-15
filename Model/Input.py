@@ -4,13 +4,13 @@ from .LogicComponent import LogicComponent
 class Input(LogicComponent):
 
     def __init__(self):
+        super().__init__()
         self.outputs: typing.List["LogicComponent"] = []
         # Input doesnt have inputs
-        self.state: bool = False
+
 
     def eval(self) -> bool:
-        return self.state
-    
+        return True
 
     def toggleState(self):
         self.state = not self.state

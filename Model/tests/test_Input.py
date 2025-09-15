@@ -1,26 +1,30 @@
 import pytest
 from Model.Input import Input
 
-def test_Default():
+
+def test_Input_eval_always_true():
     input = Input()
-    assert input.eval() is False, "Default state should be False"
+    assert input.eval() is True, "Input.eval() should always return True regardless of state."
 
 
-def test_SetState():
+
+def test_Input_set_state():
     input = Input()
-    input.state = True
-    assert input.eval() is True, "State should return True after being set to True"
-    input.state = False
-    assert input.eval() is False, "State should return False after being set to False"
+    input.setState(True)
+    assert input.state is True, "Input.state should be True after setState(True)."
+    assert input.eval() is True, "Input.eval() should always return True."
+    input.setState(False)
+    assert input.state is False, "Input.state should be False after setState(False)."
+    assert input.eval() is True, "Input.eval() should always return True."
 
 
-def test_ToggleState():
+
+def test_Input_toggle_state():
     input = Input()
-    
-    # Toggle from False to True
+    initial_state = input.state
     input.toggleState()
-    assert input.eval() is True
-
-    # Toggle back to False
+    assert input.state != initial_state, "Input.toggleState() should invert the state."
+    assert input.eval() is True, "Input.eval() should always return True."
     input.toggleState()
-    assert input.eval() is False
+    assert input.state == initial_state, "Input.toggleState() should invert the state back."
+    assert input.eval() is True, "Input.eval() should always return True."

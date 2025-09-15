@@ -133,7 +133,7 @@
 	\color{#2}%
 	\fi
 	\rlap{\hspace*{\lst@numbersep}%
-		\color@block{\linewidth}{\ht\strutbox}{\dp\strutbox}%
+		\color@block{1.015\linewidth}{\ht\strutbox}{\dp\strutbox}%
 	}	
 	\endgroup 	
 }
@@ -153,10 +153,10 @@
 	inputencoding=utf8,
 	tabsize=2,
 	numberstyle=\ttfamily\zebra{gray!15}{gray!2},
-	numbersep=2em}
+	numbersep=2.2em}
 
 \DeclareRobustCommand{\PythonFile}[3]{
-	\begin{tcolorbox}[colback=gray!15, colframe=black, boxrule=0.5pt, arc=1pt, left=12pt, right=-9.5pt, top=-5pt, bottom=-5pt,boxsep=0pt]
+	\begin{tcolorbox}[colback=gray!15, colframe=black, boxrule=0.5pt, arc=1pt, left=16.5pt, right=-9.5pt, top=-5pt, bottom=-5pt,boxsep=0pt]
 			\lstinputlisting[
 			style=python,
 			firstline=#2,

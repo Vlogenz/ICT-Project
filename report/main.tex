@@ -1,0 +1,37 @@
+\documentclass[
+	paper=a4,
+	fontsize=10pt,
+	nenglish
+]{scrartcl}
+
+\input{config}
+
+\date{\today}
+
+% use \PythonFile{<<path>>}{<<firstline>>}{<<lastline>>} to include a code snipped
+
+% use \begin{tblr} \end{tblr} for tables
+
+% further information about references: https://www.overleaf.com/learn/latex/Bibliography_management_with_biblatex
+%  short version: use \cite{} in the text and add an entry of your source to the references.bib
+
+% Let's use an own file per Section
+
+% for Images and diagrams use
+%	\figure[width([0,1])]{<<path>>}{<<caption>>}{<<label>>} % Label starts with fig:
+%	only add a name without special characters or spaces. You dont have to write a
+%	width. standard is 1. Example: 
+%		\Fig[0.5]{./assets/universityLogo.png}{very nice Logo}{logo}
+
+\begin{document}
+\input{./modules/titlePage}
+\input{./modules/shortSummary}
+\input{./modules/administrativeIntroduction}
+\toc
+\input{./modules/introduction}
+
+\printbibliography
+%\input{./modules/references}
+
+
+\end{document}

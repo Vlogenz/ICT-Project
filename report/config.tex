@@ -1,0 +1,269 @@
+% Basics
+% ===========================================================
+\usepackage[english]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{csquotes}
+\usepackage{etex}
+\usepackage{xcolor}
+\usepackage{xspace}
+\usepackage{etoolbox}
+\usepackage{xparse}
+\usepackage{ifthen}
+\usepackage{calc}
+% ===========================================================
+
+% graphics, documents, links
+% ===========================================================
+\usepackage{graphicx}
+\usepackage{graphics}
+\usepackage{svg}
+\usepackage{pdfpages}
+\usepackage{hyperref}
+\usepackage{epstopdf}
+\AppendGraphicsExtensions{.pdf}
+
+
+% ===========================================================
+% Figures
+% ===========================================================
+\usepackage{float}
+\NewDocumentCommand{\Fig}{ O{1} O{H} m m m }{%
+	\begin{figure}[#2]
+		\centering
+		\includegraphics[width=#1\linewidth]{#3}%
+		\caption{#4}%
+		\label{fig:#5}%
+	\end{figure}%
+}
+
+
+
+% Fonts & Typography
+% ===========================================================
+\linespread{1.25}
+\usepackage{sourcecodepro}
+\usepackage[default]{sourcesanspro}
+\usepackage{amsfonts}
+\usepackage{stmaryrd}
+\usepackage{bbm}
+\usepackage{bm}
+\newcommand{\code}[1]{\texttt{#1}}
+\usepackage{xspace}
+\makeatletter 
+\xspaceaddexceptions{\grqq \grq \csq@qclose@i \} } 
+\makeatother
+\usepackage{multicol}
+\usepackage{vwcol}
+\usepackage{soul}
+\usepackage{eurosym}
+% ===========================================================
+
+
+% Mathe-Pakete
+% ===========================================================
+\usepackage{mathtools}
+\usepackage{amssymb}
+\usepackage[bigdelims]{newtxmath}
+\usepackage{wasysym}
+% ===========================================================
+
+% TikZ -- hope we dont need it
+% ===========================================================
+%\usepackage{tikz}
+%\usepackage{tikz-cd}          
+%\usetikzlibrary{arrows.meta}    
+%\usetikzlibrary{shadows}
+%\usetikzlibrary{calc}
+%\usetikzlibrary{backgrounds}  
+%\usetikzlibrary{patterns}
+%\tikzset{>=Latex}
+
+%\usepackage{tikz-qtree}
+%\usetikzlibrary{positioning, shapes.geometric}
+% ===========================================================
+
+% pgfplots - dont needed
+% ===========================================================
+% \usepackage{pgfplots}
+% \pgfplotsset{width=10cm,compat=1.9}
+% ===========================================================
+
+% Tabel
+% ===========================================================
+\usepackage{tabularray} % best tables
+% ===========================================================
+
+% listings
+% ===========================================================
+\usepackage{listingsutf8}
+\usepackage[most]{tcolorbox}
+% \begin{lstlisting}[style=pseudo]
+\lstdefinestyle{pseudo}{
+	belowcaptionskip=1\baselineskip,
+	breaklines=true,
+	showstringspaces=false,
+	keepspaces,
+	showstringspaces=false,
+	basicstyle=\small,
+	keywordstyle=\bfseries,
+	commentstyle=\itshape\color{gray},
+	numbers=left,
+	numberstyle=\tiny\ttfamily\color{darkgray},
+	inputencoding=utf8/latin1,
+	tabsize=2,
+	mathescape,
+	morekeywords={if, then, return, end, function, for, to, do, while, else, and, procedure},
+	literate={:=}{$\leftarrow$}1,
+	moredelim=[is][\normalfont\raggedleft]{|}{|}
+}
+
+% really complex stuff for nice python code snippets
+\newlength{\LstNumField}
+\setlength{\LstNumField}{40em}
+\makeatletter
+\renewcommand{\thelstnumber}{\ifnum\value{lstnumber}<10 0\fi\arabic{lstnumber}}
+\makeatother
+\makeatletter
+\newcommand{\zebra}[2]{%
+	\begingroup
+	\lst@basicstyle
+	\ifodd\value{lstnumber}%
+	\color{#1}%
+	\else
+	\color{#2}%
+	\fi
+	\rlap{\hspace*{\lst@numbersep}%
+		\color@block{\linewidth}{\ht\strutbox}{\dp\strutbox}%
+	}	
+	\endgroup 	
+}
+\makeatother
+
+\lstdefinestyle{python}{
+	language=Python,
+	%belowcaptionskip=1\baselineskip,
+	breaklines=false,
+	showstringspaces=false,
+	keepspaces,
+	basicstyle=\small\ttfamily,
+	keywordstyle=\bfseries\color{blue},
+	commentstyle=\itshape\color{green},
+	stringstyle=\color{orange},
+	numbers=left,
+	inputencoding=utf8,
+	tabsize=2,
+	numberstyle=\ttfamily\zebra{gray!15}{gray!2},
+	numbersep=2em}
+
+\DeclareRobustCommand{\PythonFile}[3]{
+	\begin{tcolorbox}[colback=gray!15, colframe=black, boxrule=0.5pt, arc=1pt, left=12pt, right=-9.5pt, top=-5pt, bottom=-5pt,boxsep=0pt]
+			\lstinputlisting[
+			style=python,
+			firstline=#2,
+			lastline=#3,
+			firstnumber=#2
+			]{#1}
+		\end{tcolorbox}
+		\vspace{-4pt}
+		{\tiny #1: Line #2-#3 \medskip\par}
+}
+% ===========================================================
+
+% Bibliography for References
+% ===========================================================
+  \usepackage[
+	  backend=biber,
+	  style=numeric,
+	  sorting=ynt,
+	  citestyle=numeric
+  ]{biblatex}
+  \addbibresource{./modules/references.bib}
+  \renewcommand*{\mkbibbrackets}[1]{\textsuperscript{[#1]}}
+  \nocite{*}    
+
+% Hyperlinks within Document and urls
+\hypersetup{
+	colorlinks=true,
+	linkcolor=black,
+	filecolor=magenta,      
+	urlcolor=cyan,
+	pdfpagemode=FullScreen,
+	citecolor=blue
+}
+\urlstyle{same}
+
+% ===========================================================
+
+
+
+% table of contents
+% ===========================================================
+\newcommand{\toc}{
+		\tableofcontents
+		\pagebreak
+}
+% ===========================================================
+
+% Empty Line
+% ===========================================================
+\newcommand{\blank}{\phantom{ }\\}
+% ===========================================================
+
+
+% Quotes
+% ===========================================================
+\newcommand{\qt}[1]{\glqq #1\grqq \xspace }
+% ===========================================================
+
+% Shortcuts
+% ===========================================================
+\newcommand{\B}{\mathbb{B}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\oh}{\mathcal{O}}
+
+\newcommand{\ra}{\rightarrow}
+\newcommand{\imp}{\Rightarrow}
+\newcommand{\limp}{\Leftarrow}
+\newcommand{\eq}{\Leftrightarrow}
+
+
+\newcommand{\ol}[1]{\overline{#1}}
+\newcommand{\wt}[1]{\widetilde{#1}}
+\newcommand{\wh}[1]{\widehat{#1}}
+
+\DeclareMathOperator{\id}{id}         % Identity
+\DeclareMathOperator{\pot}{\mathcal{P}}    % Potency Set
+% ===========================================================
+
+% Brackets
+% ===========================================================
+\DeclarePairedDelimiter{\absolut}{\lvert}{\rvert}    % Abs
+\DeclarePairedDelimiter{\ceiling}{\lceil}{\rceil}    % Ceil
+\DeclarePairedDelimiter{\Floor}{\lfloor}{\rfloor}    % Floor
+\DeclarePairedDelimiter{\Norm}{\lVert}{\rVert}      % Norm
+\DeclarePairedDelimiter{\sprod}{\langle}{\rangle}    
+\DeclarePairedDelimiter{\enbrace}{(}{)}          % n
+\DeclarePairedDelimiter{\benbrace}{\lbrack}{\rbrack}  
+\DeclarePairedDelimiter{\penbrace}{\{}{\}}        
+\newcommand{\Underbrace}[2]{{\underbrace{#1}_{#2}}}   
+
+\newcommand{\abs}[1]{\absolut*{#1}}
+\newcommand{\ceil}[1]{\ceiling*{#1}}
+\newcommand{\flo}[1]{\Floor*{#1}}
+\newcommand{\no}[1]{\Norm*{#1}}
+\newcommand{\sk}[1]{\sprod*{#1}}
+\newcommand{\enb}[1]{\enbrace*{#1}}
+\newcommand{\penb}[1]{\penbrace*{#1}}
+\newcommand{\benb}[1]{\benbrace*{#1}}
+
+\makeatletter
+\renewcommand*\env@matrix[1][*\c@MaxMatrixCols c]{%
+	\hskip -\arraycolsep
+	\let\@ifnextchar\new@ifnextchar
+	\array{#1}}
+\makeatother
+% ===========================================================

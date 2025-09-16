@@ -1,14 +1,6 @@
 import pytest
 from Model.Or import Or
-from Model.LogicComponent import LogicComponent
-        
-
-class DummyInput(LogicComponent):
-    def __init__(self, value):
-        super().__init__()
-        self.state = value
-    def eval(self):
-        return self.state
+from .DummyInput import DummyInput
 
 def test_or_raises_error_on_too_few_inputs():
     or_gate = Or()

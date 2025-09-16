@@ -1,13 +1,6 @@
 import pytest
 from Model.Xnor import Xnor
-from Model.LogicComponent import LogicComponent
-
-class DummyInput(LogicComponent):
-    def __init__(self, value):
-        super().__init__()
-        self.state = value
-    def eval(self):
-        return self.state
+from .DummyInput import DummyInput
 
 def test_xnor_raises_error_on_too_few_inputs():
     xnor_gate = Xnor()

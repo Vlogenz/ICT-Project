@@ -13,11 +13,11 @@ class Not(LogicComponent):
             bool: True if the output state has changed, False otherwise.
         """
         
-        old_state = self.state
+        oldState = self.state
         if len(self.inputs) != 1:
             raise ValueError("NOT gate must have exactly one input.")
-        self.state = not self.inputs[0].eval()
-        if self.state != old_state:
+        self.state = not self.inputs[0].getState()
+        if self.state != oldState:
             return True
         else:  
             return False

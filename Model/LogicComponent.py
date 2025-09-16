@@ -29,4 +29,6 @@ class LogicComponent(ABC):
     def addOutput(self, output: "LogicComponent"):
         self.outputs.append(output)
 
-   
+    def getState(self):
+        return self.state
+    

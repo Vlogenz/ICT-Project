@@ -14,7 +14,7 @@ class Output(LogicComponent):
             bool: True if the output state has changed, False otherwise.
         """
         old_state = self.state
-        self.state = self.inputs[0].eval()
+        self.state = self.inputs[0].getState()
 
         if self.state != old_state:
             return True

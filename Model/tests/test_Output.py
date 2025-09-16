@@ -1,13 +1,6 @@
 import pytest
 from Model.Output import Output
-from Model.LogicComponent import LogicComponent
-
-class DummyInput(LogicComponent):
-    def __init__(self, value):
-        super().__init__()
-        self.state = value
-    def eval(self):
-        return self.state
+from .DummyInput import DummyInput
 
 
 def test_Output_state_changes_from_default():

@@ -11,3 +11,8 @@ Then run this to install all packages in your env:
 ````
 pip install -r requirements.txt
 ````
+
+When you install a new package, remember to run the following command to update the requirements.txt:
+````
+pip freeze > requirements.txt
+````

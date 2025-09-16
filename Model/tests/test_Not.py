@@ -22,10 +22,11 @@ def test_not_raises_error_on_too_many_inputs():
 def test_not_logic_state_and_change(a, expected):
     not_gate = Not()
     not_gate.inputs = [DummyInput(a)]
-    # First eval: state should change from default to expected
+    # First eval: state should change from default (False) to expected if expected != False
+    initial = not_gate.state["outValue"]
     changed = not_gate.eval()
-    assert not_gate.state is expected, f"Not.state should be {expected} after eval() with input {a}."
-    assert changed is (expected != False), "Not.eval() should return True if state changed from default."
+    assert not_gate.state["outValue"] is expected, f"Not.state['outValue'] should be {expected} after eval() with input {a}."
+    assert changed is (expected != initial), "Not.eval() should return True if state changed from default."
     # Second eval: state should not change if input is the same
     changed = not_gate.eval()
     assert changed is False, "Not.eval() should return False if state does not change."
@@ -39,9 +40,9 @@ def test_not_state_changes_multiple_times():
     a.state = True
     changed = not_gate.eval()
     assert changed is True, "Not.eval() should return True when state changes from True to False."
-    assert not_gate.state is False, "Not.state should be False after input changes."
+    assert not_gate.state["outValue"] is False, "Not.state['outValue'] should be False after input changes."
     # Change input back to False
     a.state = False
     changed = not_gate.eval()
     assert changed is True, "Not.eval() should return True when state changes from False to True."
-    assert not_gate.state is True, "Not.state should be True after input changes."
+    assert not_gate.state["outValue"] is True, "Not.state['outValue'] should be True after input changes."

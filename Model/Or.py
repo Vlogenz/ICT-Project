@@ -13,14 +13,14 @@ class Or(   LogicComponent):
             bool: True if the output state has changed, False otherwise.
         """
         
-        oldState = self.state
+        oldState = self.state["outValue"]
         if len(self.inputs) != 2:
             raise ValueError("OR gate must have exactly two inputs.")
         if self.inputs[0].getState() or self.inputs[1].getState():
-            self.state = True
+            self.state["outValue"] = True
         else:
-            self.state = False
-        if self.state != oldState:
+            self.state["outValue"] = False
+        if self.state["outValue"] != oldState:
             return True
         else:  
             return False

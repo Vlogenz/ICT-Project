@@ -4,21 +4,20 @@ from .LogicComponent import LogicComponent
 
 class Connector():
 
-    state: bool = False
+    bitWidth: int = 0 
     origin: LogicComponent = None
     destination: typing.List[LogicComponent] = None
 
     def __init__(self):
         self.origin = None
         self.destination = None 
-        self.state = False
+        self.bitWidth = 1
 
-    
-    def setState(self, state: bool):
-        self.state = state
+    def setBitWidth(self, bitWidth: int):
+        self.bitWidth = bitWidth
 
-    def getState(self) -> bool:
-        return self.state
+    def getBitWidth(self) -> int:
+        return self.bitWidth
     
 
     def setOrigin(self, origin: LogicComponent):

@@ -26,7 +26,7 @@ def test_nand_logic_state_and_change(a, b, expected):
     nand_gate.inputs = [DummyInput(a), DummyInput(b)]
     # First eval: state should change from default (assume False) to expected
     changed = nand_gate.eval()
-    assert nand_gate.state == expected, f"Nand.state should be {expected} after eval() with inputs {a}, {b}."
+    assert nand_gate.state["outValue"] == expected, f"Nand.state['outValue'] should be {expected} after eval() with inputs {a}, {b}."
     # State changes if output is different from initial state (assume initial state is False)
     assert changed == (expected != False), "Nand.eval() should return True if state changed from default."
     # Second eval: state should not change if inputs are the same
@@ -40,15 +40,15 @@ def test_nand_state_changes_multiple_times():
     nand_gate.inputs = [a, b]
     # Initial eval: both True, output should be False
     changed = nand_gate.eval()
-    assert nand_gate.state is False, "Nand.state should be False after both inputs are True."
+    assert nand_gate.state["outValue"] is False, "Nand.state['outValue'] should be False after both inputs are True."
     # Change one input to False, output should become True
     a.state = False
     changed = nand_gate.eval()
     assert changed is True, "Nand.eval() should return True when state changes from False to True."
-    assert nand_gate.state is True, "Nand.state should be True after one input is False."
+    assert nand_gate.state["outValue"] is True, "Nand.state['outValue'] should be True after one input is False."
     # Change back to both True, output should become False
     a.state = True
     changed = nand_gate.eval()
     assert changed is True, "Nand.eval() should return True when state changes from True to False."
-    assert nand_gate.state is False, "Nand.state should be False after both inputs are True."
+    assert nand_gate.state["outValue"] is False, "Nand.state['outValue'] should be False after both inputs are True."
 

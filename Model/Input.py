@@ -8,12 +8,11 @@ class Input(LogicComponent):
         self.outputs: typing.List["LogicComponent"] = []
         # Input doesnt have inputs
 
-
     def eval(self) -> bool:
         return True
 
     def toggleState(self):
-        self.state = not self.state
+        self.state["outValue"] = not self.state["outValue"]
 
     def setState(self, state: bool):
-        self.state = state
+        self.state["outValue"] = state

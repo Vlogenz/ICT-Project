@@ -25,7 +25,7 @@ def test_xnor_logic_state_and_change(a, b, expected):
     xnor_gate.inputs = [DummyInput(a), DummyInput(b)]
     # First eval: state should change from default (likely False) to expected
     changed = xnor_gate.eval()
-    assert xnor_gate.state == expected, f"Xnor.state should be {expected} after eval() with inputs {a}, {b}."
+    assert xnor_gate.state["outValue"] == expected, f"Xnor.state['outValue'] should be {expected} after eval() with inputs {a}, {b}."
     assert changed == (expected != False), "Xnor.eval() should return True if state changed from default."
     # Second eval: state should not change if inputs are the same
     changed = xnor_gate.eval()
@@ -38,14 +38,14 @@ def test_xnor_state_changes_multiple_times():
     xnor_gate.inputs = [a, b]
     # Initial eval: both False, output should be True
     changed = xnor_gate.eval()
-    assert xnor_gate.state is True, "Xnor.state should be True after both inputs are False."
+    assert xnor_gate.state["outValue"] is True, "Xnor.state['outValue'] should be True after both inputs are False."
     # Change one input to True, output should become False
     a.state = True
     changed = xnor_gate.eval()
     assert changed is True, "Xnor.eval() should return True when state changes from True to False."
-    assert xnor_gate.state is False, "Xnor.state should be False after one input is True."
+    assert xnor_gate.state["outValue"] is False, "Xnor.state['outValue'] should be False after one input is True."
     # Change both inputs to True, output should become True
     b.state = True
     changed = xnor_gate.eval()
     assert changed is True, "Xnor.eval() should return True when state changes from False to True."
-    assert xnor_gate.state is True, "Xnor.state should be True after both inputs are True."
+    assert xnor_gate.state["outValue"] is True, "Xnor.state['outValue'] should be True after both inputs are True."

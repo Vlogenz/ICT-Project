@@ -10,7 +10,7 @@ def test_Output_state_changes_from_default():
     # Initial state is False, so should change to True
     changed = output.eval()
     assert changed is True, "Output.eval() should return True when state changes."
-    assert output.state is True, "Output.state should be updated to True."
+    assert output.state["outValue"] is True, "Output.state['outValue'] should be updated to True."
 
 
 def test_Output_state_does_not_change():
@@ -21,7 +21,7 @@ def test_Output_state_does_not_change():
     output.eval()  # set initial state
     changed = output.eval()  # call again, should not change
     assert changed is False, "Output.eval() should return False when state does not change."
-    assert output.state is False, "Output.state should remain False."
+    assert output.state["outValue"] is False, "Output.state['outValue'] should remain False."
 
 def test_Output_state_changes_multiple_times():
     output = Output()
@@ -32,9 +32,9 @@ def test_Output_state_changes_multiple_times():
     dummy.state = True
     changed = output.eval()
     assert changed is True, "Output.eval() should return True when state changes from False to True."
-    assert output.state is True, "Output.state should be updated to True."
+    assert output.state["outValue"] is True, "Output.state['outValue'] should be updated to True."
     # Change input back to False
     dummy.state = False
     changed = output.eval()
     assert changed is True, "Output.eval() should return True when state changes from True to False."
-    assert output.state is False, "Output.state should be updated to False."
+    assert output.state["outValue"] is False, "Output.state['outValue'] should be updated to False."

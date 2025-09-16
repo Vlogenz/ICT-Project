@@ -26,7 +26,7 @@ def test_or_logic_state_and_change(a, b, expected):
     or_gate.inputs = [DummyInput(a), DummyInput(b)]
     # First eval: state should change from default (likely False) to expected
     changed = or_gate.eval()
-    assert or_gate.state is expected, f"Or.state should be {expected} after eval() with inputs {a}, {b}."
+    assert or_gate.state["outValue"] is expected, f"Or.state should be {expected} after eval() with inputs {a}, {b}."
     assert changed is (expected != False), "Or.eval() should return True if state changed from default."
     # Second eval: state should not change if inputs are the same
     changed = or_gate.eval()
@@ -42,11 +42,11 @@ def test_or_state_changes_multiple_times():
     a.state = True
     changed = or_gate.eval()
     assert changed is True, "Or.eval() should return True when state changes from False to True."
-    assert or_gate.state is True, "Or.state should be True after input changes."
+    assert or_gate.state["outValue"] is True, "Or.state['outValue'] should be True after input changes."
     # Change both inputs to False
     a.state = False
     b.state = False
     changed = or_gate.eval()
     assert changed is True, "Or.eval() should return True when state changes from True to False."
-    assert or_gate.state is False, "Or.state should be False after both inputs are False."
+    assert or_gate.state["outValue"] is False, "Or.state['outValue'] should be False after both inputs are False."
 

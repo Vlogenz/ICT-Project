@@ -10,18 +10,18 @@ class DummyLogicComponent(LogicComponent):
 	def eval(self):
 		return True
 
-def test_connector_initial_state():
+def test_connector_initial_BitWidth():
 	c = Connector()
-	assert c.getState() is False
+	assert c.getBitWidth() is 1
 	assert c.getOrigin() is None
 	assert c.getDestination() is None
 
-def test_connector_set_and_get_state():
+def test_connector_set_and_get_BitWidth():
 	c = Connector()
-	c.setState(True)
-	assert c.getState() is True
-	c.setState(False)
-	assert c.getState() is False
+	c.setBitWidth(1)
+	assert c.getBitWidth() is 1
+	c.setBitWidth(8)
+	assert c.getBitWidth() is 8
 
 def test_connector_set_and_get_origin():
 	c = Connector()

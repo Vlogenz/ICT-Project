@@ -26,7 +26,7 @@ def test_and_logic_state_and_change(a, b, expected):
     and_gate.inputs = [DummyInput(a), DummyInput(b)]
     # First eval: state should change from default (likely False) to expected
     changed = and_gate.eval()
-    assert and_gate.state is expected, f"And.state should be {expected} after eval() with inputs {a}, {b}."
+    assert and_gate.state["outValue"] == expected, f"And.state['outValue'] should be {expected} after eval() with inputs {a}, {b}."
     assert changed is (expected != False), "And.eval() should return True if state changed from default."
     # Second eval: state should not change if inputs are the same
     changed = and_gate.eval()
@@ -42,10 +42,10 @@ def test_and_state_changes_multiple_times():
     b.state = True
     changed = and_gate.eval()
     assert changed is True, "And.eval() should return True when state changes from False to True."
-    assert and_gate.state is True, "And.state should be True after both inputs are True."
+    assert and_gate.state["outValue"] is True, "And.state['outValue'] should be True after both inputs are True."
     # Change one input to False
     a.state = False
     changed = and_gate.eval()
     assert changed is True, "And.eval() should return True when state changes from True to False."
-    assert and_gate.state is False, "And.state should be False after one input is False."
+    assert and_gate.state["outValue"] is False, "And.state['outValue'] should be False after one input is False."
 

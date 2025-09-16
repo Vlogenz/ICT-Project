@@ -3,7 +3,7 @@ import typing
 
 class LogicComponent(ABC):
     def __init__(self):
-        self.state: bool = False
+        self.state: dict = {"outValue": False}
         self.inputs: typing.List["LogicComponent"] = []
         self.outputs: typing.List["LogicComponent"] = []
 

@@ -1,1 +1,13 @@
-#A really cool Readme.md!
+# A really cool Readme.md!
+
+## Setup local development
+You can automatically install all required packages for the project. If you do not have an env in your project directory yet, run this:
+````
+python3.13 -m venv env
+source env/bin/activate
+````
+
+Then run this to install all packages in you env:
+````
+pip install -r requirements.txt
+````

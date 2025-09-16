@@ -7,7 +7,7 @@ python3.13 -m venv env
 source env/bin/activate
 ````
 
-Then run this to install all packages in you env:
+Then run this to install all packages in your env:
 ````
 pip install -r requirements.txt
 ````

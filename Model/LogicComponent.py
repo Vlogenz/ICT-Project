@@ -2,10 +2,15 @@ from abc import ABC, abstractmethod
 import typing
 
 class LogicComponent(ABC):
+    
+    id = 0
+    
     def __init__(self):
         self.state: bool = False
         self.inputs: typing.List["LogicComponent"] = []
         self.outputs: typing.List["LogicComponent"] = []
+        self.id = LogicComponent.id
+        LogicComponent.id +=1
 
     # Implementation left to the subclasses
     @abstractmethod
@@ -32,3 +37,5 @@ class LogicComponent(ABC):
     def getState(self):
         return self.state
     
+    def __hash__(self):
+        return self.id

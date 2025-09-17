@@ -1,5 +1,5 @@
 import pytest
-from Model.Not import Not
+from src.model.Not import Not
 from .DummyInput import DummyInput
 
 def test_not_raises_error_on_too_few_inputs():

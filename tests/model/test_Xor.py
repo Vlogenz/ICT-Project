@@ -1,5 +1,5 @@
 import pytest
-from Model.Xor import Xor
+from src.model.Xor import Xor
 from .DummyInput import DummyInput
 
 def test_xor_raises_error_on_too_few_inputs():

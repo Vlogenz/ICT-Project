@@ -1,8 +1,8 @@
 import typing
 
-from Model.LogicComponent import LogicComponent
-from Model.Input import Input
-from Model.GlobalConstants import MAX_EVAL_CYCLES
+from model.LogicComponent import LogicComponent
+from model.Input import Input
+from model.GlobalConstants import MAX_EVAL_CYCLES
 
 class LogicComponentController:    
     
@@ -114,14 +114,22 @@ class LogicComponentController:
     def getInputs(self):
         return self.inputs
     
-    
-    # def addLogicComponent(self, component:LogicComponent):
-    #     """Adds a logic component to the controller
+    T = typing.TypeVar("T",bound=LogicComponent)
+    def addLogicComponent(self, component: typing.Type[T]):
+        """creates a new component of given type
 
-    #     Args:
-    #         component (LogicComponent): the component to add
-    #     """
-    #     self.components.append(component)
+        Args:
+            component (typing.Type[T]): type of component which shoud be created
+
+        Returns:
+            LogicComponent: the new component 
+        """
+        comp = component()
+        self.components.append(comp)
+        if type(comp) == Input:
+            self.inputs.append(comp)
+        
+        return comp
     
     
     def removeLogicComponent(self, component:LogicComponent):
@@ -129,11 +137,13 @@ class LogicComponentController:
 
         Args:
             component (LogicComponent): the component to remove
+
+        Raises:
+            ReferenceError: If component was not present in the controllers list
         """
         if component in self.components:
             self.components.remove(component)
             if type(component) == Input:
                 self.inputs.remove(component)
         else:
-            # TODO throw Error
-            pass
+            raise ReferenceError("Can't remove non existent component from controller")

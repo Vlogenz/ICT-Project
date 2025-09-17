@@ -1,6 +1,6 @@
 import pytest
-from Model.Connector import Connector
-from Model.LogicComponent import LogicComponent
+from src.model.Connector import Connector
+from src.model.LogicComponent import LogicComponent
 
 # Dummy LogicComponent for testing
 class DummyLogicComponent(LogicComponent):

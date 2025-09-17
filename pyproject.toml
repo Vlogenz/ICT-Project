@@ -1,0 +1,5 @@
+[tool.pytest.ini_options]
+testpaths = ["tests/"]
+python_files = ["test*.py", "*Test.py"]
+python_classes = ["Test*", "*Test"]
+python_functions = ["test*", "*Test"]

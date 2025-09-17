@@ -1,5 +1,5 @@
 import pytest
-from Model.And import And
+from src.model.And import And
 from .DummyInput import DummyInput
 
 def test_and_raises_error_on_too_few_inputs():

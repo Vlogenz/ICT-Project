@@ -1,4 +1,4 @@
-from Model.LogicComponent import LogicComponent
+from src.model.LogicComponent import LogicComponent
 
 
 class DummyInput(LogicComponent):

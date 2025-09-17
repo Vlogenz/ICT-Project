@@ -1,5 +1,5 @@
 import pytest
-from Model.Or import Or
+from src.model.Or import Or
 from .DummyInput import DummyInput
 
 def test_or_raises_error_on_too_few_inputs():

@@ -1,5 +1,5 @@
 import pytest
-from Model.Nor import Nor
+from src.model.Nor import Nor
 from .DummyInput import DummyInput
 
 def test_nor_raises_error_on_too_few_inputs():

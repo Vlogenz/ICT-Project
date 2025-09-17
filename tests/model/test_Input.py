@@ -1,5 +1,5 @@
 import pytest
-from Model.Input import Input
+from src.model.Input import Input
 
 
 def test_Input_eval_always_true():

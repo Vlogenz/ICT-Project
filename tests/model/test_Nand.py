@@ -1,5 +1,5 @@
 import pytest
-from Model.Nand import Nand
+from src.model.Nand import Nand
 from .DummyInput import DummyInput
 
 def test_nand_raises_error_on_too_few_inputs():

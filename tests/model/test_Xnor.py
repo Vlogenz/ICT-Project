@@ -1,5 +1,5 @@
 import pytest
-from Model.Xnor import Xnor
+from src.model.Xnor import Xnor
 from .DummyInput import DummyInput
 
 def test_xnor_raises_error_on_too_few_inputs():

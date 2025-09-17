@@ -1,26 +1,39 @@
+//import related modules
 import QtQuick
 import QtQuick.Controls
-import QtQuick.Layouts
 
-Window {
-    width: 300
-    height: 200
+//window containing the application
+ApplicationWindow {
+    width: 640
+    height: 480
     visible: true
-    title: "Sandbox Mode"
+    //title of the application
+    title: "Hello World"
 
-    ColumnLayout {
-        anchors.fill: parent
-
-        Text {
-            id: textLabel
-            text: greetingsModel.text
-            Layout.alignment: Qt.AlignHCenter
-        }
-
-        Button {
-            text: "Click me"
-            Layout.alignment: Qt.AlignHCenter
-            onClicked: greetingsModel.random_greeting()
+    //menu containing two menu items
+    header: MenuBar {
+        Menu {
+            title: "&File"
+            Action {
+                text: "&Open..."
+                onTriggered: console.log("Open action triggered")
+            }
+            MenuSeparator { }
+            Action {
+                text: "&Exit"
+                onTriggered: Qt.quit()
+            }
         }
     }
+
+    //Content Area
+
+    //a button in the middle of the content area
+    /*Button {
+        text: "Hello World"
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.verticalCenter: parent.verticalCenter
+    }*/
+    EditorGrid {}
+    EditorSidebar {}
 }

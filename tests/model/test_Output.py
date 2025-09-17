@@ -1,5 +1,5 @@
 import pytest
-from Model.Output import Output
+from src.model.Output import Output
 from .DummyInput import DummyInput
 
 

@@ -1,8 +1,8 @@
 import typing
 
-from model.LogicComponent import LogicComponent
-from model.Input import Input
-from model.GlobalConstants import MAX_EVAL_CYCLES
+from src.model.LogicComponent import LogicComponent
+from src.model.Input import Input
+from src.model.GlobalConstants import MAX_EVAL_CYCLES
 
 class LogicComponentController:    
     

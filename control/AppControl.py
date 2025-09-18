@@ -11,7 +11,7 @@ class AppController:
         # self.engine.rootContext().setContextProperty("greetingsModel", self.model)
 
         # Load QML view
-        self.engine.load("view/SandboxMode.qml")
+        self.engine.load("view/dragAndDrop/gridview.qml")
         if not self.engine.rootObjects():
             sys.exit(-1)
 

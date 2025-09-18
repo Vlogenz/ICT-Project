@@ -4,15 +4,16 @@ from .DummyInput import DummyInput
 
 def test_nor_raises_error_on_too_few_inputs():
 	nor_gate = Nor()
-	nor_gate.inputs = [DummyInput(True)]
-	with pytest.raises(ValueError):
-		nor_gate.eval()
+	nor_gate.addInput(DummyInput(True),"outValue","input1")
+	assert nor_gate.eval() == True
+	assert nor_gate.state["outValue"] == (0,1)
 
 def test_nor_raises_error_on_too_many_inputs():
 	nor_gate = Nor()
-	nor_gate.inputs = [DummyInput(True), DummyInput(False), DummyInput(True)]
-	with pytest.raises(ValueError):
-		nor_gate.eval()
+	nor_gate.addInput(DummyInput(True),"outValue","input1")
+	nor_gate.addInput(DummyInput(False),"outValue","input2")
+	with pytest.raises(KeyError):
+		nor_gate.addInput(DummyInput(True),"outValue","input1")
 
 @pytest.mark.parametrize("a, b, expected", [
 	(False, False, True),
@@ -22,11 +23,12 @@ def test_nor_raises_error_on_too_many_inputs():
 ])
 def test_nor_logic_state_and_change(a, b, expected):
 	nor_gate = Nor()
-	nor_gate.inputs = [DummyInput(a), DummyInput(b)]
+	nor_gate.addInput(DummyInput(a),"outValue","input1")
+	nor_gate.addInput(DummyInput(b),"outValue","input2")
 	changed = nor_gate.eval()
 	expected_tuple = (1,1) if expected else (0,1)
 	assert nor_gate.state["outValue"] == expected_tuple, f"Nor.state['outValue'] should be {expected_tuple} after eval() with inputs {a}, {b}."
-	assert changed is (expected_tuple != (0,1)), "Nor.eval() should return True if state changed from default."
+	assert changed is (expected_tuple != (1,1)), "Nor.eval() should return True if state changed from default."
 	changed = nor_gate.eval()
 	assert changed is False, "Nor.eval() should return False if state does not change."
 
@@ -34,7 +36,8 @@ def test_nor_state_changes_multiple_times():
 	nor_gate = Nor()
 	a = DummyInput(False)
 	b = DummyInput(False)
-	nor_gate.inputs = [a, b]
+	nor_gate.addInput(a,"outValue","input1")
+	nor_gate.addInput(b,"outValue","input2")
 	changed = nor_gate.eval()
 	assert nor_gate.state["outValue"] == (1,1), "Nor.state['outValue'] should be (1,1) after both inputs are False."
 	a.setValue(True)

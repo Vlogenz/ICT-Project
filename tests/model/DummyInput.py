@@ -9,8 +9,5 @@ class DummyInput(LogicComponent):
     def eval(self):
         return True
 
-    def getState(self):
-        return self.state
-
     def setValue(self, value):
         self.state["outValue"] = (1,1) if value else (0,1)

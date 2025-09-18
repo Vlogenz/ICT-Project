@@ -3,21 +3,26 @@ from .LogicComponent import LogicComponent
 
 class Xor(LogicComponent):
 
+    def __init__(self):
+        super().__init__()
+        self.inputs: typing.Dict = {"input1": None, "input2": None} # XOR gate has exactly two inputs
+        self.state: dict = {"outValue": (0,1)}
+    
     def eval(self) -> bool:
         """Evaluate the XOR gate, and return if the Output has changed.
 
-        Raises:
-            ValueError: If the number of inputs is not exactly two.
-
-        Returns:
-            bool: True if the output state has changed, False otherwise.
-        """
-        
+		Returns:
+			bool: True if the output state has changed, False otherwise.
+		"""
         oldState = self.state.copy()
-        if len(self.inputs) != 2:
-            raise ValueError("XOR gate must have exactly two inputs.")
-        a = self.inputs[0].getState()["outValue"][0]
-        b = self.inputs[1].getState()["outValue"][0]
+        if self.inputs["input1"] is None:
+            a = False
+        else:
+            a = self.inputs["input1"][0].getState()[self.inputs["input1"][1]][0]
+        if self.inputs["input2"] is None:
+            b = False
+        else:
+            b = self.inputs["input2"][0].getState()[self.inputs["input2"][1]][0]
         if a != b:
             self.state["outValue"] = (1,1)
         else:

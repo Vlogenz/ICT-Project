@@ -10,7 +10,8 @@ from .DummyInput import DummyInput
 ])
 def test_half_adder_logic(a, b, expected_sum, expected_carry):
     ha = HalfAdder()
-    ha.inputs = [DummyInput(a), DummyInput(b)]
+    ha.addInput(DummyInput(a), "outValue", "inputA")
+    ha.addInput(DummyInput(b), "outValue", "inputB")
     ha.eval()
     expected_sum_tuple = (1,1) if expected_sum else (0,1)
     expected_carry_tuple = (1,1) if expected_carry else (0,1)

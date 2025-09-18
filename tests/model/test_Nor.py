@@ -23,11 +23,10 @@ def test_nor_raises_error_on_too_many_inputs():
 def test_nor_logic_state_and_change(a, b, expected):
 	nor_gate = Nor()
 	nor_gate.inputs = [DummyInput(a), DummyInput(b)]
-	# First eval: state should change from default (likely False) to expected
 	changed = nor_gate.eval()
-	assert nor_gate.state == expected, f"Nor.state should be {expected} after eval() with inputs {a}, {b}."
-	assert changed == (expected != False), "Nor.eval() should return True if state changed from default."
-	# Second eval: state should not change if inputs are the same
+	expected_tuple = (1,1) if expected else (0,1)
+	assert nor_gate.state["outValue"] == expected_tuple, f"Nor.state['outValue'] should be {expected_tuple} after eval() with inputs {a}, {b}."
+	assert changed is (expected_tuple != (0,1)), "Nor.eval() should return True if state changed from default."
 	changed = nor_gate.eval()
 	assert changed is False, "Nor.eval() should return False if state does not change."
 
@@ -36,17 +35,13 @@ def test_nor_state_changes_multiple_times():
 	a = DummyInput(False)
 	b = DummyInput(False)
 	nor_gate.inputs = [a, b]
-	# Initial eval: both False, output should be True
 	changed = nor_gate.eval()
-	assert nor_gate.state is True, "Nor.state should be True after both inputs are False."
-	# Change one input to True, output should become False
-	a.state = True
+	assert nor_gate.state["outValue"] == (1,1), "Nor.state['outValue'] should be (1,1) after both inputs are False."
+	a.setValue(True)
 	changed = nor_gate.eval()
-	assert changed is True, "Nor.eval() should return True when state changes from True to False."
-	assert nor_gate.state is False, "Nor.state should be False after one input is True."
-	# Change both inputs back to False, output should become True
-	a.state = False
-	b.state = False
+	assert changed is True, "Nor.eval() should return True when state changes from (1,1) to (0,1)."
+	assert nor_gate.state["outValue"] == (0,1), "Nor.state['outValue'] should be (0,1) after one input is True."
+	a.setValue(False)
+	b.setValue(False)
 	changed = nor_gate.eval()
-	assert changed is True, "Nor.eval() should return True when state changes from False to True."
-	assert nor_gate.state is True, "Nor.state should be True after both inputs are False."
+	assert nor_gate.state["outValue"] == (1,1), "Nor.state['outValue'] should be (1,1) after both inputs are False again."

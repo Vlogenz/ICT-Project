@@ -4,43 +4,65 @@ from .LogicComponent import LogicComponent
 
 class Connector():
 
-    state: bool = False
-    origin: LogicComponent = None
-    destination: typing.List[LogicComponent] = None
+    bitWidth: int
+    origin: LogicComponent
+    destination: typing.List[LogicComponent]
 
     def __init__(self):
         self.origin = None
-        self.destination = None 
-        self.state = False
+        self.destination = []
+        self.bitWidth = 0
 
+    def setBitWidth(self, bitWidth: int):
+        self.bitWidth = bitWidth
+
+    def getBitWidth(self) -> int:
+        return self.bitWidth
     
-    def setState(self, state: bool):
-        self.state = state
 
-    def getState(self) -> bool:
-        return self.state
-    
+    def setOrigin(self, newOrigin: LogicComponent, key:str):
+        """Set the origin component of the connector. checks if the bitwidth matches.
 
-    def setOrigin(self, origin: LogicComponent):
-        self.origin = origin
+        Args:
+            origin (LogicComponent): The origin component to set.
 
+        Raises:
+            ValueError: If the bitwidth of the origin component does not match the connector's bitwidth.
+        """
+        if self.bitWidth == 0 or self.bitWidth == newOrigin.getState()[key][1]:
+            self.bitWidth = newOrigin.getState()[key][1] # set bitwidth if not set yet
+            self.origin = newOrigin
+        else:
+            raise ValueError("Bitwidth of connector does not match bitwidth of connected components.")
+            
     def getOrigin(self) -> LogicComponent:
         return self.origin
     
 
-    def addDestination(self, destination: LogicComponent):
+    def addDestination(self, destination: LogicComponent, key: str):
         """Add a destination component to the connector.
+
         Args:
             destination (LogicComponent): The destination component to add.
+            key (str): The key to access the bitlength ("outValue" in most cases) of the destination component.
+
+        Raises:
+            ValueError: If the bitwidth of the destination component does not match the connector's bitwidth.
         """
-        self.destination.append(destination)
+        if self.bitWidth == 0 or self.bitWidth == destination.getState()[key][1]:
+            self.bitWidth = destination.getState()[key][1]
+            self.destination.append(destination)
+        else:
+            raise ValueError("Bitwidth of connector does not match bitwidth of connected components.")
 
     def removeDestination(self, destination: LogicComponent):
-        """Remove a destination component from the connector.
+        """ Remove a destination component from the connector.
         Args:
-            destination (LogicComponent): The destination component to remove.
-        """
+                destination (LogicComponent): The destination component to remove.
+            """
         self.destination.remove(destination)
+        if len(self.destination) == 0:
+            self.bitWidth = 0
 
     def getDestination(self) -> typing.List[LogicComponent]:
         return self.destination

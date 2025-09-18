@@ -23,11 +23,10 @@ def test_xor_raises_error_on_too_many_inputs():
 def test_xor_logic_state_and_change(a, b, expected):
     xor_gate = Xor()
     xor_gate.inputs = [DummyInput(a), DummyInput(b)]
-    # First eval: state should change from default (likely False) to expected
     changed = xor_gate.eval()
-    assert xor_gate.state == expected, f"Xor.state should be {expected} after eval() with inputs {a}, {b}."
-    assert changed == (expected != False), "Xor.eval() should return True if state changed from default."
-    # Second eval: state should not change if inputs are the same
+    expected_tuple = (1,1) if expected else (0,1)
+    assert xor_gate.state["outValue"] == expected_tuple, f"Xor.state['outValue'] should be {expected_tuple} after eval() with inputs {a}, {b}."
+    assert changed is (expected_tuple != (0,1)), "Xor.eval() should return True if state changed from default."
     changed = xor_gate.eval()
     assert changed is False, "Xor.eval() should return False if state does not change."
 
@@ -36,16 +35,13 @@ def test_xor_state_changes_multiple_times():
     a = DummyInput(False)
     b = DummyInput(False)
     xor_gate.inputs = [a, b]
-    # Initial eval: both False, output should be False
     changed = xor_gate.eval()
-    assert xor_gate.state is False, "Xor.state should be False after both inputs are False."
-    # Change one input to True, output should become True
-    a.state = True
+    assert xor_gate.state["outValue"] == (0,1), "Xor.state['outValue'] should be (0,1) after both inputs are False."
+    a.setValue(True)
     changed = xor_gate.eval()
-    assert changed is True, "Xor.eval() should return True when state changes from False to True."
-    assert xor_gate.state is True, "Xor.state should be True after one input is True."
-    # Change both inputs to True, output should become False
-    b.state = True
+    assert changed is True, "Xor.eval() should return True when state changes from (0,1) to (1,1)."
+    assert xor_gate.state["outValue"] == (1,1), "Xor.state['outValue'] should be (1,1) after one input is True."
+    b.setValue(True)
     changed = xor_gate.eval()
-    assert changed is True, "Xor.eval() should return True when state changes from True to False."
-    assert xor_gate.state is False, "Xor.state should be False after both inputs are True."
+    assert changed is True, "Xor.eval() should return True when state changes from (1,1) to (0,1)."
+    assert xor_gate.state["outValue"] == (0,1), "Xor.state['outValue'] should be (0,1) after both inputs are True."

@@ -6,7 +6,7 @@ from .DummyInput import DummyInput
 def test_Output_state_changes_from_default():
     output = Output()
     dummy = DummyInput(True)
-    output.inputs.append(dummy)
+    output.addInput(dummy,"outValue","input")
     changed = output.eval()
     assert changed is True, "Output.eval() should return True when state changes."
     assert output.state["outValue"] == (1,1), "Output.state['outValue'] should be updated to (1,1)."
@@ -15,7 +15,7 @@ def test_Output_state_changes_from_default():
 def test_Output_state_does_not_change():
     output = Output()
     dummy = DummyInput(False)
-    output.inputs.append(dummy)
+    output.addInput(dummy,"outValue","input")
     output.eval()
     changed = output.eval()
     assert changed is False, "Output.eval() should return False when state does not change."
@@ -24,7 +24,7 @@ def test_Output_state_does_not_change():
 def test_Output_state_changes_multiple_times():
     output = Output()
     dummy = DummyInput(False)
-    output.inputs.append(dummy)
+    output.addInput(dummy,"outValue","input")
     output.eval()
     dummy.setValue(True)
     changed = output.eval()

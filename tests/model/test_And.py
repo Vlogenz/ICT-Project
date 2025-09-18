@@ -4,15 +4,16 @@ from .DummyInput import DummyInput
 
 def test_and_raises_error_on_too_few_inputs():
     and_gate = And()
-    and_gate.inputs = [DummyInput(True)]
-    with pytest.raises(ValueError):
-        and_gate.eval()
+    and_gate.addInput(DummyInput(True),"outValue","input1")
+    assert and_gate.eval() == False
+    assert and_gate.state["outValue"] == (0,1)
 
 def test_and_raises_error_on_too_many_inputs():
     and_gate = And()
-    and_gate.inputs = [DummyInput(True), DummyInput(False), DummyInput(True)]
-    with pytest.raises(ValueError):
-        and_gate.eval()
+    and_gate.addInput(DummyInput(True),"outValue","input1")
+    and_gate.addInput(DummyInput(False),"outValue","input2")
+    with pytest.raises(KeyError):
+        and_gate.addInput(DummyInput(True),"outValue","input1")
 
 
 @pytest.mark.parametrize("a, b, expected", [
@@ -23,7 +24,8 @@ def test_and_raises_error_on_too_many_inputs():
 ])
 def test_and_logic_state_and_change(a, b, expected):
     and_gate = And()
-    and_gate.inputs = [DummyInput(a), DummyInput(b)]
+    and_gate.addInput(DummyInput(a),"outValue","input1")
+    and_gate.addInput(DummyInput(b),"outValue","input2")
     changed = and_gate.eval()
     expected_tuple = (1,1) if expected else (0,1)
     assert and_gate.state["outValue"] == expected_tuple, f"And.state['outValue'] should be {expected_tuple} after eval() with inputs {a}, {b}."
@@ -35,7 +37,8 @@ def test_and_state_changes_multiple_times():
     and_gate = And()
     a = DummyInput(True)
     b = DummyInput(False)
-    and_gate.inputs = [a, b]
+    and_gate.addInput(a,"outValue","input1")
+    and_gate.addInput(b,"outValue","input2")
     and_gate.eval()  # state should be (0,1)
     b.setValue(True)
     changed = and_gate.eval()

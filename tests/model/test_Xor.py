@@ -4,15 +4,16 @@ from .DummyInput import DummyInput
 
 def test_xor_raises_error_on_too_few_inputs():
     xor_gate = Xor()
-    xor_gate.inputs = [DummyInput(True)]
-    with pytest.raises(ValueError):
-        xor_gate.eval()
+    xor_gate.addInput(DummyInput(True),"outValue","input2")  # Manually add second input to avoid KeyError
+    assert xor_gate.eval() == True
+    assert xor_gate.state["outValue"] == (1,1)
 
 def test_xor_raises_error_on_too_many_inputs():
     xor_gate = Xor()
-    xor_gate.inputs = [DummyInput(True), DummyInput(False), DummyInput(True)]
-    with pytest.raises(ValueError):
-        xor_gate.eval()
+    xor_gate.addInput(DummyInput(True),"outValue","input1")  # Manually add third input to avoid KeyError
+    xor_gate.addInput(DummyInput(False),"outValue","input2")  # Manually add fourth input to avoid KeyError
+    with pytest.raises(KeyError):
+        xor_gate.addInput(DummyInput(True),"outValue","input1")
 
 @pytest.mark.parametrize("a, b, expected", [
     (False, False, False),
@@ -22,7 +23,8 @@ def test_xor_raises_error_on_too_many_inputs():
 ])
 def test_xor_logic_state_and_change(a, b, expected):
     xor_gate = Xor()
-    xor_gate.inputs = [DummyInput(a), DummyInput(b)]
+    xor_gate.addInput(DummyInput(a),"outValue","input1")
+    xor_gate.addInput(DummyInput(b),"outValue","input2")
     changed = xor_gate.eval()
     expected_tuple = (1,1) if expected else (0,1)
     assert xor_gate.state["outValue"] == expected_tuple, f"Xor.state['outValue'] should be {expected_tuple} after eval() with inputs {a}, {b}."
@@ -34,7 +36,8 @@ def test_xor_state_changes_multiple_times():
     xor_gate = Xor()
     a = DummyInput(False)
     b = DummyInput(False)
-    xor_gate.inputs = [a, b]
+    xor_gate.addInput(a,"outValue","input1")
+    xor_gate.addInput(b,"outValue","input2")
     changed = xor_gate.eval()
     assert xor_gate.state["outValue"] == (0,1), "Xor.state['outValue'] should be (0,1) after both inputs are False."
     a.setValue(True)

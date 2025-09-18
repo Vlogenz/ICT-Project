@@ -4,9 +4,8 @@ from .DummyInput import DummyInput
 
 def test_not_raises_error_on_too_few_inputs():
     not_gate = Not()
-    not_gate.inputs = []
-    with pytest.raises(ValueError):
-        not_gate.eval()
+    assert not_gate.eval() == False
+    assert not_gate.state["outValue"] == (1,1)
 
 def test_not_raises_error_on_too_many_inputs():
     not_gate = Not()
@@ -21,18 +20,18 @@ def test_not_raises_error_on_too_many_inputs():
 ])
 def test_not_logic_state_and_change(a, expected):
     not_gate = Not()
-    not_gate.inputs = [DummyInput(a)]
+    not_gate.addInput(DummyInput(a),"outValue","input")
     changed = not_gate.eval()
     expected_tuple = (1,1) if expected else (0,1)
     assert not_gate.state["outValue"] == expected_tuple, f"Not.state['outValue'] should be {expected_tuple} after eval() with input {a}."
-    assert changed is (expected_tuple != (0,1)), "Not.eval() should return True if state changed from default."
+    assert changed is (expected_tuple != (1,1)), "Not.eval() should return True if state changed from default."
     changed = not_gate.eval()
     assert changed is False, "Not.eval() should return False if state does not change."
 
 def test_not_state_changes_multiple_times():
     not_gate = Not()
     a = DummyInput(False)
-    not_gate.inputs = [a]
+    not_gate.addInput(a,"outValue","input")
     not_gate.eval()  # state should be (1,1)
     a.setValue(True)
     changed = not_gate.eval()

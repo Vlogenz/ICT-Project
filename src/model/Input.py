@@ -6,6 +6,7 @@ class Input(LogicComponent):
     def __init__(self):
         self.state: bool = False
         #Inputs are always empty for Input component
+        self.inputs = {} # Input has no inputs
         self.outputs: typing.List["LogicComponent"] = []
         self.id = LogicComponent.id
         LogicComponent.id +=1

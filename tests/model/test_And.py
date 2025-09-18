@@ -24,11 +24,10 @@ def test_and_raises_error_on_too_many_inputs():
 def test_and_logic_state_and_change(a, b, expected):
     and_gate = And()
     and_gate.inputs = [DummyInput(a), DummyInput(b)]
-    # First eval: state should change from default (likely False) to expected
     changed = and_gate.eval()
-    assert and_gate.state is expected, f"And.state should be {expected} after eval() with inputs {a}, {b}."
-    assert changed is (expected != False), "And.eval() should return True if state changed from default."
-    # Second eval: state should not change if inputs are the same
+    expected_tuple = (1,1) if expected else (0,1)
+    assert and_gate.state["outValue"] == expected_tuple, f"And.state['outValue'] should be {expected_tuple} after eval() with inputs {a}, {b}."
+    assert changed is (expected_tuple != (0,1)), "And.eval() should return True if state changed from default."
     changed = and_gate.eval()
     assert changed is False, "And.eval() should return False if state does not change."
 
@@ -37,15 +36,13 @@ def test_and_state_changes_multiple_times():
     a = DummyInput(True)
     b = DummyInput(False)
     and_gate.inputs = [a, b]
-    and_gate.eval()  # state should be False
-    # Change both inputs to True
-    b.state = True
+    and_gate.eval()  # state should be (0,1)
+    b.setValue(True)
     changed = and_gate.eval()
-    assert changed is True, "And.eval() should return True when state changes from False to True."
-    assert and_gate.state is True, "And.state should be True after both inputs are True."
-    # Change one input to False
-    a.state = False
+    assert changed is True, "And.eval() should return True when state changes from (0,1) to (1,1)."
+    assert and_gate.state["outValue"] == (1,1), "And.state['outValue'] should be (1,1) after both inputs are True."
+    a.setValue(False)
     changed = and_gate.eval()
-    assert changed is True, "And.eval() should return True when state changes from True to False."
-    assert and_gate.state is False, "And.state should be False after one input is False."
+    assert changed is True, "And.eval() should return True when state changes from (1,1) to (0,1)."
+    assert and_gate.state["outValue"] == (0,1), "And.state['outValue'] should be (0,1) after one input is False."
 

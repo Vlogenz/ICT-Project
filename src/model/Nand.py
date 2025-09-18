@@ -12,14 +12,15 @@ class Nand(LogicComponent):
         Returns:
             bool: True if the output state has changed, False otherwise.
         """
-        oldState = self.state
+        oldState = self.state.copy()
         if len(self.inputs) != 2:
             raise ValueError("NAND gate must have exactly two inputs.")
-        # NAND logic: output is False only if both inputs are True
-        if self.inputs[0].getState() and self.inputs[1].getState():
-            self.state = False
+        a = self.inputs[0].getState()["outValue"][0]
+        b = self.inputs[1].getState()["outValue"][0]
+        if a and b:
+            self.state["outValue"] = (0,1)
         else:
-            self.state = True
+            self.state["outValue"] = (1,1)
         if self.state != oldState:
             return True
         else:

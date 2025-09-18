@@ -6,11 +6,14 @@ class LogicComponent(ABC):
     id = 0
     
     def __init__(self):
+
         self.state: bool = False
         self.inputs: typing.List["LogicComponent"] = []
         self.outputs: typing.List["LogicComponent"] = []
         self.id = LogicComponent.id
         LogicComponent.id +=1
+        # Default state for components with one output: (0,1) = (value, bitlength)
+        self.state: dict = {"outValue": (0,1)}  
 
     # Implementation left to the subclasses
     @abstractmethod

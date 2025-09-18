@@ -11,14 +11,15 @@ class Nor(LogicComponent):
 		Returns:
 			bool: True if the output state has changed, False otherwise.
 		"""
-		oldState = self.state
+		oldState = self.state.copy()
 		if len(self.inputs) != 2:
 			raise ValueError("NOR gate must have exactly two inputs.")
-		# NOR logic: output True only if both inputs are False
-		if not self.inputs[0].getState() and not self.inputs[1].getState():
-			self.state = True
+		a = self.inputs[0].getState()["outValue"][0]
+		b = self.inputs[1].getState()["outValue"][0]
+		if a == 0 and b == 0:
+			self.state["outValue"] = (1,1)
 		else:
-			self.state = False
+			self.state["outValue"] = (0,1)
 		if self.state != oldState:
 			return True
 		else:

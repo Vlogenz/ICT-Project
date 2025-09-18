@@ -7,34 +7,30 @@ def test_Output_state_changes_from_default():
     output = Output()
     dummy = DummyInput(True)
     output.inputs.append(dummy)
-    # Initial state is False, so should change to True
     changed = output.eval()
     assert changed is True, "Output.eval() should return True when state changes."
-    assert output.state is True, "Output.state should be updated to True."
+    assert output.state["outValue"] == (1,1), "Output.state['outValue'] should be updated to (1,1)."
 
 
 def test_Output_state_does_not_change():
     output = Output()
     dummy = DummyInput(False)
     output.inputs.append(dummy)
-    # First call: state changes from default to False (no change)
-    output.eval()  # set initial state
-    changed = output.eval()  # call again, should not change
+    output.eval()
+    changed = output.eval()
     assert changed is False, "Output.eval() should return False when state does not change."
-    assert output.state is False, "Output.state should remain False."
+    assert output.state["outValue"] == (0,1), "Output.state['outValue'] should remain (0,1)."
 
 def test_Output_state_changes_multiple_times():
     output = Output()
     dummy = DummyInput(False)
     output.inputs.append(dummy)
-    output.eval()  # set initial state to False
-    # Change input to True
-    dummy.state = True
+    output.eval()
+    dummy.setValue(True)
     changed = output.eval()
-    assert changed is True, "Output.eval() should return True when state changes from False to True."
-    assert output.state is True, "Output.state should be updated to True."
-    # Change input back to False
-    dummy.state = False
+    assert changed is True, "Output.eval() should return True when state changes from (0,1) to (1,1)."
+    assert output.state["outValue"] == (1,1), "Output.state['outValue'] should be updated to (1,1)."
+    dummy.setValue(False)
     changed = output.eval()
-    assert changed is True, "Output.eval() should return True when state changes from True to False."
-    assert output.state is False, "Output.state should be updated to False."
+    assert changed is True, "Output.eval() should return True when state changes from (1,1) to (0,1)."
+    assert output.state["outValue"] == (0,1), "Output.state['outValue'] should be updated to (0,1)."

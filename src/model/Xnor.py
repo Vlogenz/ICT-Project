@@ -11,13 +11,15 @@ class Xnor(LogicComponent):
 		Returns:
 			bool: True if the output state has changed, False otherwise.
 		"""
-		oldState = self.state
+		oldState = self.state.copy()
 		if len(self.inputs) != 2:
 			raise ValueError("XNOR gate must have exactly two inputs.")
-		# XNOR logic: output True if both inputs are the same
-		a = self.inputs[0].getState()
-		b = self.inputs[1].getState()
-		self.state = (a == b)
+		a = self.inputs[0].getState()["outValue"][0]
+		b = self.inputs[1].getState()["outValue"][0]
+		if a == b:
+			self.state["outValue"] = (1,1)
+		else:
+			self.state["outValue"] = (0,1)
 		if self.state != oldState:
 			return True
 		else:

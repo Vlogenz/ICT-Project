@@ -24,11 +24,10 @@ def test_or_raises_error_on_too_many_inputs():
 def test_or_logic_state_and_change(a, b, expected):
     or_gate = Or()
     or_gate.inputs = [DummyInput(a), DummyInput(b)]
-    # First eval: state should change from default (likely False) to expected
     changed = or_gate.eval()
-    assert or_gate.state is expected, f"Or.state should be {expected} after eval() with inputs {a}, {b}."
-    assert changed is (expected != False), "Or.eval() should return True if state changed from default."
-    # Second eval: state should not change if inputs are the same
+    expected_tuple = (1,1) if expected else (0,1)
+    assert or_gate.state["outValue"] == expected_tuple, f"Or.state['outValue'] should be {expected_tuple} after eval() with inputs {a}, {b}."
+    assert changed is (expected_tuple != (0,1)), "Or.eval() should return True if state changed from default."
     changed = or_gate.eval()
     assert changed is False, "Or.eval() should return False if state does not change."
 
@@ -37,16 +36,14 @@ def test_or_state_changes_multiple_times():
     a = DummyInput(False)
     b = DummyInput(False)
     or_gate.inputs = [a, b]
-    or_gate.eval()  # state should be False
-    # Change one input to True
-    a.state = True
+    or_gate.eval()  # state should be (0,1)
+    a.setValue(True)
     changed = or_gate.eval()
-    assert changed is True, "Or.eval() should return True when state changes from False to True."
-    assert or_gate.state is True, "Or.state should be True after input changes."
-    # Change both inputs to False
-    a.state = False
-    b.state = False
+    assert changed is True, "Or.eval() should return True when state changes from (0,1) to (1,1)."
+    assert or_gate.state["outValue"] == (1,1), "Or.state['outValue'] should be (1,1) after input changes."
+    a.setValue(False)
+    b.setValue(False)
     changed = or_gate.eval()
-    assert changed is True, "Or.eval() should return True when state changes from True to False."
-    assert or_gate.state is False, "Or.state should be False after both inputs are False."
+    assert changed is True, "Or.eval() should return True when state changes from (1,1) to (0,1)."
+    assert or_gate.state["outValue"] == (0,1), "Or.state['outValue'] should be (0,1) after both inputs are False."
 

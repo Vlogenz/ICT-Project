@@ -22,11 +22,10 @@ def test_not_raises_error_on_too_many_inputs():
 def test_not_logic_state_and_change(a, expected):
     not_gate = Not()
     not_gate.inputs = [DummyInput(a)]
-    # First eval: state should change from default to expected
     changed = not_gate.eval()
-    assert not_gate.state is expected, f"Not.state should be {expected} after eval() with input {a}."
-    assert changed is (expected != False), "Not.eval() should return True if state changed from default."
-    # Second eval: state should not change if input is the same
+    expected_tuple = (1,1) if expected else (0,1)
+    assert not_gate.state["outValue"] == expected_tuple, f"Not.state['outValue'] should be {expected_tuple} after eval() with input {a}."
+    assert changed is (expected_tuple != (0,1)), "Not.eval() should return True if state changed from default."
     changed = not_gate.eval()
     assert changed is False, "Not.eval() should return False if state does not change."
 
@@ -34,14 +33,12 @@ def test_not_state_changes_multiple_times():
     not_gate = Not()
     a = DummyInput(False)
     not_gate.inputs = [a]
-    not_gate.eval()  # state should be True
-    # Change input to True
-    a.state = True
+    not_gate.eval()  # state should be (1,1)
+    a.setValue(True)
     changed = not_gate.eval()
-    assert changed is True, "Not.eval() should return True when state changes from True to False."
-    assert not_gate.state is False, "Not.state should be False after input changes."
-    # Change input back to False
-    a.state = False
+    assert changed is True, "Not.eval() should return True when state changes from (1,1) to (0,1)."
+    assert not_gate.state["outValue"] == (0,1), "Not.state['outValue'] should be (0,1) after input changes."
+    a.setValue(False)
     changed = not_gate.eval()
-    assert changed is True, "Not.eval() should return True when state changes from False to True."
-    assert not_gate.state is True, "Not.state should be True after input changes."
+    assert changed is True, "Not.eval() should return True when state changes from (0,1) to (1,1)."
+    assert not_gate.state["outValue"] == (1,1), "Not.state['outValue'] should be (1,1) after input changes."

@@ -37,24 +37,23 @@ class LogicComponentController:
         indeg = {}
         for comp in self.components:
             if type(comp) != Input:
-                indeg[comp] = len(comp.getInputs())
+                compo = [tuple[0] for tuple in comp.inputs.values() if tuple is not None]
+                indeg[comp] = len(set(compo))
+                
         currentTick = self.inputs.copy()
         while len(currentTick) > 0:
             self.updateInTick[tick] = currentTick.copy()
             nextTick = []
             for u in currentTick:
-                for v in u.getOutputs():
+                vs = [tuple[0] for tuple in u.getOutputs()]
+                for v in vs:
                     indeg[v] -= 1
                     if indeg[v] == 0:
                         nextTick.append(v)
             currentTick = nextTick
             tick +=1
         
-        sumIndeg = 0
-        for comp in indeg:
-            sumIndeg += indeg[comp]
-        
-        if sumIndeg > 0:
+        if sum(indeg.values()) > 0:
             return False
         else:
             for tick in self.updateInTick:
@@ -76,18 +75,17 @@ class LogicComponentController:
             bool: wether evaluation was successful or not
         """
         tick = 0
-        currentTick = kw["startingComponents"]
-        if len(currentTick) == 0:
-            currentTick = self.inputs.copy()
+        currentTick = kw.get("startingComponents",self.inputs.copy())
         while len(currentTick)>0:
             nextTick = []
             for g in currentTick:
                 if g.eval():
-                    for out in g.getOutputs():
+                    gOut = [tuple[0] for tuple in g.getOutputs()]
+                    for out in gOut:
                         nextTick.append(out)
             
             
-            self.updateComponents(currentTick)
+            self.updateComponents(components=currentTick)
             #TODO short sleep
             currentTick = nextTick
             tick +=1

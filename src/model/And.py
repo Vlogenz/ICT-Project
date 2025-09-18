@@ -2,7 +2,7 @@ import  typing
 from .LogicComponent import LogicComponent
 
 class And(LogicComponent):
-
+    
     def eval(self) -> bool:
         """Evaluate the AND gate, and return if the Output has changed.
 

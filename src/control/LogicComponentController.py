@@ -12,14 +12,14 @@ class LogicComponentController:
         self.updateInTick: typing.Dict = {}
     
     
-    def updateComponents(self, **kw):
+    def updateComponents(self, **tickList):
         """updates all or selected components
         
         optional Arguments:
             components= List of components which has to be updated
         """
         componentsToUpdate = []
-        componentsToUpdate = kw["components"]
+        componentsToUpdate = tickList["components"]
         if len(componentsToUpdate) == 0:
             componentsToUpdate = self.components
         for comp in self.components:
@@ -36,8 +36,8 @@ class LogicComponentController:
         tick = 0
         indeg = {}
         for comp in self.components:
-            indeg[comp] = len(comp.getInputs())
-        
+            if type(comp) != Input:
+                indeg[comp] = len(comp.getInputs())
         currentTick = self.inputs.copy()
         while len(currentTick) > 0:
             self.updateInTick[tick] = currentTick.copy()
@@ -60,7 +60,7 @@ class LogicComponentController:
             for tick in self.updateInTick:
                 for comp in self.updateInTick[tick]:
                     comp.eval()
-                self.updateComponents(self.updateInTick[tick])
+                self.updateComponents(components =self.updateInTick[tick])
                 #TODO maybe a short sleep
             return True
         
@@ -147,3 +147,7 @@ class LogicComponentController:
                 self.inputs.remove(component)
         else:
             raise ReferenceError("Can't remove non existent component from controller")
+        
+        
+    def getComponents(self):
+        return self.components

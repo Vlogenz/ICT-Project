@@ -24,3 +24,6 @@ class Input(LogicComponent):
 
     def setState(self, state: tuple):
         self.state["outValue"] = state
+        
+    def getState(self) -> dict:
+        return self.state

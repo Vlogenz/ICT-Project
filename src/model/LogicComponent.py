@@ -7,7 +7,6 @@ class LogicComponent(ABC):
     
     def __init__(self):
 
-        self.state: bool = False
         self.inputs: typing.List["LogicComponent"] = []
         self.outputs: typing.List["LogicComponent"] = []
         self.id = LogicComponent.id

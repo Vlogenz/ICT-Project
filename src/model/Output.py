@@ -18,7 +18,7 @@ class Output(LogicComponent):
             bool: True if the output state has changed, False otherwise.
         """
         old_state = self.state.copy()
-        if self.input["input"] is None: # set input to false if no component is connected
+        if self.inputs["input"] is None: # set input to false if no component is connected
             value = False
         else:
             value = self.inputs["input"][0].getState()[self.inputs["input"][1]][0]

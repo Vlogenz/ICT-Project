@@ -4,7 +4,7 @@ from src.model.LogicComponent import LogicComponent
 from src.model.Input import Input
 from src.model.GlobalConstants import MAX_EVAL_CYCLES
 from src.infrastructure.eventBus import getBus
-from time import sleep
+#from time import sleep
 
 class LogicComponentController:    
     
@@ -66,7 +66,7 @@ class LogicComponentController:
                 for comp in self.updateInTick[tick]:
                     comp.eval()
                 self.updateComponents(components =self.updateInTick[tick])
-                sleep(self.playbackSpeed)
+                # TODO sleep(self.playbackSpeed)
             return True
         
     
@@ -92,7 +92,7 @@ class LogicComponentController:
             
             
             self.updateComponents(components=currentTick)
-            sleep(self.playbackSpeed)
+            #TODO sleep(self.playbackSpeed)
             currentTick = nextTick
             tick +=1
             

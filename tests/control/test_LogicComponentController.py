@@ -10,7 +10,9 @@ from src.model.Nor import Nor
 
 @pytest.fixture
 def lC(): 
-    return LogicComponentController()
+    lC = LogicComponentController()
+    lC.setEvalSpeed(0)
+    return lC
     
 
 def test_addLogicComponent(lC):

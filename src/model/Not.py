@@ -5,7 +5,9 @@ class Not(LogicComponent):
     
     def __init__(self):
         super().__init__()
-        self.inputs: typing.Dict = {"input": None} # NOT gate has exactly one input
+        self.inputs: typing.Dict = {"input": None} 
+        # NOT gate has exactly one input
+        #   (Tuples of component and output key of that component)
         self.state: dict = {"outValue": (1,1)}
 
     def eval(self) -> bool:
@@ -16,10 +18,13 @@ class Not(LogicComponent):
         """
         
         oldState = self.state.copy()
-        if self.inputs["input"] is None:
+        if self.inputs["input"] is None: # set input to false if no component ist connected
             a = False
         else:
             a = self.inputs["input"][0].getState()[self.inputs["input"][1]][0]
+            # gets the component out of the first tuple in self.inputs and then 
+            #   uses the key from that tuple to access the right output from the 
+            #   components state
         if a == 0:
             self.state["outValue"] = (1,1)
         else:

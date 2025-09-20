@@ -1,11 +1,5 @@
-import sys
-
-from PySide6 import QtWidgets
-
-from view.SandboxModeWindow import SandboxModeWindow
+from control.AppController import AppController
 
 if __name__ == "__main__":
-    app = QtWidgets.QApplication(sys.argv)
-    w = SandboxModeWindow()
-    w.show()
-    sys.exit(app.exec())
+    appController = AppController()
+    appController.run()

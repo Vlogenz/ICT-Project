@@ -1,6 +1,7 @@
 import pytest
 from src.model.Nand import Nand
 from .DummyInput import DummyInput
+from src.infrastructure.eventBus import getBus
 
 def test_nand_raises_error_on_too_few_inputs():
     nand_gate = Nand()
@@ -23,6 +24,7 @@ def test_nand_raises_error_on_too_many_inputs():
     (True, True, False),
 ])
 def test_nand_logic_state_and_change(a, b, expected):
+    getBus().setManual()
     nand_gate = Nand()
     nand_gate.addInput(DummyInput(a),"outValue","input1")
     nand_gate.addInput(DummyInput(b),"outValue","input2")
@@ -35,6 +37,7 @@ def test_nand_logic_state_and_change(a, b, expected):
 
 
 def test_nand_state_changes_multiple_times():
+    getBus().setManual()
     nand_gate = Nand()
     a = DummyInput(True)
     b = DummyInput(True)

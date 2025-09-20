@@ -1,6 +1,7 @@
 import pytest
 from src.model.Not import Not
 from .DummyInput import DummyInput
+from src.infrastructure.eventBus import getBus
 
 def test_not_raises_error_on_too_few_inputs():
     not_gate = Not()
@@ -19,6 +20,7 @@ def test_not_raises_error_on_too_many_inputs():
     (True, False),
 ])
 def test_not_logic_state_and_change(a, expected):
+    getBus().setManual()
     not_gate = Not()
     not_gate.addInput(DummyInput(a),"outValue","input")
     changed = not_gate.eval()
@@ -29,6 +31,7 @@ def test_not_logic_state_and_change(a, expected):
     assert changed is False, "Not.eval() should return False if state does not change."
 
 def test_not_state_changes_multiple_times():
+    getBus().setManual()
     not_gate = Not()
     a = DummyInput(False)
     not_gate.addInput(a,"outValue","input")

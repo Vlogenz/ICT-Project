@@ -1,6 +1,7 @@
 import pytest
 from src.model.Xnor import Xnor
 from .DummyInput import DummyInput
+from src.infrastructure.eventBus import getBus
 
 def test_xnor_raises_error_on_too_few_inputs():
     xnor_gate = Xnor()
@@ -22,6 +23,7 @@ def test_xnor_raises_error_on_too_many_inputs():
     (True, True, True),
 ])
 def test_xnor_logic_state_and_change(a, b, expected):
+    getBus().setManual()
     xnor_gate = Xnor()
     xnor_gate.addInput(DummyInput(a),"outValue","input1")
     xnor_gate.addInput(DummyInput(b),"outValue","input2")
@@ -33,6 +35,7 @@ def test_xnor_logic_state_and_change(a, b, expected):
     assert changed is False, "Xnor.eval() should return False if state does not change."
 
 def test_xnor_state_changes_multiple_times():
+    getBus().setManual()
     xnor_gate = Xnor()
     a = DummyInput(False)
     b = DummyInput(False)

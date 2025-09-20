@@ -1,6 +1,7 @@
 import pytest
 from src.model.And import And
 from .DummyInput import DummyInput
+from src.infrastructure.eventBus import getBus
 
 def test_and_raises_error_on_too_few_inputs():
     and_gate = And()
@@ -23,6 +24,7 @@ def test_and_raises_error_on_too_many_inputs():
     (True, True, True),
 ])
 def test_and_logic_state_and_change(a, b, expected):
+    getBus().setManual()
     and_gate = And()
     and_gate.addInput(DummyInput(a),"outValue","input1")
     and_gate.addInput(DummyInput(b),"outValue","input2")
@@ -34,6 +36,7 @@ def test_and_logic_state_and_change(a, b, expected):
     assert changed is False, "And.eval() should return False if state does not change."
 
 def test_and_state_changes_multiple_times():
+    getBus().setManual()
     and_gate = And()
     a = DummyInput(True)
     b = DummyInput(False)

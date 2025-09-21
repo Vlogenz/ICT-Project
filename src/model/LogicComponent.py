@@ -57,6 +57,7 @@ class LogicComponent(ABC):
             KeyError: If the internalKey is not found in inputs or the input does not match"""     
         if internalKey in self.inputs and self.inputs[internalKey] == (input,key):
             self.inputs[internalKey] = None
+            self.bus.emit("model:input_changed",self)
         else:
             raise KeyError(f"Key {internalKey} not found in inputs or input does not match.")
 

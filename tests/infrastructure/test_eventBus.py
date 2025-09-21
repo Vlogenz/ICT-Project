@@ -29,3 +29,11 @@ def test_subscriptionAndEmmiting():
     in2.addOutput(xor,"input2")
     xor.addInput(in2,"outValue","input2")
     assert xor.getState()["outValue"] == (0,1)
+    
+    in1.removeOutput(xor,"input1")
+    xor.removeInput(in1,"outValue","input1")
+    assert xor.getState()["outValue"] == (1,1)
+    
+    in2.removeOutput(xor,"input2")
+    xor.removeInput(in2,"outValue","input2")
+    assert xor.getState()["outValue"] == (0,1)

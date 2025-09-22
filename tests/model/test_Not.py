@@ -11,8 +11,7 @@ def test_not_raises_error_on_too_few_inputs():
 def test_not_raises_error_on_too_many_inputs():
     not_gate = Not()
     not_gate.addInput(DummyInput(True),"outValue","input")
-    with pytest.raises(KeyError):
-        not_gate.addInput(DummyInput(False),"outValue","input")
+    assert not not_gate.addInput(DummyInput(False),"outValue","input")
 
 
 @pytest.mark.parametrize("a, expected", [

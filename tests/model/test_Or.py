@@ -13,8 +13,7 @@ def test_or_raises_error_on_too_many_inputs():
     or_gate = Or()
     or_gate.addInput(DummyInput(True),"outValue","input1")  # Manually add second input to avoid KeyError
     or_gate.addInput(DummyInput(False),"outValue","input2")  # Manually add third input to avoid KeyError
-    with pytest.raises(KeyError):
-        or_gate.addInput(DummyInput(True),"outValue","input1")
+    assert not or_gate.addInput(DummyInput(True),"outValue","input1")
 
 
 @pytest.mark.parametrize("a, b, expected", [

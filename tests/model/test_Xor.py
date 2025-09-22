@@ -13,8 +13,7 @@ def test_xor_raises_error_on_too_many_inputs():
     xor_gate = Xor()
     xor_gate.addInput(DummyInput(True),"outValue","input1")  # Manually add third input to avoid KeyError
     xor_gate.addInput(DummyInput(False),"outValue","input2")  # Manually add fourth input to avoid KeyError
-    with pytest.raises(KeyError):
-        xor_gate.addInput(DummyInput(True),"outValue","input1")
+    assert not xor_gate.addInput(DummyInput(True),"outValue","input1")
 
 @pytest.mark.parametrize("a, b, expected", [
     (False, False, False),

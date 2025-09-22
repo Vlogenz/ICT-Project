@@ -13,8 +13,7 @@ def test_nor_raises_error_on_too_many_inputs():
 	nor_gate = Nor()
 	nor_gate.addInput(DummyInput(True),"outValue","input1")
 	nor_gate.addInput(DummyInput(False),"outValue","input2")
-	with pytest.raises(KeyError):
-		nor_gate.addInput(DummyInput(True),"outValue","input1")
+	assert not nor_gate.addInput(DummyInput(True),"outValue","input1")
 
 @pytest.mark.parametrize("a, b, expected", [
 	(False, False, True),

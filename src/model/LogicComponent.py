@@ -38,12 +38,17 @@ class LogicComponent(ABC):
             internalKey (str): The internal key of this component where the input is connected.
         Raises:
             KeyError: If the internalKey is not found in inputs or already occupied.
+        Returns:
+            bool: True if the input was added successfully, False if the input slot is already occupied
         """
         if internalKey in self.inputs and self.inputs[internalKey] is None:
             self.inputs[internalKey] = (input,key)
             self.bus.emit("model:input_changed",self)
+            return True
+        elif internalKey in self.inputs and self.inputs[internalKey] is not None:
+            return False
         else:
-            raise KeyError(f"Key {internalKey} not found in inputs or already occupied.")  
+            raise KeyError(f"Key {internalKey} not found in inputs")  
         
 
     def removeInput(self, input: "LogicComponent", key:str, internalKey: str):

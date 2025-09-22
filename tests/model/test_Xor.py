@@ -1,6 +1,7 @@
 import pytest
 from src.model.Xor import Xor
 from .DummyInput import DummyInput
+from src.infrastructure.eventBus import getBus
 
 def test_xor_raises_error_on_too_few_inputs():
     xor_gate = Xor()
@@ -22,6 +23,7 @@ def test_xor_raises_error_on_too_many_inputs():
     (True, True, False),
 ])
 def test_xor_logic_state_and_change(a, b, expected):
+    getBus().setManual()
     xor_gate = Xor()
     xor_gate.addInput(DummyInput(a),"outValue","input1")
     xor_gate.addInput(DummyInput(b),"outValue","input2")
@@ -33,6 +35,7 @@ def test_xor_logic_state_and_change(a, b, expected):
     assert changed is False, "Xor.eval() should return False if state does not change."
 
 def test_xor_state_changes_multiple_times():
+    getBus().setManual()
     xor_gate = Xor()
     a = DummyInput(False)
     b = DummyInput(False)

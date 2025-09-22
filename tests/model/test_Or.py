@@ -1,6 +1,7 @@
 import pytest
 from src.model.Or import Or
 from .DummyInput import DummyInput
+from src.infrastructure.eventBus import getBus
 
 def test_or_raises_error_on_too_few_inputs():
     or_gate = Or()
@@ -23,6 +24,7 @@ def test_or_raises_error_on_too_many_inputs():
     (True, True, True),
 ])
 def test_or_logic_state_and_change(a, b, expected):
+    getBus().setManual()
     or_gate = Or()
     or_gate.addInput(DummyInput(a),"outValue","input1")
     or_gate.addInput(DummyInput(b),"outValue","input2")
@@ -34,6 +36,7 @@ def test_or_logic_state_and_change(a, b, expected):
     assert changed is False, "Or.eval() should return False if state does not change."
 
 def test_or_state_changes_multiple_times():
+    getBus().setManual()
     or_gate = Or()
     a = DummyInput(False)
     b = DummyInput(False)

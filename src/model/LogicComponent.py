@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 import typing
+from src.infrastructure.eventBus import getBus
 
 class LogicComponent(ABC):
     
@@ -12,7 +13,8 @@ class LogicComponent(ABC):
         self.id = LogicComponent.id
         LogicComponent.id +=1
         # Default state for components with one output: (0,1) = (value, bitlength)
-        self.state: dict = {}  
+        self.state: dict = {}
+        self.bus = getBus()
 
     # Implementation left to the subclasses
     @abstractmethod
@@ -39,6 +41,7 @@ class LogicComponent(ABC):
         """
         if internalKey in self.inputs and self.inputs[internalKey] is None:
             self.inputs[internalKey] = (input,key)
+            self.bus.emit("model:input_changed",self)
         else:
             raise KeyError(f"Key {internalKey} not found in inputs or already occupied.")  
         
@@ -54,6 +57,7 @@ class LogicComponent(ABC):
             KeyError: If the internalKey is not found in inputs or the input does not match"""     
         if internalKey in self.inputs and self.inputs[internalKey] == (input,key):
             self.inputs[internalKey] = None
+            self.bus.emit("model:input_changed",self)
         else:
             raise KeyError(f"Key {internalKey} not found in inputs or input does not match.")
 

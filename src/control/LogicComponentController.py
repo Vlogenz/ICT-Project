@@ -3,6 +3,8 @@ import typing
 from src.model.LogicComponent import LogicComponent
 from src.model.Input import Input
 from src.model.GlobalConstants import MAX_EVAL_CYCLES
+from src.infrastructure.eventBus import getBus
+#from time import sleep
 
 class LogicComponentController:    
     
@@ -10,6 +12,10 @@ class LogicComponentController:
         self.components: typing.List["LogicComponent"] = []
         self.inputs: typing.List["Input"] = []
         self.updateInTick: typing.Dict = {}
+        self.playbackSpeed = 0.2
+        self.bus = getBus()
+        # Registrierung: ab jetzt wird der Handler automatisch aufgerufen
+        self.bus.subscribe("model:input_changed", self.onModelInputUpdate)
     
     
     def updateComponents(self, **tickList):
@@ -60,7 +66,7 @@ class LogicComponentController:
                 for comp in self.updateInTick[tick]:
                     comp.eval()
                 self.updateComponents(components =self.updateInTick[tick])
-                #TODO maybe a short sleep
+                # TODO sleep(self.playbackSpeed)
             return True
         
     
@@ -86,7 +92,7 @@ class LogicComponentController:
             
             
             self.updateComponents(components=currentTick)
-            #TODO short sleep
+            #TODO sleep(self.playbackSpeed)
             currentTick = nextTick
             tick +=1
             
@@ -101,9 +107,12 @@ class LogicComponentController:
         Returns:
           Bool: True if evaluation was successful, false if not.
         """
+        getBus().setManual()
         if self.khanFrontierEval():
+            getBus().setAuto()
             return True
         elif self.eventDrivenEval():
+            getBus().setAuto()
             return True
         else:
             return False
@@ -149,3 +158,14 @@ class LogicComponentController:
         
     def getComponents(self):
         return self.components
+    
+    def onModelInputUpdate(self, model: LogicComponent):
+        """uses the eventdriveneval to update starting from a changed component
+
+        Args:
+            model (LogicComponent): changed component
+        """
+        self.eventDrivenEval(startingComponents=[model])
+    
+    def setEvalSpeed(self, speed: float):
+        self.playbackspeed = speed

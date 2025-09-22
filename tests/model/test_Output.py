@@ -1,9 +1,11 @@
 import pytest
 from src.model.Output import Output
 from .DummyInput import DummyInput
+from src.infrastructure.eventBus import getBus
 
 
 def test_Output_state_changes_from_default():
+    getBus().setManual()
     output = Output()
     dummy = DummyInput(True)
     output.addInput(dummy,"outValue","input")
@@ -13,6 +15,7 @@ def test_Output_state_changes_from_default():
 
 
 def test_Output_state_does_not_change():
+    getBus().setManual()
     output = Output()
     dummy = DummyInput(False)
     output.addInput(dummy,"outValue","input")
@@ -22,6 +25,7 @@ def test_Output_state_does_not_change():
     assert output.state["outValue"] == (0,1), "Output.state['outValue'] should remain (0,1)."
 
 def test_Output_state_changes_multiple_times():
+    getBus().setManual()
     output = Output()
     dummy = DummyInput(False)
     output.addInput(dummy,"outValue","input")

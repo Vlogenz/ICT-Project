@@ -1,6 +1,7 @@
 import pytest
 from src.model.HalfAdder import HalfAdder
 from .DummyInput import DummyInput
+from src.infrastructure.eventBus import getBus
 
 @pytest.mark.parametrize("a, b, expected_sum, expected_carry", [
     (False, False, False, False),
@@ -9,6 +10,7 @@ from .DummyInput import DummyInput
     (True, True, False, True),
 ])
 def test_half_adder_logic(a, b, expected_sum, expected_carry):
+    getBus().setManual()
     ha = HalfAdder()
     ha.addInput(DummyInput(a), "outValue", "inputA")
     ha.addInput(DummyInput(b), "outValue", "inputB")

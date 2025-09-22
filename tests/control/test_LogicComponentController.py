@@ -322,3 +322,36 @@ def test_eval3(lC):
     in1.setState((1,1))
     
     assert lC.eval() == False
+    
+
+def test_addConnection(lC):
+    in1 = lC.addLogicComponent(Input)
+    in2 = lC.addLogicComponent(Input)
+    and1 = lC.addLogicComponent(And)
+    
+    assert lC.addConnection(in1,"outValue",and1,"input1") == True
+    assert lC.addConnection(in2,"outValue",and1,"input2") == True
+    assert lC.addConnection(in1,"outValue",and1,"input1") == False
+    with pytest.raises(KeyError):
+        lC.addConnection(in1,"outValue",and1,"input3")
+
+def test_removeConnection(lC):
+    in1 = lC.addLogicComponent(Input)
+    in2 = lC.addLogicComponent(Input)
+    and1 = lC.addLogicComponent(And)
+    
+    lC.addConnection(in1,"outValue",and1,"input1")
+    lC.addConnection(in2,"outValue",and1,"input2")
+    
+    lC.removeConnection(in1,"outValue",and1,"input1")
+    assert and1.inputs["input1"] == None
+    assert in1.outputs == []
+    with pytest.raises(KeyError):
+        lC.removeConnection(in1,"outValue",and1,"input1")
+    with pytest.raises(KeyError):
+        lC.removeConnection(in1,"outValue",and1,"input3")
+        
+    lC.removeConnection(in2,"outValue",and1,"input2")
+    assert and1.inputs["input2"] == None
+    assert in2.outputs == []
+    

@@ -9,6 +9,7 @@ class LogicComponent(ABC):
     def __init__(self):
         
         self.inputs: typing.Dict = {} #internalKey where a input is connected to and tupels of inputs and the key of the inputs output (important for the controllers algorithms)
+        self.inputBitwidths: typing.Dict = {} # internalKey of input and the bitwidth of that input
         self.outputs: typing.List[("LogicComponent",str)] = [] # list of tupels of outputs and the key they are connected to (important for the controllers algorithms)
         self.id = LogicComponent.id
         LogicComponent.id +=1
@@ -93,3 +94,16 @@ class LogicComponent(ABC):
     
     def __hash__(self):
         return self.id
+    
+    def getBitwidth(self,key: str)-> int:
+        """returns the bitwidth of a specific input
+
+        Args:
+            key (str): the internal key of the input
+
+        Returns:
+            int: the bitwidth of the input
+        """
+        return self.inputBitwidths[key]    
+    
+        

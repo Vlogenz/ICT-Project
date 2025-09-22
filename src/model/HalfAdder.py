@@ -7,6 +7,7 @@ class HalfAdder(LogicComponent):
     def __init__(self):
         super().__init__()
         self.inputs = {"inputA": None, "inputB": None} 
+        self.inputBitwidths: typing.Dict = {"inputA": 1, "inputB": 1}
         # Half Adder has exactly two inputs
         #   (Tuples of component and output key of that component)
         self.state: dict = {"sum": (0,1),

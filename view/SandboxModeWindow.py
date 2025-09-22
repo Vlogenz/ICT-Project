@@ -1,6 +1,7 @@
 import sys
 from view.PaletteItem import PaletteItem
 from view.GridWidget import GridWidget
+from view.DeleteArea import DeleteArea
 
 from PySide6 import QtGui, QtWidgets
 
@@ -20,16 +21,19 @@ class SandboxModeWindow(QtWidgets.QMainWindow):
         palette.addWidget(PaletteItem("Red Node", QtGui.QColor("#ff9999")))
         palette.addStretch()
 
+        # Grid
+        grid = GridWidget()
+
+        # Delete area
+        deleteArea = DeleteArea(grid)
+        palette.addWidget(deleteArea)
+
         palette_frame = QtWidgets.QFrame()
         palette_frame.setLayout(palette)
         palette_frame.setFixedWidth(120)
 
-        # Grid
-        grid = GridWidget()
-
         layout.addWidget(palette_frame)
         layout.addWidget(grid, 1)
-
 
 def main():
     app = QtWidgets.QApplication(sys.argv)

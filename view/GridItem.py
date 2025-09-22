@@ -2,6 +2,9 @@ import uuid
 from PySide6 import QtWidgets, QtGui, QtCore
 import json
 
+from PySide6.QtGui import QAction, QCursor
+from PySide6.QtWidgets import QMenu
+
 from constants import CELL_SIZE, MIME_TYPE
 
 
@@ -33,6 +36,10 @@ class GridItem(QtWidgets.QFrame):
         # TODO: change ports to arrays/list
         self.output_port = QtCore.QRectF(self.width() - 16, self.height() / 2 - 8, 16, 16)
         self.input_port = QtCore.QRectF(0, self.height() / 2 - 8, 16, 16)
+
+        # Set up right click menu
+        self.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.customContextMenuRequested.connect(self.openContextMenu)
 
     def paintEvent(self, event):
         super().paintEvent(event)
@@ -82,8 +89,15 @@ class GridItem(QtWidgets.QFrame):
             if result == QtCore.Qt.IgnoreAction:
                 self.show()
 
-    # TODO: Double click should not be for removing perspectively. Add a bin to drag items to.
-    def mouseDoubleClickEvent(self, event: QtGui.QMouseEvent):
+    def openContextMenu(self, position):
+        menu = QMenu(self)  # Parent the menu to avoid leaks
+        deleteAction = QAction("Delete component", self)
+        deleteAction.triggered.connect(self.deleteItem)
+        menu.addAction(deleteAction)
+
+        menu.exec_(QCursor.pos()) # Display the menu at the cursor's current position
+
+    def deleteItem(self):
         from view.GridWidget import GridWidget
         if isinstance(self.parent(), GridWidget):
             self.parent().remove_item(self.uid)

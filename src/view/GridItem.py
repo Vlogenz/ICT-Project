@@ -46,23 +46,19 @@ class GridItem(QtWidgets.QFrame):
         painter.setBrush(QtGui.QColor("green"))
         painter.drawEllipse(self.input_port)
 
-    def port_at(self, pos: QtCore.QPoint):
-        """Check if pos is over a port."""
-        if self.output_port.contains(pos):
-            return "output"
-        if self.input_port.contains(pos):
-            return "input"
-        return None
-
     def mousePressEvent(self, event: QtGui.QMouseEvent):
         """Handle dragging of the item or starting a connection from a port."""
         local_pos = event.position().toPoint()
-        port = self.port_at(local_pos)
+        port = portAt(self.output_port, self.input_port, local_pos)
+
+        # If the user clicked on an output, start a connection and pass it to the grid
         if port == "output":
-            # Start a connector -> pass to grid
-            self.parentWidget().start_connection(self, "output", event)
+            self.parentWidget().startConnection(self, "output", event)
             return
+
+        # If the user clicked on an input, remove the connection going to it (if any)
         elif port == "input":
+            self.parentWidget().removeConnectionTo(self)
             return
 
         # normal Move-Drag
@@ -99,4 +95,13 @@ class GridItem(QtWidgets.QFrame):
         """Delete this item from the grid."""
         from src.view.GridWidget import GridWidget
         if isinstance(self.parent(), GridWidget):
-            self.parent().remove_item(self.uid)
+            self.parent().removeItem(self.uid)
+
+
+def portAt(output_port, input_port, pos: QtCore.QPoint):
+    """Check if pos is over a port."""
+    if output_port.contains(pos):
+        return "output"
+    if input_port.contains(pos):
+        return "input"
+    return None

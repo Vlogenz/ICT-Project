@@ -3,7 +3,7 @@ from PySide6.QtCore import QPointF
 from PySide6.QtGui import QPainterPath
 
 from constants import GRID_COLS, GRID_ROWS, CELL_SIZE, MIME_TYPE
-from src.view.GridItem import GridItem
+from src.view.GridItem import GridItem, portAt
 import json
 import random
 
@@ -71,7 +71,7 @@ class GridWidget(QtWidgets.QWidget):
             self.orthogonalRoute(path, start, cur)
             painter.drawPath(path)
 
-    def cell_at(self, pos: QtCore.QPoint):
+    def cellAt(self, pos: QtCore.QPoint):
         """Returns the cell (x, y) at the given position or None if out of bounds."""
         x = pos.x() // CELL_SIZE
         y = pos.y() // CELL_SIZE
@@ -79,11 +79,11 @@ class GridWidget(QtWidgets.QWidget):
             return (x, y)
         return None
 
-    def is_occupied(self, cell):
+    def isOccupied(self, cell):
         """Returns true if and only if a GridItem occupies the given cell."""
         return any((gx, gy) == cell for gx, gy, _ in self.items.values())
 
-    def add_item(self, cell, widget: GridItem):
+    def addItem(self, cell, widget: GridItem):
         """Adds the given widget at the given cell (x, y). The cell must be free."""
         gx, gy = cell
         self.items[widget.uid] = (gx, gy, widget)
@@ -91,7 +91,7 @@ class GridWidget(QtWidgets.QWidget):
         widget.move(gx * CELL_SIZE + 4, gy * CELL_SIZE + 4)
         widget.show()
 
-    def remove_item(self, uid):
+    def removeItem(self, uid):
         """Removes the item with the given uid from the grid."""
         if uid in self.items:
             _, _, w = self.items.pop(uid)
@@ -123,7 +123,7 @@ class GridWidget(QtWidgets.QWidget):
         """This gets called when something is dropped onto the widget. If the cell is occupied, the drop is ignored."""
         self.useRandomOffset = True
         pos = event.position().toPoint()
-        cell = self.cell_at(pos)
+        cell = self.cellAt(pos)
         if not cell:
             event.ignore()
             return
@@ -133,14 +133,14 @@ class GridWidget(QtWidgets.QWidget):
 
         # In case the item is dragged newly from the palette
         if action == "create":
-            if self.is_occupied(cell):
+            if self.isOccupied(cell):
                 event.ignore()
                 return
             typ = payload.get("type", "Item")
             color = payload.get("color")
             col = QtGui.QColor(color) if color else None
             item = GridItem(typ, color=col, parent=self)
-            self.add_item(cell, item)
+            self.addItem(cell, item)
             event.acceptProposedAction()
 
         # In case the item is moved within the grid
@@ -150,7 +150,7 @@ class GridWidget(QtWidgets.QWidget):
                 event.ignore()
                 return
             _, _, item = self.items[uid]
-            if self.is_occupied(cell) and self.items[uid][:2] != cell:
+            if self.isOccupied(cell) and self.items[uid][:2] != cell:
                 event.ignore()
                 item.show()
                 return
@@ -163,12 +163,16 @@ class GridWidget(QtWidgets.QWidget):
             event.acceptProposedAction()
 
     # --- Starting a connection ---
-    def start_connection(self, item: GridItem, port: str, event: QtGui.QMouseEvent):
+    def startConnection(self, item: GridItem, port: str, event: QtGui.QMouseEvent):
         """Starts drawing a connection line between GridItems."""
         if port == "output":
             start = item.mapToParent(item.output_port.center().toPoint())
             self.dragging_line = (item.uid, start, event.position().toPoint())
-            self.grabMouse()
+
+    def removeConnectionTo(self, item: GridItem):
+        """Removes the connection going to the given item's input port (if any)."""
+        self.connections = [(s, d) for s, d in self.connections if d != item.uid]
+        self.update()
 
     def mouseMoveEvent(self, event):
         """This is called whenever the mouse moves within the widget. If a line is being dragged, it updates the line."""
@@ -184,12 +188,13 @@ class GridWidget(QtWidgets.QWidget):
             src_uid, start, _ = self.dragging_line
             for uid, (_, _, item) in self.items.items():
                 local = item.mapFromParent(event.pos())
-                if item.port_at(local) == "input":
+                # Check if the line ends on an input port of another item and not on itself
+                if portAt(item.output_port, item.input_port, local) == "input" and src_uid != uid:
                     self.connections.append((src_uid, uid))
                     break
             self.dragging_line = None
-            self.releaseMouse()
             self.update()
+
 
     def orthogonalRoute(self, path: QPainterPath, src: QPointF, dst: QPointF):
         """A helper method to draw an orthogonal route from src to dst.

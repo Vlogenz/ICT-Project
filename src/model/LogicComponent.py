@@ -13,8 +13,7 @@ class LogicComponent(ABC):
         self.outputs: typing.List[("LogicComponent",str)] = [] # list of tupels of outputs and the key they are connected to (important for the controllers algorithms)
         self.id = LogicComponent.id
         LogicComponent.id +=1
-        # Default state for components with one output: (0,1) = (value, bitlength)
-        self.state: dict = {}
+        self.state: dict = {} # Default state for components with one output: (0,1) = (value, bitlength)
         self.bus = getBus()
 
     # Implementation left to the subclasses

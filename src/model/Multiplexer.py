@@ -34,7 +34,7 @@ class Multiplexer2Inp(LogicComponent):
 
         #   If the bitwidth has not been set but the input succeeded, set bandwidth to match the new input
         if self.getBitwidth(internalKey) == 0 and success:
-            inputBitwidth: int = input.getBitwidth(key)
+            inputBitwidth: int = input.getState()[key][1]
             self.inputBitwidths: typing.Dict = {"selection": 1, "input1": inputBitwidth, "input2": inputBitwidth}
 
         return success
@@ -50,13 +50,14 @@ class Multiplexer2Inp(LogicComponent):
         for input in self.inputs:
             if self.inputs[input] is None:
                 return False
-            
-        outputKey: str = "input" + (self.inputs["selection"][0].getState()[self.inputs["selection"][1]] + 1)
+        
+        inputnum = int(self.inputs["selection"][0].getState()[self.inputs["selection"][1]][0])
+        outputKey: str = "input" + str(inputnum +1)
         # gets the component out of the first tuple in self.inputs and then 
         #   uses the key from that tuple to access the right output from the 
         #   components state
 
-        self.state = {"outputValue": (self.inputs[outputKey][0].getState()[self.inputs[outputKey][1]], self.inputs[outputKey][0].getBitwidth([self.inputs[outputKey][1]]))}
+        self.state = {"outputValue": (inputnum, self.inputs[outputKey][0].getState()[self.inputs[outputKey][1]][1])}
         # gets the component out of the tuple determined by the selection input, then 
         #   uses the key from that tuple to access the right output from the 
         #   components state

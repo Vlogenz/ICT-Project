@@ -36,7 +36,7 @@ class DeleteArea(QtWidgets.QFrame):
             if data.get("action") == "move":
                 uid = data.get("id")
                 if uid:
-                    self.gridWidget.remove_item(uid)
+                    self.gridWidget.removeItem(uid)
                 event.acceptProposedAction()
             else:
                 event.ignore()

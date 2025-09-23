@@ -13,8 +13,7 @@ def test_nand_raises_error_on_too_many_inputs():
     nand_gate = Nand()
     nand_gate.addInput(DummyInput(True),"outValue","input1")
     nand_gate.addInput(DummyInput(False),"outValue","input2")
-    with pytest.raises(KeyError):
-        nand_gate.addInput(DummyInput(True),"outValue","input1")
+    assert nand_gate.addInput(DummyInput(True),"outValue","input1") == False
 
 
 @pytest.mark.parametrize("a, b, expected", [

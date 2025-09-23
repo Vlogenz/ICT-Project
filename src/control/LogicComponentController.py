@@ -12,7 +12,7 @@ class LogicComponentController:
         self.components: typing.List["LogicComponent"] = []
         self.inputs: typing.List["Input"] = []
         self.updateInTick: typing.Dict = {}
-        self.playbackSpeed = 0.2
+        self.playbackSpeed = 0.1
         self.bus = getBus()
         # Registrierung: ab jetzt wird der Handler automatisch aufgerufen
         self.bus.subscribe("model:input_changed", self.onModelInputUpdate)
@@ -96,7 +96,7 @@ class LogicComponentController:
             currentTick = nextTick
             tick +=1
             
-            if tick > MAX_EVAL_CYCLES:
+            if tick > MAX_EVAL_CYCLES*len(self.components):
                 return False
         return True
             
@@ -169,3 +169,36 @@ class LogicComponentController:
     
     def setEvalSpeed(self, speed: float):
         self.playbackspeed = speed
+        
+    def addConnection(self, origin: "LogicComponent", originKey: str, target: "LogicComponent", targetKey: str) -> bool:
+        """
+        Adds a connection from the origin component to the target component.
+        Args:
+            origin (LogicComponent): The component where the connection starts.
+            originKey (str): The key of the output from the origin component.
+            target (LogicComponent): The component where the connection ends.
+            targetKey (str): The key of the input on the target component.
+        Returns:
+            bool: True if the connection was added successfully, False otherwise.  
+            """
+        if target.getBitwidth(targetKey) == 0 or origin.getState()[originKey][1] == target.getBitwidth(targetKey):
+            #check if bitlengths of inputs and output are thesame or if input has bitlength 0 (means bitlength hasnt been set yet)
+            if target.addInput(origin, originKey, targetKey):
+                origin.addOutput(target, targetKey)
+                return True
+            return False
+        else:
+            return False
+        
+        
+    def removeConnection(self, origin: "LogicComponent", originKey: str, target: "LogicComponent", targetKey: str):
+        """
+        Removes a connection from the origin component to the target component.
+        Args:
+            origin (LogicComponent): The component where the connection starts.
+            originKey (str): The key of the output from the origin component.
+            target (LogicComponent): The component where the connection ends.
+            targetKey (str): The key of the input on the target component.
+        """
+        origin.removeOutput(target, targetKey)
+        target.removeInput(origin, originKey, targetKey)

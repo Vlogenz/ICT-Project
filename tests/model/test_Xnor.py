@@ -13,8 +13,7 @@ def test_xnor_raises_error_on_too_many_inputs():
     xnor_gate = Xnor()
     xnor_gate.addInput(DummyInput(True),"outValue","input1")  # Manually add third input to avoid KeyError
     xnor_gate.addInput(DummyInput(False),"outValue","input2")  # Manually add fourth input to avoid KeyError
-    with pytest.raises(KeyError):
-        xnor_gate.addInput(DummyInput(True),"outValue","input1")
+    assert not xnor_gate.addInput(DummyInput(True),"outValue","input1")
 
 @pytest.mark.parametrize("a, b, expected", [
     (False, False, True),

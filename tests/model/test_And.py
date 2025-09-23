@@ -13,8 +13,7 @@ def test_and_raises_error_on_too_many_inputs():
     and_gate = And()
     and_gate.addInput(DummyInput(True),"outValue","input1")
     and_gate.addInput(DummyInput(False),"outValue","input2")
-    with pytest.raises(KeyError):
-        and_gate.addInput(DummyInput(True),"outValue","input1")
+    assert and_gate.addInput(DummyInput(True),"outValue","input1") == False
 
 
 @pytest.mark.parametrize("a, b, expected", [

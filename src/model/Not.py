@@ -6,6 +6,7 @@ class Not(LogicComponent):
     def __init__(self):
         super().__init__()
         self.inputs: typing.Dict = {"input": None} 
+        self.inputBitwidths: typing.Dict = {"input": 1}
         # NOT gate has exactly one input
         #   (Tuples of component and output key of that component)
         self.state: dict = {"outValue": (1,1)}

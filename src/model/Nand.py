@@ -6,6 +6,7 @@ class Nand(LogicComponent):
     def __init__(self):
         super().__init__()
         self.inputs: typing.Dict = {"input1": None, "input2": None} 
+        self.inputBitwidths: typing.Dict = {"input1": 1, "input2": 1}
         # NAND gate has exactly two inputs
         #   (Tuples of component and output key of that component)
         self.state: dict = {"outValue": (1,1)}

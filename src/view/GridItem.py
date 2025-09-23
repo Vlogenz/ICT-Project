@@ -58,7 +58,7 @@ class GridItem(QtWidgets.QFrame):
 
         # If the user clicked on an input, remove the connection going to it (if any)
         elif port == "input":
-            self.parentWidget().removeConnectionTo(self, port)
+            self.parentWidget().removeConnectionTo(self)
             return
 
         # normal Move-Drag
@@ -95,7 +95,7 @@ class GridItem(QtWidgets.QFrame):
         """Delete this item from the grid."""
         from src.view.GridWidget import GridWidget
         if isinstance(self.parent(), GridWidget):
-            self.parent().remove_item(self.uid)
+            self.parent().removeItem(self.uid)
 
 
 def portAt(output_port, input_port, pos: QtCore.QPoint):

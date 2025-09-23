@@ -168,13 +168,11 @@ class GridWidget(QtWidgets.QWidget):
         if port == "output":
             start = item.mapToParent(item.output_port.center().toPoint())
             self.dragging_line = (item.uid, start, event.position().toPoint())
-            self.grabMouse()
 
-    def removeConnectionTo(self, item: GridItem, port: str):
+    def removeConnectionTo(self, item: GridItem):
         """Removes the connection going to the given item's input port (if any)."""
-        if port == "input":
-            self.connections = [(s, d) for s, d in self.connections if d != item.uid]
-            self.update()
+        self.connections = [(s, d) for s, d in self.connections if d != item.uid]
+        self.update()
 
     def mouseMoveEvent(self, event):
         """This is called whenever the mouse moves within the widget. If a line is being dragged, it updates the line."""
@@ -190,12 +188,13 @@ class GridWidget(QtWidgets.QWidget):
             src_uid, start, _ = self.dragging_line
             for uid, (_, _, item) in self.items.items():
                 local = item.mapFromParent(event.pos())
-                if portAt(item.output_port, item.input_port, local) == "input":
+                # Check if the line ends on an input port of another item and not on itself
+                if portAt(item.output_port, item.input_port, local) == "input" and src_uid != uid:
                     self.connections.append((src_uid, uid))
                     break
             self.dragging_line = None
-            self.releaseMouse()
             self.update()
+
 
     def orthogonalRoute(self, path: QPainterPath, src: QPointF, dst: QPointF):
         """A helper method to draw an orthogonal route from src to dst.

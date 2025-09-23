@@ -5,6 +5,9 @@ from src.view.DeleteArea import DeleteArea
 
 from PySide6 import QtGui, QtWidgets
 
+from src.view.SimulationControls import SimulationControls
+
+
 class SandboxModeWindow(QtWidgets.QMainWindow):
     """Main window for the sandbox mode."""
 
@@ -13,7 +16,7 @@ class SandboxModeWindow(QtWidgets.QMainWindow):
         self.setWindowTitle("Sandbox Mode")
 
         central = QtWidgets.QWidget()
-        layout = QtWidgets.QHBoxLayout(central)
+        layout = QtWidgets.QGridLayout(central)
         self.setCentralWidget(central)
         pal = self.palette()
         pal.setColor(self.backgroundRole(), QtGui.QColor("white"))
@@ -37,5 +40,10 @@ class SandboxModeWindow(QtWidgets.QMainWindow):
         palette_frame.setLayout(palette)
         palette_frame.setFixedWidth(120)
 
-        layout.addWidget(palette_frame)
-        layout.addWidget(grid, 1)
+        # Simulation controls
+        simControls = SimulationControls()
+
+        # Add the items to the main grid layout
+        layout.addWidget(palette_frame, 0, 0, 2, 1)
+        layout.addWidget(simControls, 0, 1)
+        layout.addWidget(grid, 1, 1)

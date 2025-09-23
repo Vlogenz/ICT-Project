@@ -6,6 +6,8 @@ from src.view.DeleteArea import DeleteArea
 from PySide6 import QtGui, QtWidgets
 
 class SandboxModeWindow(QtWidgets.QMainWindow):
+    """Main window for the sandbox mode."""
+
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Sandbox Mode")
@@ -37,13 +39,3 @@ class SandboxModeWindow(QtWidgets.QMainWindow):
 
         layout.addWidget(palette_frame)
         layout.addWidget(grid, 1)
-
-def main():
-    app = QtWidgets.QApplication(sys.argv)
-    w = SandboxModeWindow()
-    w.show()
-    sys.exit(app.exec())
-
-
-if __name__ == "__main__":
-    main()

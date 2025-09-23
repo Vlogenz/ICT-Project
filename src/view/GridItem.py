@@ -36,6 +36,7 @@ class GridItem(QtWidgets.QFrame):
         self.customContextMenuRequested.connect(self.openContextMenu)
 
     def paintEvent(self, event):
+        """Draw the item and the ports. Overrides QWidget.paintEvent, which gets called automatically when update() is called."""
         super().paintEvent(event)
         painter = QtGui.QPainter(self)
         # Output-Port on the right (blue)
@@ -54,6 +55,7 @@ class GridItem(QtWidgets.QFrame):
         return None
 
     def mousePressEvent(self, event: QtGui.QMouseEvent):
+        """Handle dragging of the item or starting a connection from a port."""
         local_pos = event.position().toPoint()
         port = self.port_at(local_pos)
         if port == "output":
@@ -83,7 +85,9 @@ class GridItem(QtWidgets.QFrame):
             if result == QtCore.Qt.IgnoreAction:
                 self.show()
 
-    def openContextMenu(self, position):
+    def openContextMenu(self):
+        """Open a context menu with options like deleting the item."""
+
         menu = QMenu(self)  # Parent the menu to avoid leaks
         deleteAction = QAction("Delete component", self)
         deleteAction.triggered.connect(self.deleteItem)
@@ -92,6 +96,7 @@ class GridItem(QtWidgets.QFrame):
         menu.exec_(QCursor.pos()) # Display the menu at the cursor's current position
 
     def deleteItem(self):
+        """Delete this item from the grid."""
         from src.view.GridWidget import GridWidget
         if isinstance(self.parent(), GridWidget):
             self.parent().remove_item(self.uid)

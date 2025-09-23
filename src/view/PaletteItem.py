@@ -25,6 +25,8 @@ class PaletteItem(QtWidgets.QFrame):
             f"border: 1px solid lightgray; background-color: {color.name() if color != None else 'lightgray'};")
 
     def mousePressEvent(self, event: QtGui.QMouseEvent):
+        """This gets called when the user starts dragging the item."""
+
         if event.button() == QtCore.Qt.LeftButton:
             drag = QtGui.QDrag(self)
             mime = QtCore.QMimeData()

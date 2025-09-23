@@ -7,6 +7,8 @@ from src.model.Or import Or
 from src.model.Output import Output
 from src.model.Not import Not
 from src.model.Nor import Nor
+from src.model.Register import Register
+from tests.model.DummyInput import DummyInput,DummyOutput
 
 @pytest.fixture
 def lC(): 
@@ -354,4 +356,31 @@ def test_removeConnection(lC):
     lC.removeConnection(in2,"outValue",and1,"input2")
     assert and1.inputs["input2"] == None
     assert in2.outputs == []
+
+
+
+def test_updateRegisters_single_register():
+    lC = LogicComponentController()
+    clkin = lC.addLogicComponent(Input)
+    reg = lC.addLogicComponent(Register)
+    inp = lC.addLogicComponent(Input)
+    out = DummyOutput(32)
+    inp.setState((1, 32))
+    clkin.setState((1, 1))
+
+    lC.addConnection(inp, "outValue", reg, "input")
+    lC.addConnection(clkin, "outValue", reg, "clk")
+    lC.addConnection(reg, "outValue", out, "input")
+
     
+    
+    reg.eval()
+    
+    assert out.state["state"][0] == 0
+    assert reg.getState()["outValue"][0] == 0
+    lC.updateRegisters()
+
+    
+    assert reg.getState()["outValue"][0] == 1
+    assert out.state["state"][0] == 1
+

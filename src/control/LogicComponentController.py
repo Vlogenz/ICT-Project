@@ -4,6 +4,7 @@ from src.model.LogicComponent import LogicComponent
 from src.model.Input import Input
 from constants import MAX_EVAL_CYCLES
 from src.infrastructure.eventBus import getBus
+from src.model.Register import Register
 #from time import sleep
 
 class LogicComponentController:    
@@ -43,7 +44,7 @@ class LogicComponentController:
         indeg = {}
         for comp in self.components:
             if type(comp) != Input:
-                compo = [tuple[0] for tuple in comp.inputs.values() if tuple is not None]
+                compo = [tuple[0] for tuple in comp.inputs.values() if tuple is not None and type(tuple[0])!= Register]
                 indeg[comp] = len(set(compo))
                 
         currentTick = self.inputs.copy()
@@ -202,3 +203,17 @@ class LogicComponentController:
         """
         origin.removeOutput(target, targetKey)
         target.removeInput(origin, originKey, targetKey)
+        
+    
+    def updateRegisters(self):
+        """ Updates all registers and evaluates the circuit starting from the outputs of the registers.
+        """
+        componentsToUpdate = []
+        for comp in self.components:
+            if hasattr(comp, "updateState"):
+                comp.updateState()
+                # collect all components which are connected to the output of the register
+                componentsToUpdate.extend([out[0] for out in comp.getOutputs()])
+        componentsToUpdate = list(set(componentsToUpdate))
+        self.eventDrivenEval(startingComponents=componentsToUpdate)
+                

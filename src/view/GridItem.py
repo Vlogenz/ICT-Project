@@ -98,6 +98,6 @@ class GridItem(QtWidgets.QFrame):
         menu.exec_(QCursor.pos()) # Display the menu at the cursor's current position
 
     def deleteItem(self):
-        from view.GridWidget import GridWidget
+        from src.view.GridWidget import GridWidget
         if isinstance(self.parent(), GridWidget):
             self.parent().remove_item(self.uid)

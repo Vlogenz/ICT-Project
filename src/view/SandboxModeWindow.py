@@ -1,7 +1,7 @@
 import sys
-from view.PaletteItem import PaletteItem
-from view.GridWidget import GridWidget
-from view.DeleteArea import DeleteArea
+from src.view.PaletteItem import PaletteItem
+from src.view.GridWidget import GridWidget
+from src.view.DeleteArea import DeleteArea
 
 from PySide6 import QtGui, QtWidgets
 

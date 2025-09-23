@@ -1,7 +1,7 @@
 from PySide6 import QtWidgets
 import sys
 
-from view.SandboxModeWindow import SandboxModeWindow
+from src.view.SandboxModeWindow import SandboxModeWindow
 
 class AppController:
     def __init__(self):

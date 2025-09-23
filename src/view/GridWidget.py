@@ -1,8 +1,10 @@
 from PySide6 import QtCore, QtGui, QtWidgets
+from PySide6.QtCore import QPointF
 
 from constants import GRID_COLS, GRID_ROWS, CELL_SIZE, MIME_TYPE
-from view.GridItem import GridItem
+from src.view.GridItem import GridItem
 import json
+import random
 
 
 class GridWidget(QtWidgets.QWidget):
@@ -19,6 +21,7 @@ class GridWidget(QtWidgets.QWidget):
         self.dragging_item_pos = None
         self.dragging_item_uid = None
         self.setMinimumSize(cols * CELL_SIZE, rows * CELL_SIZE)
+        self.useRandomOffset = True
 
     def paintEvent(self, event):
         painter = QtGui.QPainter(self)
@@ -53,16 +56,14 @@ class GridWidget(QtWidgets.QWidget):
                     dst_pos = dst_item.mapToParent(dst_item.input_port.center().toPoint())
 
                 path = QtGui.QPainterPath(src_pos)
-                midx = (src_pos.x() + dst_pos.x()) / 2
-                path.cubicTo(midx, src_pos.y(), midx, dst_pos.y(), dst_pos.x(), dst_pos.y())
+                self.orthogonalRoute(path, src_pos, dst_pos)
                 painter.drawPath(path)
 
         # temporary connections
         if self.dragging_line:
             _, start, cur = self.dragging_line
             path = QtGui.QPainterPath(start)
-            midx = (start.x() + cur.x()) / 2
-            path.cubicTo(midx, start.y(), midx, cur.y(), cur.x(), cur.y())
+            self.orthogonalRoute(path, start, cur)
             painter.drawPath(path)
 
     def cell_at(self, pos: QtCore.QPoint):
@@ -97,6 +98,7 @@ class GridWidget(QtWidgets.QWidget):
             event.ignore()
 
     def dragMoveEvent(self, event):
+        self.useRandomOffset = False
         payload = json.loads(event.mimeData().data(MIME_TYPE).data().decode("utf-8"))
         if payload.get("action") == "move":
             uid = payload.get("id")
@@ -107,6 +109,7 @@ class GridWidget(QtWidgets.QWidget):
         event.acceptProposedAction()
 
     def dropEvent(self, event):
+        self.useRandomOffset = True
         pos = event.position().toPoint()
         cell = self.cell_at(pos)
         if not cell:
@@ -153,11 +156,13 @@ class GridWidget(QtWidgets.QWidget):
             self.grabMouse()
 
     def mouseMoveEvent(self, event):
+        self.useRandomOffset = False
         if self.dragging_line:
             self.dragging_line = (self.dragging_line[0], self.dragging_line[1], event.pos())
             self.update()
 
     def mouseReleaseEvent(self, event):
+        self.useRandomOffset = True
         if self.dragging_line:
             src_uid, start, _ = self.dragging_line
             for uid, (_, _, item) in self.items.items():
@@ -169,3 +174,16 @@ class GridWidget(QtWidgets.QWidget):
             self.releaseMouse()
             self.update()
 
+    def orthogonalRoute(self, path, src: QPointF, dst: QPointF):
+        midx = (src.x() + dst.x()) / 2
+        midy = (src.y() + dst.y()) / 2
+        if self.useRandomOffset:
+            offset = random.randint(20,50)
+        else:
+            offset = 20
+        path.lineTo(src.x() + offset, src.y())
+        path.lineTo(src.x() + offset, midy)
+        path.lineTo(midx, midy)
+        path.lineTo(dst.x() - offset, midy)
+        path.lineTo(dst.x() - offset, dst.y())
+        path.lineTo(dst)

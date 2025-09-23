@@ -1,0 +1,41 @@
+import sys
+from src.view.PaletteItem import PaletteItem
+from src.view.GridWidget import GridWidget
+from src.view.DeleteArea import DeleteArea
+
+from PySide6 import QtGui, QtWidgets
+
+class SandboxModeWindow(QtWidgets.QMainWindow):
+    """Main window for the sandbox mode."""
+
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("Sandbox Mode")
+
+        central = QtWidgets.QWidget()
+        layout = QtWidgets.QHBoxLayout(central)
+        self.setCentralWidget(central)
+        pal = self.palette()
+        pal.setColor(self.backgroundRole(), QtGui.QColor("white"))
+        self.setPalette(pal)
+
+        # Palette
+        # TODO: Show all available logic components here
+        palette = QtWidgets.QVBoxLayout()
+        palette.addWidget(PaletteItem("Label"))
+        palette.addWidget(PaletteItem("Red Node", QtGui.QColor("#ff9999")))
+        palette.addStretch()
+
+        # Grid
+        grid = GridWidget()
+
+        # Delete area
+        deleteArea = DeleteArea(grid)
+        palette.addWidget(deleteArea)
+
+        palette_frame = QtWidgets.QFrame()
+        palette_frame.setLayout(palette)
+        palette_frame.setFixedWidth(120)
+
+        layout.addWidget(palette_frame)
+        layout.addWidget(grid, 1)

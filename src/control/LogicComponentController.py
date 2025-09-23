@@ -2,7 +2,7 @@ import typing
 
 from src.model.LogicComponent import LogicComponent
 from src.model.Input import Input
-from src.model.GlobalConstants import MAX_EVAL_CYCLES
+from constants import MAX_EVAL_CYCLES
 from src.infrastructure.eventBus import getBus
 #from time import sleep
 

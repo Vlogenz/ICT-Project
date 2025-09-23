@@ -8,22 +8,21 @@ class PaletteItem(QtWidgets.QFrame):
 
     def __init__(self, label: str, color: QtGui.QColor = None, parent=None):
         super().__init__(parent)
-        self.setFrameShape(QtWidgets.QFrame.Box)
+        self.setFrameShape(QtWidgets.QFrame.NoFrame)
         self.setFixedSize(70, 40)
 
         layout = QtWidgets.QHBoxLayout(self)
-        layout.setContentsMargins(4, 2, 4, 2)
+        layout.setContentsMargins(0,0,0,0)
         lbl = QtWidgets.QLabel(label)
         lbl.setAlignment(QtCore.Qt.AlignCenter)
         layout.addWidget(lbl)
 
         self.label = label
         self.color = color
-        if color:
-            pal = self.palette()
-            pal.setColor(self.backgroundRole(), color)
-            self.setAutoFillBackground(True)
-            self.setPalette(pal)
+
+        # Apply stylesheet
+        self.setStyleSheet(
+            f"border: 1px solid lightgray; background-color: {color.name() if color != None else 'lightgray'};")
 
     def mousePressEvent(self, event: QtGui.QMouseEvent):
         if event.button() == QtCore.Qt.LeftButton:

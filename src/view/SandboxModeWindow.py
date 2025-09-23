@@ -13,6 +13,9 @@ class SandboxModeWindow(QtWidgets.QMainWindow):
         central = QtWidgets.QWidget()
         layout = QtWidgets.QHBoxLayout(central)
         self.setCentralWidget(central)
+        pal = self.palette()
+        pal.setColor(self.backgroundRole(), QtGui.QColor("white"))
+        self.setPalette(pal)
 
         # Palette
         # TODO: Show all available logic components here

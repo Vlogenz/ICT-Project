@@ -8,7 +8,7 @@ import random
 
 
 class GridWidget(QtWidgets.QWidget):
-    """Zentrale Drop-Fläche mit Ports und Verbindungen."""
+    """Main drop area with grid, items and connections."""
 
     def __init__(self, cols=GRID_COLS, rows=GRID_ROWS, parent=None):
         super().__init__(parent)
@@ -37,7 +37,6 @@ class GridWidget(QtWidgets.QWidget):
             painter.drawLine(0, y, self.cols * CELL_SIZE, y)
 
         # painting connections
-        # TODO: Make connecting lines straight with 90 degree angles instead of cubic curves
         pen_conn = QtGui.QPen(QtGui.QColor("black"), 2)
         painter.setPen(pen_conn)
         for src, dst in self.connections:

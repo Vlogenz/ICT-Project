@@ -16,21 +16,15 @@ class GridItem(QtWidgets.QFrame):
         self.uid = uid or str(uuid.uuid4())
         self.item_type = item_type
 
-        self.setFrameShape(QtWidgets.QFrame.Panel)
-        self.setLineWidth(2)
         self.setFixedSize(CELL_SIZE - 8, CELL_SIZE - 8)
 
         layout = QtWidgets.QVBoxLayout(self)
-        layout.setContentsMargins(2, 2, 2, 2)
         lbl = QtWidgets.QLabel(item_type)
         lbl.setAlignment(QtCore.Qt.AlignCenter)
         layout.addWidget(lbl)
 
-        if color:
-            pal = self.palette()
-            pal.setColor(self.backgroundRole(), color)
-            self.setAutoFillBackground(True)
-            self.setPalette(pal)
+        # Apply stylesheet
+        self.setStyleSheet(f"border: 1px solid lightgray; background-color: {color.name() if color != None else 'lightgray'};")
 
         # Define ports
         # TODO: change ports to arrays/list

@@ -9,7 +9,6 @@ class Multiplexer2Inp(LogicComponent):
         self.inputBitwidths: typing.Dict = {"selection": 1, "input1": 0, "input2": 0}
         self.state: typing.Dict = {"outputValue": (0, 0)}
         #   If the state ever has a bit length of 0 then it failed to evaluate
-        #   
 
 
 

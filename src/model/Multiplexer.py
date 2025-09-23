@@ -1,12 +1,17 @@
 import  typing
 from .LogicComponent import LogicComponent
 
-class Multiplexer2Bit(LogicComponent):
+class Multiplexer2Inp(LogicComponent):
 
     def __init__(self):
         super().__init__()
         self.inputs: typing.Dict = {"selection": None, "input1": None, "input2": None}
         self.inputBitwidths: typing.Dict = {"selection": 1, "input1": 0, "input2": 0}
+        self.state: typing.Dict = {"outputValue": (0, 0)}
+        #   If the state ever has a bit length of 0 then it failed to evaluate
+        #   
+
+
 
     def addInput(self, input: "LogicComponent", key: str, internalKey: str):
         """
@@ -47,12 +52,16 @@ class Multiplexer2Bit(LogicComponent):
             if self.inputs[input] is None:
                 return False
             
-        #   Same way of getting an output value as in the AND gate
-        #   Used to get the value from select that will be used to pick which input to get data from
         outputKey: str = "input" + (self.inputs["selection"][0].getState()[self.inputs["selection"][1]] + 1)
+        # gets the component out of the first tuple in self.inputs and then 
+        #   uses the key from that tuple to access the right output from the 
+        #   components state
 
-        #   Same line, but with the key to the chosen output instead of "selection"
-        self.state: typing.Dict = {"outputValue": self.inputs[outputKey][0].getState()[self.inputs[outputKey][1]]}
+        self.state = {"outputValue": (self.inputs[outputKey][0].getState()[self.inputs[outputKey][1]], self.inputs[outputKey][0].getBitwidth([self.inputs[outputKey][1]]))}
+        # gets the component out of the tuple determined by the selection input, then 
+        #   uses the key from that tuple to access the right output from the 
+        #   components state
+        #   Does the same for getting the bit width
 
         #   Check to see if data has changed
         if (self.state["outputValue"] == oldState):

@@ -1,6 +1,6 @@
 import json
 from PySide6 import QtWidgets, QtGui, QtCore
-from constants import MIME_TYPE
+from src.constants import MIME_TYPE
 
 
 class PaletteItem(QtWidgets.QFrame):

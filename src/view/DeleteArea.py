@@ -1,6 +1,6 @@
 from PySide6 import QtWidgets, QtCore, QtGui
 import json
-from constants import MIME_TYPE
+from src.constants import MIME_TYPE
 
 class DeleteArea(QtWidgets.QFrame):
     """A drop target area to delete items."""

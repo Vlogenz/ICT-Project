@@ -16,11 +16,11 @@ from src.infrastructure.eventBus import getBus
 def test_full_adder_logic(a, b, cin, expected_sum, expected_cout):
     getBus().setManual()
     fa = FullAdder()
-    fa.addInput(DummyInput(a), "outValue", "A")
-    fa.addInput(DummyInput(b), "outValue", "B")
-    fa.addInput(DummyInput(cin), "outValue", "Cin")
+    fa.addInput(DummyInput(a), "outValue", "inputA")
+    fa.addInput(DummyInput(b), "outValue", "inputB")
+    fa.addInput(DummyInput(cin), "outValue", "inputCin")
     fa.eval()
     expected_sum_tuple = (1,1) if expected_sum else (0,1)
     expected_cout_tuple = (1,1) if expected_cout else (0,1)
-    assert fa.state["Sum"] == expected_sum_tuple, f"FullAdder Sum should be {expected_sum_tuple} for inputs {a}, {b}, {cin}"
-    assert fa.state["Cout"] == expected_cout_tuple, f"FullAdder Cout should be {expected_cout_tuple} for inputs {a}, {b}, {cin}"
+    assert fa.state["outSum"] == expected_sum_tuple, f"FullAdder Sum should be {expected_sum_tuple} for inputs {a}, {b}, {cin}"
+    assert fa.state["cOut"] == expected_cout_tuple, f"FullAdder Cout should be {expected_cout_tuple} for inputs {a}, {b}, {cin}"

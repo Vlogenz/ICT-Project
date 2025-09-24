@@ -1,18 +1,28 @@
+import sys
 import json
 from PySide6 import QtWidgets, QtGui, QtCore
-from constants import MIME_TYPE
-
+# from constants import MIME_TYPE
 
 class PaletteItem(QtWidgets.QFrame):
     """Drag-Source in the palette on the side."""
 
-    def __init__(self, label: str, color: QtGui.QColor = None, parent=None):
+    def __init__(self, label: str, image_path: str = None, color: QtGui.QColor = None, parent=None):
         super().__init__(parent)
         self.setFrameShape(QtWidgets.QFrame.Box)
-        self.setFixedSize(70, 40)
+        self.setFixedSize(90, 40)
 
         layout = QtWidgets.QHBoxLayout(self)
         layout.setContentsMargins(4, 2, 4, 2)
+
+        if image_path:  # Show gate image if provided
+            img_label = QtWidgets.QLabel()
+            pixmap = QtGui.QPixmap(image_path)
+            img_label.setPixmap(
+                pixmap.scaled(28, 28, QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation)
+            )
+            img_label.setAlignment(QtCore.Qt.AlignCenter)
+            layout.addWidget(img_label)
+
         lbl = QtWidgets.QLabel(label)
         lbl.setAlignment(QtCore.Qt.AlignCenter)
         layout.addWidget(lbl)
@@ -41,3 +51,26 @@ class PaletteItem(QtWidgets.QFrame):
 
             drag.exec(QtCore.Qt.CopyAction)
 
+
+if __name__ == "__main__":
+    app = QtWidgets.QApplication(sys.argv)
+    window = QtWidgets.QWidget()
+    layout = QtWidgets.QVBoxLayout(window)
+
+    gates = [
+        ("AND", r"C:\Users\hghad\anaconda3\envs\itk213\ICT project\ICT-Project\Gates\andgate.png"),
+        ("OR", r"C:\Users\hghad\anaconda3\envs\itk213\ICT project\ICT-Project\Gates\orgate.png"),
+        ("NOT", r"C:\Users\hghad\anaconda3\envs\itk213\ICT project\ICT-Project\Gates\notgate.png"),
+        ("NAND", r"C:\Users\hghad\anaconda3\envs\itk213\ICT project\ICT-Project\Gates\nandgate.png"),
+        ("NOR", r"C:\Users\hghad\anaconda3\envs\itk213\ICT project\ICT-Project\Gates\norgate.png"),
+        ("XOR", r"C:\Users\hghad\anaconda3\envs\itk213\ICT project\ICT-Project\Gates\xorgate.png"),
+        ("XNOR", r"C:\Users\hghad\anaconda3\envs\itk213\ICT project\ICT-Project\Gates\xnor.png"),
+    ]
+
+    for label, path in gates:
+        item = PaletteItem(label, image_path=path)
+        layout.addWidget(item)
+
+    window.setWindowTitle("Logic Gate Palette")
+    window.show()
+    sys.exit(app.exec())

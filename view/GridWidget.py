@@ -92,58 +92,71 @@ class GridWidget(QtWidgets.QWidget):
     # --- Drag & Drop ---
     def dragEnterEvent(self, event):
         if event.mimeData().hasFormat(MIME_TYPE):
+            print("Drag entered with format match")
             event.acceptProposedAction()
         else:
+            print("Drag entered ignored")
             event.ignore()
 
-    def dragMoveEvent(self, event):
-        payload = json.loads(event.mimeData().data(MIME_TYPE).data().decode("utf-8"))
-        if payload.get("action") == "move":
-            uid = payload.get("id")
-            if uid in self.items:
-                self.dragging_item_pos = event.position().toPoint()
-                self.dragging_item_uid = uid
-                self.update()
-        event.acceptProposedAction()
+def dragMoveEvent(self, event):
+    payload_raw = event.mimeData().data(MIME_TYPE).data()
+    payload = json.loads(payload_raw.decode("utf-8"))
+    print(f"Drag move with payload: {payload}")
+    if payload.get("action") == "move":
+        uid = payload.get("id")
+        if uid in self.items:
+            self.dragging_item_pos = event.position().toPoint()
+            self.dragging_item_uid = uid
+            self.update()
+    event.acceptProposedAction()
 
-    def dropEvent(self, event):
-        pos = event.position().toPoint()
-        cell = self.cell_at(pos)
-        if not cell:
+def dropEvent(self, event):
+    pos = event.position().toPoint()
+    cell = self.cell_at(pos)
+    if not cell:
+        print("Drop outside grid")
+        event.ignore()
+        return
+
+    payload_raw = event.mimeData().data(MIME_TYPE).data()
+    payload = json.loads(payload_raw.decode("utf-8"))
+    print(f"Dropped payload: {payload}")
+    action = payload.get("action")
+
+    if action == "create":
+        if self.is_occupied(cell):
+            print(f"Cell {cell} occupied, drop ignored")
             event.ignore()
             return
+        typ = payload.get("type", "Item")
+        color = payload.get("color")
+        col = QtGui.QColor(color) if color else None
+        item = GridItem(typ, color=col, parent=self)
+        self.add_item(cell, item)
+        print(f"Created item {typ} at {cell}")
+        event.acceptProposedAction()
 
-        payload = json.loads(event.mimeData().data(MIME_TYPE).data().decode("utf-8"))
-        action = payload.get("action")
-
-        if action == "create":
-            if self.is_occupied(cell):
-                event.ignore()
-                return
-            typ = payload.get("type", "Item")
-            color = payload.get("color")
-            col = QtGui.QColor(color) if color else None
-            item = GridItem(typ, color=col, parent=self)
-            self.add_item(cell, item)
-            event.acceptProposedAction()
-
-        elif action == "move":
-            uid = payload.get("id")
-            if uid not in self.items:
-                event.ignore()
-                return
-            _, _, item = self.items[uid]
-            if self.is_occupied(cell) and self.items[uid][:2] != cell:
-                event.ignore()
-                item.show()
-                return
-            self.items[uid] = (cell[0], cell[1], item)
-            item.move(cell[0] * CELL_SIZE + 4, cell[1] * CELL_SIZE + 4)
+    elif action == "move":
+        uid = payload.get("id")
+        if uid not in self.items:
+            print(f"Move item uid {uid} not found, drop ignored")
+            event.ignore()
+            return
+        _, _, item = self.items[uid]
+        if self.is_occupied(cell) and self.items[uid][:2] != cell:
+            print(f"Cell {cell} occupied, move ignored")
+            event.ignore()
             item.show()
-            self.dragging_item_uid = None
-            self.dragging_item_pos = None
-            self.update()
-            event.acceptProposedAction()
+            return
+        self.items[uid] = (cell[0], cell[1], item)
+        item.move(cell[0] * CELL_SIZE + 4, cell[1] * CELL_SIZE + 4)
+        item.show()
+        self.dragging_item_uid = None
+        self.dragging_item_pos = None
+        self.update()
+        print(f"Moved item {uid} to {cell}")
+        event.acceptProposedAction()
+
 
     # --- Starting a connection ---
     def start_connection(self, item: GridItem, port: str, event: QtGui.QMouseEvent):

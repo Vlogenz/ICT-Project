@@ -23,6 +23,17 @@ class Multiplexer2Inp(LogicComponent):
             bool: True if the input was added successfully, False if the input failed to add
         """
 
+        #   Redundant(?) check to ensure that the selection value isn't too big for the multiplexer
+        #   we subtract 2 from the inputs length to exclude selection and to counter length starting from 1
+        #   Here it ensures that the value is either 0 or 1, we handle transforming this into something usable in eval()
+        if internalKey == "selection" and input.getState()[key][0] > (len(self.inputs) - 2):
+            return False
+        
+        #   Generalized check for comparing new input bitwidth to what is permitted
+        #   If the input bitwidth is not what is set then we reject it, unless it is not set yet
+        if self.getBitwidth(internalKey) != 0 and self.getBitwidth(internalKey) != input.getState()[key][1]:
+            return False
+
         try:
             success: int = super().addInput(input, key, internalKey)
 
@@ -51,13 +62,13 @@ class Multiplexer2Inp(LogicComponent):
             if self.inputs[input] is None:
                 return False
         
-        inputnum = int(self.inputs["selection"][0].getState()[self.inputs["selection"][1]][0])
-        outputKey: str = "input" + str(inputnum +1)
+        inputId = int(self.inputs["selection"][0].getState()[self.inputs["selection"][1]][0]) + 1
+        outputKey: str = "input" + str(inputId)
         # gets the component out of the first tuple in self.inputs and then 
         #   uses the key from that tuple to access the right output from the 
         #   components state
 
-        self.state = {"outputValue": (inputnum, self.inputs[outputKey][0].getState()[self.inputs[outputKey][1]][1])}
+        self.state = {"outputValue": (self.inputs[outputKey][0].getState()[self.inputs[outputKey][1]][0], self.inputs[outputKey][0].getState()[self.inputs[outputKey][1]][1])}
         # gets the component out of the tuple determined by the selection input, then 
         #   uses the key from that tuple to access the right output from the 
         #   components state

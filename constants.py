@@ -1,6 +1,8 @@
+"""Global constants for the whole project."""
 
 CELL_SIZE = 100
 #TODO: make grid size dynamic or "infinite" with scrolling
-GRID_COLS = 16
-GRID_ROWS = 16
+GRID_COLS = 8
+GRID_ROWS = 8
 MIME_TYPE = "application/x-qt-grid-item"
+MAX_EVAL_CYCLES: int = 5

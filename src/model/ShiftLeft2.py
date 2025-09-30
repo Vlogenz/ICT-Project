@@ -19,12 +19,15 @@ class ShiftLeft2(LogicComponent):
         oldState = self.state.copy()
         if self.inputs["input1"] is None: # set input to false if no component is connected
             a = False
+            # If no input connected, output bitwidth should be 2 (0 + 2)
+            outputBitwidth = 2 if self.inputBitwidths["input1"] == 0 else self.inputBitwidths["input1"] + 2
         else:
             a = self.inputs["input1"][0].getState()[self.inputs["input1"][1]][0]
             # gets the component out of the first tuple in self.inputs and then 
             #   uses the key from that tuple to access the right output from the 
             #   components state
-        self.state["outValue"] = (a<<2,self.inputBitwidths["input1"]+2) # shift left by 2 bits
+            outputBitwidth = self.inputBitwidths["input1"] + 2
+        self.state["outValue"] = (a<<2, outputBitwidth) # shift left by 2 bits
         if self.state != oldState:
             return True
         else:
@@ -32,9 +35,19 @@ class ShiftLeft2(LogicComponent):
         
     def addInput(self, input: "LogicComponent", key: str, internalKey: str):
         ret = super().addInput(input,key,internalKey)
-        bit = input.getState()[key][1]  # Get bitwidth from the output state
-        self.state["outValue"] = (self.state["outValue"][0], bit + 2)
-        self.inputBitwidths["input1"] = bit
+        if ret:  # Input was successfully added to an empty slot
+            bit = input.getState()[key][1]  # Get bitwidth from the output state
+            self.inputBitwidths["input1"] = bit
+            self.state["outValue"] = (self.state["outValue"][0], bit + 2)
+        else:
+            # Check if we're trying to update an existing connection with same component
+            if internalKey in self.inputs and self.inputs[internalKey] is not None:
+                current_input, current_key = self.inputs[internalKey]
+                if current_input == input and current_key == key:
+                    # Update bitwidth for existing connection
+                    bit = input.getState()[key][1]
+                    self.inputBitwidths["input1"] = bit
+                    self.state["outValue"] = (self.state["outValue"][0], bit + 2)
         return ret
         
     def removeInput(self, input: "LogicComponent", key: str, internalKey: str):
@@ -47,6 +60,30 @@ class ShiftLeft2(LogicComponent):
         """
         super().removeInput(input, key, internalKey)
         # Reset input bitwidth to default value when input is removed
-        # The state will be recalculated by eval() method: (0<<2, 0+2) = (0, 2)
-        # or by the next addInput call
-        self.inputBitwidths["input1"] = 0  
+        self.inputBitwidths["input1"] = 0
+        self.state["outValue"] = (0, 0)  # Reset output state to default when input is removed
+
+    def addOutput(self, output: "LogicComponent", key: str):
+        """Add an output connection and update input bitwidth accordingly.
+        
+        Args:
+            output (LogicComponent): The output component to be added.
+            key (str): The key of the input from the output component.
+        """
+        super().addOutput(output, key)
+        # Update input bitwidth based on new output state
+        if self.inputs["input1"] is None:
+            # No input connected: output bitwidth = bitwidth of output component
+            self.inputBitwidths["input1"] = output.inputBitwidths[key] - 2
+
+    def removeOutput(self, output: "LogicComponent", key: str):
+        """Remove an output connection and update bitwidths if no outputs remain.
+        
+        Args:
+            output (LogicComponent): The output component to be removed.
+            key (str): The input key of the output component.
+        """
+        super().removeOutput(output, key)
+        # If no more outputs and no inputs, reset bitwidth to 0
+        if len(self.outputs) == 0 and self.inputs["input1"] is None:
+            self.state["outValue"] = (0, 0)  

@@ -10,7 +10,7 @@ def test_signextend_initialization():
     assert "input1" in sign_extend.inputs
     assert sign_extend.inputs["input1"] is None
     assert sign_extend.inputBitwidths["input1"] == 16
-    assert sign_extend.state["outValue"] == (0, 1)  # default state
+    assert sign_extend.state["outValue"] == (0, 32)  # default state with 32-bit output
 
 
 def test_signextend_no_input_connected():
@@ -20,7 +20,7 @@ def test_signextend_no_input_connected():
     changed = sign_extend.eval()
     # Should output (False, 32) which is (0, 32) when no input is connected
     assert sign_extend.state["outValue"] == (0, 32)
-    assert changed is True  # state changed from default (0, 1) to (0, 32)
+    assert changed is False  # state doesn't change since initial state is already (0, 32)
     
     # Second evaluation should not change state
     changed = sign_extend.eval()
@@ -48,7 +48,11 @@ def test_signextend_with_various_inputs(input_value, bitwidth, expected_output):
     
     changed = sign_extend.eval()
     assert sign_extend.state["outValue"] == (expected_output, 32)
-    assert changed is True  # state should change from default
+    # For input_value 0: initial state is already (0, 32), so eval doesn't change it
+    if input_value == 0:
+        assert changed is False  # state doesn't change for zero input
+    else:
+        assert changed is True   # state should change from default for non-zero inputs
     
     # Second evaluation should not change state
     changed = sign_extend.eval()
@@ -95,7 +99,7 @@ def test_signextend_handles_edge_cases():
     # Test with zero
     changed = sign_extend.eval()
     assert sign_extend.state["outValue"] == (0, 32)
-    assert changed is True
+    assert changed is False  # state doesn't change since initial and result are both (0, 32)
     
     # Test with maximum positive 16-bit value
     dummy_input.setValue(0x7FFF, 16)

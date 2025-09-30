@@ -8,7 +8,7 @@ class SignExtend(LogicComponent):
         self.inputs: typing.Dict = {"input1": None} 
         self.inputBitwidths: typing.Dict = {"input1": 16}
         #   (Tuples of component and output key of that component)
-        self.state: dict = {"outValue": (0,1)}
+        self.state: dict = {"outValue": (0,32)}
     
     def eval(self) -> bool:
         """Evaluate the SignExtend, and return if the Output has changed.

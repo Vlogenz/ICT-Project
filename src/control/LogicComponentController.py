@@ -41,28 +41,32 @@ class LogicComponentController:
             bool: if evaluation was successful or not
         """
         tick = 0
-        indeg = {}
+        indeg = {} # indegree of each component
         for comp in self.components:
             if type(comp) != Input:
+                # create a list of all components which are inputs to this component
                 compo = [tuple[0] for tuple in comp.inputs.values() if tuple is not None and type(tuple[0])!= Register]
-                indeg[comp] = len(set(compo))
+                indeg[comp] = len(set(compo)) # count only unique components
                 
-        currentTick = self.inputs.copy()
-        while len(currentTick) > 0:
-            self.updateInTick[tick] = currentTick.copy()
-            nextTick = []
+        currentTick = self.inputs.copy() # start with inputs
+        while len(currentTick) > 0: # while there are still components to process
+            self.updateInTick[tick] = currentTick.copy() # store current components in tick dictionary
+            nextTick = [] # list of components for next tick
             for u in currentTick:
-                vs = [tuple[0] for tuple in u.getOutputs()]
+                vs = [tuple[0] for tuple in u.getOutputs()] # get all components which are outputs of current component
                 for v in vs:
-                    indeg[v] -= 1
-                    if indeg[v] == 0:
+                    indeg[v] -= 1 # decrease indegree of output component
+                    if indeg[v] == 0: # if indegree is 0, add to next tick
                         nextTick.append(v)
+            # move to next tick
             currentTick = nextTick
-            tick +=1
+            tick +=1 # increase tick count
         
+        # if there are still components with indegree > 0, there is a circular dependency
         if sum(indeg.values()) > 0:
             return False
         else:
+            # evaluate components tick by tick
             for tick in self.updateInTick:
                 for comp in self.updateInTick[tick]:
                     comp.eval()
@@ -81,12 +85,13 @@ class LogicComponentController:
         Returns:
             bool: wether evaluation was successful or not
         """
-        tick = 0
-        currentTick = kw.get("startingComponents",self.inputs.copy())
-        while len(currentTick)>0:
-            nextTick = []
+        tick = 0 
+        currentTick = kw.get("startingComponents",self.inputs.copy()) # start with inputs or given components
+        while len(currentTick)>0: # while there are still components to process
+            nextTick = [] # list of components for next tick
             for g in currentTick:
-                if g.eval():
+                if g.eval(): # evaluate component
+                    # if evaluation changed the output, add all connected components to next tick
                     gOut = [tuple[0] for tuple in g.getOutputs()]
                     for out in gOut:
                         nextTick.append(out)
@@ -96,7 +101,7 @@ class LogicComponentController:
             #TODO sleep(self.playbackSpeed)
             currentTick = nextTick
             tick +=1
-            
+            # if too many ticks, there is probably a circular dependency which don't has a stable state
             if tick > MAX_EVAL_CYCLES*len(self.components):
                 return False
         return True

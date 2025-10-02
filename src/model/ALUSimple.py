@@ -6,7 +6,7 @@ class ALUSimple(LogicComponent):  # A simple 32-bit ALU
     def __init__(self):
         super().__init__()
         self.inputs: typing.Dict = {"input1": None, "input2": None, "OP": None, "Ainvert": None, "Binvert": None, "CarryIn": None}
-        self.inputBitwidths: typing.Dict = {"input1": 0, "input2": 0, "OP": 2, "Ainvert": 1, "Binvert": 1, "CarryIn": 1}
+        self.inputBitwidths: typing.Dict = {"input1": 32, "input2": 32, "OP": 2, "Ainvert": 1, "Binvert": 1, "CarryIn": 1}
         self.state: dict = {"outValue": (0,32),}
     
     def eval(self) -> bool:

@@ -6,6 +6,9 @@ from src.view.GridWidget import GridWidget
 from src.view.DeleteArea import DeleteArea
 
 from PySide6 import QtGui, QtWidgets
+import inspect
+import pkgutil
+import importlib
 
 from src.view.SimulationControls import SimulationControls
 
@@ -27,8 +30,9 @@ class SandboxModeWindow(QtWidgets.QMainWindow):
         # Palette
         # TODO: Show all available logic components here
         palette = QtWidgets.QVBoxLayout()
-        palette.addWidget(PaletteItem("Label"))
-        palette.addWidget(PaletteItem("Red Node", QtGui.QColor("#ff9999")))
+        classes = self.get_component_classes()
+        for class_ in classes:
+            palette.addWidget(PaletteItem(f"{class_}"))
         palette.addStretch()
 
         # Grid
@@ -49,3 +53,19 @@ class SandboxModeWindow(QtWidgets.QMainWindow):
         layout.addWidget(palette_frame, 0, 0, 2, 1)
         layout.addWidget(simControls, 0, 1)
         layout.addWidget(grid, 1, 1)
+
+        #class_list = self.get_classes_in_package("src.model")
+        #for cls in class_list:
+        #    print(cls)
+
+    def get_component_classes(self):
+        classes = []
+        package = importlib.import_module("src.model")
+
+        for _, module_name, _ in pkgutil.walk_packages(package.__path__, package.__name__ + "."):
+            module = importlib.import_module(module_name)
+
+            for name, obj in inspect.getmembers(module, inspect.isclass):
+                if obj.__module__ == module.name:
+                    classes.append(obj)
+        return classes

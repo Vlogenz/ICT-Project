@@ -8,7 +8,7 @@ class AppController:
     def __init__(self):
         self.app = QtWidgets.QApplication(sys.argv)
         self.logicController = LogicComponentController()
-        self.window = SandboxModeWindow(logicController)
+        self.window = SandboxModeWindow(self.logicController)
 
     def run(self):
         self.window.show()

@@ -1,4 +1,6 @@
 import sys
+
+from src.control.LogicComponentController import LogicComponentController
 from src.view.PaletteItem import PaletteItem
 from src.view.GridWidget import GridWidget
 from src.view.DeleteArea import DeleteArea
@@ -11,7 +13,7 @@ from src.view.SimulationControls import SimulationControls
 class SandboxModeWindow(QtWidgets.QMainWindow):
     """Main window for the sandbox mode."""
 
-    def __init__(self):
+    def __init__(self, logicController: LogicComponentController):
         super().__init__()
         self.setWindowTitle("Sandbox Mode")
 
@@ -30,7 +32,7 @@ class SandboxModeWindow(QtWidgets.QMainWindow):
         palette.addStretch()
 
         # Grid
-        grid = GridWidget()
+        grid = GridWidget(logicController)
 
         # Delete area
         deleteArea = DeleteArea(grid)

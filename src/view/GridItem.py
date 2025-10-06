@@ -6,20 +6,20 @@ from PySide6.QtGui import QAction, QCursor
 from PySide6.QtWidgets import QMenu
 
 from constants import CELL_SIZE, MIME_TYPE
-
+from src.model.LogicComponent import LogicComponent
 
 class GridItem(QtWidgets.QFrame):
     """An Element in the grid with inputs and outputs"""
 
-    def __init__(self, item_type: str, color: QtGui.QColor = None, uid=None, parent=None):
+    def __init__(self, logicComponent: LogicComponent, color: QtGui.QColor = None, uid=None, parent=None):
         super().__init__(parent)
         self.uid = uid or str(uuid.uuid4())
-        self.item_type = item_type
+        self.item_type = "test"
 
         self.setFixedSize(CELL_SIZE - 8, CELL_SIZE - 8)
 
         layout = QtWidgets.QVBoxLayout(self)
-        lbl = QtWidgets.QLabel(item_type)
+        lbl = QtWidgets.QLabel(self.item_type)
         lbl.setAlignment(QtCore.Qt.AlignCenter)
         layout.addWidget(lbl)
 
@@ -30,6 +30,9 @@ class GridItem(QtWidgets.QFrame):
         # TODO: change ports to arrays/list
         self.output_port = QtCore.QRectF(self.width() - 16, self.height() / 2 - 8, 16, 16)
         self.input_port = QtCore.QRectF(0, self.height() / 2 - 8, 16, 16)
+
+        # Define ports dynamically based on what the LogicComponent has
+
 
         # Set up right click menu
         self.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)

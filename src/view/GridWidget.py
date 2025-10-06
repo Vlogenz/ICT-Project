@@ -3,16 +3,19 @@ from PySide6.QtCore import QPointF
 from PySide6.QtGui import QPainterPath
 
 from constants import GRID_COLS, GRID_ROWS, CELL_SIZE, MIME_TYPE
+from src.control.LogicComponentController import LogicComponentController
 from src.view.GridItem import GridItem, portAt
 import json
 import random
+from src.model.And import And
 
 
 class GridWidget(QtWidgets.QWidget):
     """Main drop area with grid, items and connections."""
 
-    def __init__(self, cols=GRID_COLS, rows=GRID_ROWS, parent=None):
+    def __init__(self, logicController: LogicComponentController, cols=GRID_COLS, rows=GRID_ROWS, parent=None):
         super().__init__(parent)
+        self.logicController = logicController
         self.cols = cols
         self.rows = rows
         self.setAcceptDrops(True)
@@ -139,7 +142,8 @@ class GridWidget(QtWidgets.QWidget):
             typ = payload.get("type", "Item")
             color = payload.get("color")
             col = QtGui.QColor(color) if color else None
-            item = GridItem(typ, color=col, parent=self)
+            logicComponent = self.logicController.addLogicComponent(And)
+            item = GridItem(logicComponent, color=col, parent=self)
             self.addItem(cell, item)
             event.acceptProposedAction()
 

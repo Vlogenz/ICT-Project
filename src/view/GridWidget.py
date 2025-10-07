@@ -7,6 +7,7 @@ from src.control.LogicComponentController import LogicComponentController
 from src.view.GridItem import GridItem, portAt
 import json
 import random
+import pickle
 from src.model.And import And
 
 
@@ -114,7 +115,7 @@ class GridWidget(QtWidgets.QWidget):
         """This gets called when something is dragged over the widget."""
         self.useRandomOffset = False
         payload = json.loads(event.mimeData().data(MIME_TYPE).data().decode("utf-8"))
-        if payload.get("action") == "move":
+        if payload.get("action_type") == "move":
             uid = payload.get("id")
             if uid in self.items:
                 self.dragging_item_pos = event.position().toPoint()
@@ -131,24 +132,37 @@ class GridWidget(QtWidgets.QWidget):
             event.ignore()
             return
 
-        payload = json.loads(event.mimeData().data(MIME_TYPE).data().decode("utf-8"))
-        action = payload.get("action")
+        if not event.mimeData().hasFormat(MIME_TYPE):
+            event.ignore()
+            return
 
-        # In case the item is dragged newly from the palette
-        if action == "create":
-            if self.isOccupied(cell):
-                event.ignore()
-                return
-            typ = payload.get("type", "Item")
-            color = payload.get("color")
-            col = QtGui.QColor(color) if color else None
-            logicComponent = self.logicController.addLogicComponent(And)
-            item = GridItem(logicComponent, color=col, parent=self)
-            self.addItem(cell, item)
-            event.acceptProposedAction()
+        try:
+            raw_data = bytes(event.mimeData().data(MIME_TYPE)).decode("utf-8")
+            payload = json.loads(raw_data)
+        except Exception as e:
+            print("Failed to parse MIME data:", e)
+            event.ignore()
+            return
 
-        # In case the item is moved within the grid
-        elif action == "move":
+        action_type = payload.get("action_type")
+        class_name = payload.get("class_name")
+        package_name = "src.model"
+
+        if action_type == "create":
+            # Dynamically import and create a GridItem of this class
+            try:
+                package = __import__(package_name, fromlist=[class_name])
+                print(f"package: {package}")
+                module = getattr(package, class_name)
+                print(f"module: {module}")
+                cls = getattr(module, class_name)
+                print(f"Class: {cls}")
+                new_item = GridItem(cls())
+                self.addItem(cell, new_item)
+                print(f"Created new {class_name}")
+            except Exception as e:
+                print("Error creating GridItem:", e)
+        elif action_type == "move":
             uid = payload.get("id")
             if uid not in self.items:
                 event.ignore()
@@ -164,6 +178,9 @@ class GridWidget(QtWidgets.QWidget):
             self.dragging_item_uid = None
             self.dragging_item_pos = None
             self.update()
+            event.acceptProposedAction()
+        else:
+            print("Unknown action type:", action_type)
             event.acceptProposedAction()
 
     # --- Starting a connection ---

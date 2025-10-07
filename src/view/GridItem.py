@@ -14,12 +14,12 @@ class GridItem(QtWidgets.QFrame):
     def __init__(self, logicComponent: LogicComponent, color: QtGui.QColor = None, uid=None, parent=None):
         super().__init__(parent)
         self.uid = uid or str(uuid.uuid4())
-        self.item_type = "test"
+        self.logicComponent = logicComponent
 
         self.setFixedSize(CELL_SIZE - 8, CELL_SIZE - 8)
 
         layout = QtWidgets.QVBoxLayout(self)
-        lbl = QtWidgets.QLabel(self.item_type)
+        lbl = QtWidgets.QLabel(self.logicComponent.__class__.__name__)
         lbl.setAlignment(QtCore.Qt.AlignCenter)
         layout.addWidget(lbl)
 
@@ -68,7 +68,7 @@ class GridItem(QtWidgets.QFrame):
         if event.button() == QtCore.Qt.LeftButton:
             drag = QtGui.QDrag(self)
             mime = QtCore.QMimeData()
-            payload = {"action": "move", "id": self.uid}
+            payload = {"action_type": "move", "id": self.uid}
             mime.setData(MIME_TYPE, json.dumps(payload).encode("utf-8"))
             drag.setMimeData(mime)
 

@@ -4,6 +4,7 @@ from src.control.LogicComponentController import LogicComponentController
 from src.view.PaletteItem import PaletteItem
 from src.view.GridWidget import GridWidget
 from src.view.DeleteArea import DeleteArea
+import src.model as model
 
 from PySide6 import QtGui, QtWidgets
 import inspect
@@ -30,9 +31,11 @@ class SandboxModeWindow(QtWidgets.QMainWindow):
         # Palette
         # TODO: Show all available logic components here
         palette = QtWidgets.QVBoxLayout()
-        classes = self.get_component_classes()
+        classes = list(self.iter_classes_in_package(model))
+        print(f"classes: {classes}")
         for class_ in classes:
-            palette.addWidget(PaletteItem(f"{class_}"))
+            print(f"{class_}")
+            palette.addWidget(PaletteItem(class_))
         palette.addStretch()
 
         # Grid
@@ -58,14 +61,9 @@ class SandboxModeWindow(QtWidgets.QMainWindow):
         #for cls in class_list:
         #    print(cls)
 
-    def get_component_classes(self):
-        classes = []
-        package = importlib.import_module("src.model")
-
-        for _, module_name, _ in pkgutil.walk_packages(package.__path__, package.__name__ + "."):
+    def iter_classes_in_package(self, package):
+        for _, module_name, is_pkg in pkgutil.walk_packages(package.__path__, package.__name__ + "."):
             module = importlib.import_module(module_name)
-
-            for name, obj in inspect.getmembers(module, inspect.isclass):
-                if obj.__module__ == module.name:
-                    classes.append(obj)
-        return classes
+            for name, cls in inspect.getmembers(module, inspect.isclass):
+                if cls.__module__ == module.__name__:
+                    yield cls

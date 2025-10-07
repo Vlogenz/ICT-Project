@@ -5,8 +5,9 @@ import json
 from PySide6.QtGui import QAction, QCursor
 from PySide6.QtWidgets import QMenu
 
-from constants import CELL_SIZE, MIME_TYPE
 from src.model.LogicComponent import LogicComponent
+from src.constants import CELL_SIZE, MIME_TYPE
+
 
 class GridItem(QtWidgets.QFrame):
     """An Element in the grid with inputs and outputs"""

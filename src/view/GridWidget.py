@@ -2,13 +2,11 @@ from PySide6 import QtCore, QtGui, QtWidgets
 from PySide6.QtCore import QPointF
 from PySide6.QtGui import QPainterPath
 
-from constants import GRID_COLS, GRID_ROWS, CELL_SIZE, MIME_TYPE
 from src.control.LogicComponentController import LogicComponentController
+from src.constants import GRID_COLS, GRID_ROWS, CELL_SIZE, MIME_TYPE
 from src.view.GridItem import GridItem, portAt
 import json
 import random
-import pickle
-from src.model.And import And
 
 
 class GridWidget(QtWidgets.QWidget):

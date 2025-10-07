@@ -2,9 +2,7 @@ import json
 from symtable import Class
 
 from PySide6 import QtWidgets, QtGui, QtCore
-import pickle
-from constants import MIME_TYPE
-from src.model.LogicComponent import LogicComponent
+from src.constants import MIME_TYPE
 
 
 class PaletteItem(QtWidgets.QFrame):

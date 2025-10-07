@@ -2,7 +2,7 @@ import typing
 
 from src.model.LogicComponent import LogicComponent
 from src.model.Input import Input
-from constants import MAX_EVAL_CYCLES
+from src.constants import MAX_EVAL_CYCLES
 from src.infrastructure.eventBus import getBus
 from src.model.Register import Register
 #from time import sleep
@@ -155,6 +155,19 @@ class LogicComponentController:
             ReferenceError: If component was not present in the controllers list
         """
         if component in self.components:
+            # remove all connections to and from this component
+            
+            # Remove the component from the inputs' outputs
+            for inputKey, origin in component.getInputs().items():
+                if origin is not None:
+                    origin[0].removeOutput(component, inputKey)
+            
+            for output in component.getOutputs():
+                # Remove the input from the output's inputs
+                # output[0] is the target component, output[1] is the target key
+                # output[0].getInputs()[output[1]] is the internal state key
+                output[0].removeInput(component, output[0].getInputs()[output[1]][1], output[1])
+
             self.components.remove(component)
             if type(component) == Input:
                 self.inputs.remove(component)

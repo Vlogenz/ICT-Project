@@ -29,11 +29,19 @@ class GridItem(QtWidgets.QFrame):
 
         # Define ports
         # TODO: change ports to arrays/list
-        self.output_port = QtCore.QRectF(self.width() - 16, self.height() / 2 - 8, 16, 16)
-        self.input_port = QtCore.QRectF(0, self.height() / 2 - 8, 16, 16)
+        #self.output_port = QtCore.QRectF(self.width() - 16, self.height() / 2 - 8, 16, 16)
+        #self.input_port = QtCore.QRectF(0, self.height() / 2 - 8, 16, 16)
 
         # Define ports dynamically based on what the LogicComponent has
-
+        self.outputs = [
+            (port, QtCore.QRectF(self.width() - 16, i*(self.height() / len(self.logicComponent.getOutputs())) - 8, 16, 16))
+            for port, i in self.logicComponent.getOutputs()
+        ]
+        self.inputs = [
+            (port, QtCore.QRectF(0, i*(self.height() / len(self.logicComponent.getOutputs())) - 8, 16, 16))
+            for port, i in self.logicComponent.getInputs()
+        ]
+        print(f"outputs: {self.outputs}, inputs: {self.inputs}")
 
         # Set up right click menu
         self.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
@@ -45,10 +53,12 @@ class GridItem(QtWidgets.QFrame):
         painter = QtGui.QPainter(self)
         # Output-Port on the right (blue)
         painter.setBrush(QtGui.QColor("blue"))
-        painter.drawEllipse(self.output_port)
+        for output_port in self.inputs:
+            painter.drawEllipse(output_port[1])
         # Input-Port on the left (green)
         painter.setBrush(QtGui.QColor("green"))
-        painter.drawEllipse(self.input_port)
+        for input_port in self.outputs:
+            painter.drawEllipse(input_port[1])
 
     def mousePressEvent(self, event: QtGui.QMouseEvent):
         """Handle dragging of the item or starting a connection from a port."""

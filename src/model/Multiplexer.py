@@ -22,7 +22,7 @@ class Multiplexer2Inp(LogicComponent):
         #   Note: Does not account for mismatched widths
         outputs: typing.List = self.getOutputs()
 
-        if len(outputs) == 0: return 0
+        if len(outputs) == 0: return self.getBitwidth("input1")
 
         return outputs[0][0].getBitwidth(outputs[0][1])
 
@@ -64,9 +64,33 @@ class Multiplexer2Inp(LogicComponent):
 
         return success
     
+    def addOutput(self, output, key) -> bool:
+        """
+        Add an output connection to this component and lock bitwidths if not already done.
+        Args:
+            output (LogicComponent): The output component to be added.
+            key (str): The key of the input from the output component.
+        Returns:
+            bool: True if the output was added successfully, False if the input failed to add
+        """
+
+        bitwidth: int = self.getOutputBitwidth()
+
+        #   Reject mismatches, bitwidth locking occurs after connecting to avoid potential locks with no connection to disconnect
+        if bitwidth != 0 and output.inputBitwidths[key] != bitwidth:
+            return False
+
+        super().addOutput(output, key)
+
+        if bitwidth == 0:
+            bitwidth = self.getOutputBitwidth()
+            self.inputBitwidths: typing.Dict = {"selection": 1, "input1": bitwidth, "input2": bitwidth}
+        
+        return True
+    
     def removeInput(self, input: "LogicComponent", key: str, internalKey: str):
         """
-        Remove an input connection from this component, resets input bitwidth if all inputs are disconnected.
+        Remove an input connection from this component, resets bitwidths if nothing is connected.
         Args:
             input (LogicComponent): The input component to be removed.
             key (str): The key of the output from the input component that is connected.
@@ -93,12 +117,36 @@ class Multiplexer2Inp(LogicComponent):
 
         if empty == True:
             self.inputBitwidths: typing.Dict = {"selection": 1, "input1": 0, "input2": 0}
-            self.state: typing.Dict = {"outputValue": (0, 0)}
         
         return True
     
     def removeOutput(self, output: "LogicComponent", key: str):
-        return super().removeOutput(output, key)
+        """
+        Remove an output connection from this component, resets all bitwidths if nothing is connected.
+        Args:
+            output (str): The output to be disconnected
+            key (str): The key of the input from the output component.
+        Returns:
+            bool: True if removal succeeded, False otherwise
+        """  
+
+        super().removeOutput(output, key)
+    
+        #   The rest of this code handles resetting bidwidths 
+        empty: bool = True
+        for input in self.inputs:
+            if self.inputs[input] is not None and input != "selection":
+                empty = False
+                break
+
+        if len(self.outputs) != 0:
+            empty = False
+
+        if empty == True:
+            self.inputBitwidths: typing.Dict = {"selection": 1, "input1": 0, "input2": 0}
+        
+        return True
+    
     
     def eval(self) -> bool:
         """Evaluate the multiplexer, and returns if the output has changed.
@@ -154,6 +202,34 @@ class Multiplexer4Inp(LogicComponent):
 
 
 
+    def getOutputBitwidth(self)-> int:
+        """returns the bitwidth of the outputs
+
+        Returns:
+            int: the bitwidth of the input
+        """
+
+        #   Note: Does not account for mismatched widths
+        outputs: typing.List = self.getOutputs()
+
+        if len(outputs) == 0: return self.getBitwidth("input1")
+
+        return outputs[0][0].getBitwidth(outputs[0][1])
+    
+    def getOutputBitwidth(self)-> int:
+        """returns the bitwidth of the outputs
+
+        Returns:
+            int: the bitwidth of the input
+        """
+
+        #   Note: Does not account for mismatched widths
+        outputs: typing.List = self.getOutputs()
+
+        if len(outputs) == 0: return self.getBitwidth("input1")
+
+        return outputs[0][0].getBitwidth(outputs[0][1])
+    
     def addInput(self, input: "LogicComponent", key: str, internalKey: str):
         """
         Add an input connection to this component and lock input bidwidth if not already done.
@@ -197,6 +273,35 @@ class Multiplexer4Inp(LogicComponent):
 
         return success
     
+    def addOutput(self, output, key) -> bool:
+        """
+        Add an output connection to this component and lock bitwidths if not already done.
+        Args:
+            output (LogicComponent): The output component to be added.
+            key (str): The key of the input from the output component.
+        Returns:
+            bool: True if the output was added successfully, False if the input failed to add
+        """
+
+        bitwidth: int = self.getOutputBitwidth()
+
+        #   Reject mismatches, bitwidth locking occurs after connecting to avoid potential locks with no connection to disconnect
+        if bitwidth != 0 and output.inputBitwidths[key] != bitwidth:
+            return False
+
+        super().addOutput(output, key)
+
+        if bitwidth == 0:
+            bitwidth = self.getOutputBitwidth()
+            self.inputBitwidths: typing.Dict = {
+                "selection": 1, 
+                "input1": bitwidth, 
+                "input2": bitwidth, 
+                "input3": bitwidth, 
+                "input4": bitwidth}
+        
+        return True
+    
     def removeInput(self, input: "LogicComponent", key:str, internalKey: str):
         """
         Remove an input connection from this component, resets input bitwidth if all inputs are disconnected.
@@ -220,6 +325,38 @@ class Multiplexer4Inp(LogicComponent):
             if self.inputs[input] is not None and input != "selection":
                 empty = False
                 break
+
+        if empty == True:
+            self.inputBitwidths: typing.Dict = {
+                "selection": 1, 
+                "input1": 0, 
+                "input2": 0, 
+                "input3": 0, 
+                "input4": 0}
+        
+        return True
+    
+    def removeOutput(self, output: "LogicComponent", key: str):
+        """
+        Remove an output connection from this component, resets all bitwidths if nothing is connected.
+        Args:
+            output (str): The output to be disconnected
+            key (str): The key of the input from the output component.
+        Returns:
+            bool: True if removal succeeded, False otherwise
+        """  
+
+        super().removeOutput(output, key)
+    
+        #   The rest of this code handles resetting bidwidths 
+        empty: bool = True
+        for input in self.inputs:
+            if self.inputs[input] is not None and input != "selection":
+                empty = False
+                break
+
+        if len(self.outputs) != 0:
+            empty = False
 
         if empty == True:
             self.inputBitwidths: typing.Dict = {
@@ -291,7 +428,20 @@ class Multiplexer8Inp(LogicComponent):
         #   If the state ever has a bit length of 0 then it failed to evaluate
 
 
+    def getOutputBitwidth(self)-> int:
+        """returns the bitwidth of the outputs
 
+        Returns:
+            int: the bitwidth of the input
+        """
+
+        #   Note: Does not account for mismatched widths
+        outputs: typing.List = self.getOutputs()
+
+        if len(outputs) == 0: return self.getBitwidth("input1")
+
+        return outputs[0][0].getBitwidth(outputs[0][1])
+    
     def addInput(self, input: "LogicComponent", key: str, internalKey: str):
         """
         Add an input connection to this component and lock input bidwidth if not already done.
@@ -339,6 +489,39 @@ class Multiplexer8Inp(LogicComponent):
 
         return success
     
+    def addOutput(self, output, key) -> bool:
+        """
+        Add an output connection to this component and lock bitwidths if not already done.
+        Args:
+            output (LogicComponent): The output component to be added.
+            key (str): The key of the input from the output component.
+        Returns:
+            bool: True if the output was added successfully, False if the input failed to add
+        """
+
+        bitwidth: int = self.getOutputBitwidth()
+
+        #   Reject mismatches, bitwidth locking occurs after connecting to avoid potential locks with no connection to disconnect
+        if bitwidth != 0 and output.inputBitwidths[key] != bitwidth:
+            return False
+
+        super().addOutput(output, key)
+
+        if bitwidth == 0:
+            bitwidth = self.getOutputBitwidth()
+            self.inputBitwidths: typing.Dict = {
+                "selection": 1, 
+                "input1": bitwidth, 
+                "input2": bitwidth, 
+                "input3": bitwidth, 
+                "input4": bitwidth,
+                "input5": bitwidth, 
+                "input6": bitwidth, 
+                "input7": bitwidth, 
+                "input8": bitwidth}
+        
+        return True
+    
     def removeInput(self, input: "LogicComponent", key:str, internalKey: str):
         """
         Remove an input connection from this component, resets input bitwidth if all inputs are disconnected.
@@ -377,6 +560,42 @@ class Multiplexer8Inp(LogicComponent):
         
         return True
     
+    def removeOutput(self, output: "LogicComponent", key: str):
+        """
+        Remove an output connection from this component, resets all bitwidths if nothing is connected.
+        Args:
+            output (str): The output to be disconnected
+            key (str): The key of the input from the output component.
+        Returns:
+            bool: True if removal succeeded, False otherwise
+        """  
+
+        super().removeOutput(output, key)
+    
+        #   The rest of this code handles resetting bidwidths 
+        empty: bool = True
+        for input in self.inputs:
+            if self.inputs[input] is not None and input != "selection":
+                empty = False
+                break
+
+        if len(self.outputs) != 0:
+            empty = False
+
+        if empty == True:
+            self.inputBitwidths: typing.Dict = {
+                "selection": 1, 
+                "input1": 0, 
+                "input2": 0, 
+                "input3": 0, 
+                "input4": 0,
+                "input5": 0, 
+                "input6": 0, 
+                "input7": 0, 
+                "input8": 0}
+        
+        return True
+
     def eval(self) -> bool:
         """Evaluate the multiplexer, and returns if the output has changed.
 

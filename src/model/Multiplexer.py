@@ -117,6 +117,7 @@ class Multiplexer2Inp(LogicComponent):
 
         if empty == True:
             self.inputBitwidths: typing.Dict = {"selection": 1, "input1": 0, "input2": 0}
+            self.state: typing.Dict = {"outputValue": (0, 0)}
         
         return True
     
@@ -144,6 +145,7 @@ class Multiplexer2Inp(LogicComponent):
 
         if empty == True:
             self.inputBitwidths: typing.Dict = {"selection": 1, "input1": 0, "input2": 0}
+            self.state: typing.Dict = {"outputValue": (0, 0)}
         
         return True
     
@@ -333,6 +335,7 @@ class Multiplexer4Inp(LogicComponent):
                 "input2": 0, 
                 "input3": 0, 
                 "input4": 0}
+            self.state: typing.Dict = {"outputValue": (0, 0)}
         
         return True
     
@@ -365,6 +368,7 @@ class Multiplexer4Inp(LogicComponent):
                 "input2": 0, 
                 "input3": 0, 
                 "input4": 0}
+            self.state: typing.Dict = {"outputValue": (0, 0)}
         
         return True
     
@@ -557,6 +561,7 @@ class Multiplexer8Inp(LogicComponent):
                 "input6": 0, 
                 "input7": 0, 
                 "input8": 0}
+            self.state: typing.Dict = {"outputValue": (0, 0)}
         
         return True
     
@@ -593,6 +598,7 @@ class Multiplexer8Inp(LogicComponent):
                 "input6": 0, 
                 "input7": 0, 
                 "input8": 0}
+            self.state: typing.Dict = {"outputValue": (0, 0)}
         
         return True
 

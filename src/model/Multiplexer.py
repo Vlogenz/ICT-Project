@@ -218,20 +218,6 @@ class Multiplexer4Inp(LogicComponent):
 
         return outputs[0][0].getBitwidth(outputs[0][1])
     
-    def getOutputBitwidth(self)-> int:
-        """returns the bitwidth of the outputs
-
-        Returns:
-            int: the bitwidth of the input
-        """
-
-        #   Note: Does not account for mismatched widths
-        outputs: typing.List = self.getOutputs()
-
-        if len(outputs) == 0: return self.getBitwidth("input1")
-
-        return outputs[0][0].getBitwidth(outputs[0][1])
-    
     def addInput(self, input: "LogicComponent", key: str, internalKey: str):
         """
         Add an input connection to this component and lock input bidwidth if not already done.

@@ -1,6 +1,6 @@
 import pytest
 from src.model.Multiplexer import Multiplexer2Inp, Multiplexer4Inp, Multiplexer8Inp
-from .DummyInput import DummyInput
+from .DummyInput import DummyInput, DummyOutput
 
 def test_2i1b_multiplexer_raises_error_on_too_many_inputs():
     two_input_multiplexer = Multiplexer2Inp()
@@ -56,13 +56,20 @@ def test_2i_multiplexer_rejects_mixed_input_8_1_bitwidths():
 def test_2i_multiplexer_resets_bidwidths_when_emptied():
     two_input_multiplexer = Multiplexer2Inp()
     input1 = DummyInput(5, 8)
+    output1 = DummyOutput(8)
 
     two_input_multiplexer.addInput(DummyInput(True, 1),"outValue","selection")
     two_input_multiplexer.addInput(input1,"outValue","input1")
+    two_input_multiplexer.addOutput(output1, "input")
 
     assert two_input_multiplexer.getBitwidth("input1") == 8
+    assert two_input_multiplexer.getOutputBitwidth() == 8
+
     two_input_multiplexer.removeInput(input1, "outValue", "input1")
+    two_input_multiplexer.removeOutput(output1, "input1")
+
     assert two_input_multiplexer.getBitwidth("input1") == 0
+    assert two_input_multiplexer.getOutputBitwidth() == 0
 
 def test_2i_multiplexer_only_resets_bidwidths_when_emptied():
     two_input_multiplexer = Multiplexer2Inp()

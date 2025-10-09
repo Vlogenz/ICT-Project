@@ -12,6 +12,20 @@ class Multiplexer2Inp(LogicComponent):
 
 
 
+    def getOutputBitwidth(self)-> int:
+        """returns the bitwidth of the outputs
+
+        Returns:
+            int: the bitwidth of the input
+        """
+
+        #   Note: Does not account for mismatched widths
+        outputs: typing.List = self.getOutputs()
+
+        if len(outputs) == 0: return 0
+
+        return outputs[0][0].getBitwidth(outputs[0][1])
+
     def addInput(self, input: "LogicComponent", key: str, internalKey: str):
         """
         Add an input connection to this component and lock input bidwidth if not already done.
@@ -43,14 +57,14 @@ class Multiplexer2Inp(LogicComponent):
             print(KeyError)
             return False
 
-        #   If the bitwidth has not been set but the input succeeded, set bandwidth to match the new input
+        #   If the bitwidth has not been set but the input succeeded, set bitwidths to match the new input
         if self.getBitwidth(internalKey) == 0 and success:
             inputBitwidth: int = input.getState()[key][1]
             self.inputBitwidths: typing.Dict = {"selection": 1, "input1": inputBitwidth, "input2": inputBitwidth}
 
         return success
     
-    def removeInput(self, input: "LogicComponent", key:str, internalKey: str):
+    def removeInput(self, input: "LogicComponent", key: str, internalKey: str):
         """
         Remove an input connection from this component, resets input bitwidth if all inputs are disconnected.
         Args:
@@ -74,21 +88,29 @@ class Multiplexer2Inp(LogicComponent):
                 empty = False
                 break
 
+        if len(self.outputs) != 0:
+            empty = False
+
         if empty == True:
             self.inputBitwidths: typing.Dict = {"selection": 1, "input1": 0, "input2": 0}
+            self.state: typing.Dict = {"outputValue": (0, 0)}
         
         return True
+    
+    def removeOutput(self, output: "LogicComponent", key: str):
+        return super().removeOutput(output, key)
     
     def eval(self) -> bool:
         """Evaluate the multiplexer, and returns if the output has changed.
 
         Returns:
-            bool: True if the output state has changed, False otherwise.
+            bool: True if the output state has changed, False otherwise, or if not enough inputs were included.
         """
         
         oldState: bool = self.state.copy()
         for input in self.inputs:
             if self.inputs[input] is None:
+                self.state =  {"outputValue": (0,0)}
                 return False
         
         inputId = int(self.inputs["selection"][0].getState()[self.inputs["selection"][1]][0]) + 1

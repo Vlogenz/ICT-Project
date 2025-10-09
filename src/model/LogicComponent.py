@@ -66,7 +66,7 @@ class LogicComponent(ABC):
         else:
             raise KeyError(f"Key {internalKey} not found in inputs or input does not match.")
 
-    def getOutputs(self) -> typing.List["LogicComponent"]:
+    def getOutputs(self) -> typing.List[tuple]:
         return self.outputs
     
     def addOutput(self, output: "LogicComponent", key: str):

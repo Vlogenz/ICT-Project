@@ -27,19 +27,17 @@ class GridItem(QtWidgets.QFrame):
         # Apply stylesheet
         self.setStyleSheet(f"border: 1px solid lightgray; background-color: {color.name() if color != None else 'lightgray'};")
 
-        # Define ports
-        # TODO: change ports to arrays/list
-        #self.output_port = QtCore.QRectF(self.width() - 16, self.height() / 2 - 8, 16, 16)
-        #self.input_port = QtCore.QRectF(0, self.height() / 2 - 8, 16, 16)
-
         # Define ports dynamically based on what the LogicComponent has
-        self.outputs = [
-            (port, QtCore.QRectF(self.width() - 16, i*(self.height() / len(self.logicComponent.getOutputs())) - 8, 16, 16))
-            for port, i in self.logicComponent.getOutputs()
-        ]
+        if not len(self.logicComponent.getOutputs()) == 0:
+            self.outputs = [
+                (port, QtCore.QRectF(self.width() - 16, (i+1)*(self.height() / (len(self.logicComponent.getOutputs())+1)) - 8, 16, 16))
+                for i, port in enumerate(self.logicComponent.getOutputs())
+            ]
+        else:
+            self.outputs = []
         self.inputs = [
-            (port, QtCore.QRectF(0, i*(self.height() / len(self.logicComponent.getOutputs())) - 8, 16, 16))
-            for port, i in self.logicComponent.getInputs()
+            (port, QtCore.QRectF(0, (i+1)*(self.height() / (len(self.logicComponent.getInputs())+1)) - 8, 16, 16))
+            for i, port in enumerate(self.logicComponent.getInputs())
         ]
         print(f"outputs: {self.outputs}, inputs: {self.inputs}")
 

@@ -155,7 +155,9 @@ class GridWidget(QtWidgets.QWidget):
                 print(f"module: {module}")
                 cls = getattr(module, class_name)
                 print(f"Class: {cls}")
-                new_item = GridItem(cls())
+                component = cls()
+                print(f"Component: {component}")
+                new_item = GridItem(logicComponent=component)
                 self.addItem(cell, new_item)
                 print(f"Created new {class_name}")
             except Exception as e:

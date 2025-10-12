@@ -61,15 +61,15 @@ class GridItem(QtWidgets.QFrame):
     def mousePressEvent(self, event: QtGui.QMouseEvent):
         """Handle dragging of the item or starting a connection from a port."""
         local_pos = event.position().toPoint()
-        port = portAt(self.output_port, self.input_port, local_pos)
+        port = self.portAt(local_pos)
 
         # If the user clicked on an output, start a connection and pass it to the grid
-        if port == "output":
-            self.parentWidget().startConnection(self, "output", event)
+        if port[0] == "output":
+            self.parentWidget().startConnection(self, port, event)
             return
 
         # If the user clicked on an input, remove the connection going to it (if any)
-        elif port == "input":
+        elif port[0] == "input":
             self.parentWidget().removeConnectionTo(self)
             return
 
@@ -109,11 +109,12 @@ class GridItem(QtWidgets.QFrame):
         if isinstance(self.parent(), GridWidget):
             self.parent().removeItem(self.uid)
 
-
-def portAt(output_port, input_port, pos: QtCore.QPoint):
-    """Check if pos is over a port."""
-    if output_port.contains(pos):
-        return "output"
-    if input_port.contains(pos):
-        return "input"
-    return None
+    def portAt(self, pos: QtCore.QPoint):
+        """Check if pos is over a port."""
+        for output_port, rect in self.outputs:
+            if rect.contains(pos):
+                return "output", output_port
+        for input_port, rect in self.inputs:
+            if rect.contains(pos):
+                return "input", input_port
+        return None, None

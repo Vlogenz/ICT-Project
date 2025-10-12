@@ -186,9 +186,9 @@ class GridWidget(QtWidgets.QWidget):
     # --- Starting a connection ---
     def startConnection(self, item: GridItem, port: str, event: QtGui.QMouseEvent):
         """Starts drawing a connection line between GridItems."""
-        if port == "output":
-            start = item.mapToParent(item.output_port.center().toPoint())
-            self.dragging_line = (item.uid, start, event.position().toPoint())
+        start = item.mapToParent(item.output_port.center().toPoint())
+        #TODO: rework dragging_line
+        self.dragging_line = (item, start, event.position().toPoint())
 
     def removeConnectionTo(self, item: GridItem):
         """Removes the connection going to the given item's input port (if any)."""
@@ -210,7 +210,9 @@ class GridWidget(QtWidgets.QWidget):
             for uid, (_, _, item) in self.items.items():
                 local = item.mapFromParent(event.pos())
                 # Check if the line ends on an input port of another item and not on itself
-                if portAt(item.output_port, item.input_port, local) == "input" and src_uid != uid:
+                if item.portAt(local) == "input" and src_uid != uid:
+                    # Add the connection
+                    self.logicController.addConnection(self.dragging_line[0].logicComponent, "out", item.logicComponent, "in")
                     self.connections.append((src_uid, uid))
                     break
             self.dragging_line = None

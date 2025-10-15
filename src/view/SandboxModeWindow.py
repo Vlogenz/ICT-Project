@@ -26,7 +26,21 @@ class SandboxModeWindow(QtWidgets.QMainWindow):
         # TODO: Show all available logic components here
         palette = QtWidgets.QVBoxLayout()
         palette.addWidget(PaletteItem("Label"))
-        palette.addWidget(PaletteItem("Red Node", QtGui.QColor("#ff9999")))
+        # palette.addWidget(PaletteItem("Red Node", QtGui.QColor("#ff9999")))
+        palette
+        gates = [
+        ("AND", r"C:\Users\hghad\anaconda3\envs\itk213\ICT project\ICT-Project\Gates\andgate.png"),
+        ("OR", r"C:\Users\hghad\anaconda3\envs\itk213\ICT project\ICT-Project\Gates\orgate.png"),
+        ("NOT", r"C:\Users\hghad\anaconda3\envs\itk213\ICT project\ICT-Project\Gates\notgate.png"),
+        ("NAND", r"C:\Users\hghad\anaconda3\envs\itk213\ICT project\ICT-Project\Gates\nandgate.png"),
+        ("NOR", r"C:\Users\hghad\anaconda3\envs\itk213\ICT project\ICT-Project\Gates\norgate.png"),
+        ("XOR", r"C:\Users\hghad\anaconda3\envs\itk213\ICT project\ICT-Project\Gates\xorgate.png"),
+        ("XNOR", r"C:\Users\hghad\anaconda3\envs\itk213\ICT project\ICT-Project\Gates\xnor.png"),
+        ]
+
+        for label, path in gates:
+            item = PaletteItem(label, image_path=path)
+            palette.addWidget(item)
         palette.addStretch()
 
         # Grid
@@ -35,6 +49,7 @@ class SandboxModeWindow(QtWidgets.QMainWindow):
         # Delete area
         deleteArea = DeleteArea(grid)
         palette.addWidget(deleteArea)
+        
 
         palette_frame = QtWidgets.QFrame()
         palette_frame.setLayout(palette)

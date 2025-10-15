@@ -11,7 +11,7 @@ from constants import CELL_SIZE, MIME_TYPE
 class GridItem(QtWidgets.QFrame):
     """An Element in the grid with inputs and outputs"""
 
-    def __init__(self, item_type: str, color: QtGui.QColor = None, uid=None, parent=None):
+    def __init__(self, item_type: str, image_path: str, color: QtGui.QColor = None, uid=None, parent=None):
         super().__init__(parent)
         self.uid = uid or str(uuid.uuid4())
         self.item_type = item_type
@@ -19,12 +19,23 @@ class GridItem(QtWidgets.QFrame):
         self.setFixedSize(CELL_SIZE - 8, CELL_SIZE - 8)
 
         layout = QtWidgets.QVBoxLayout(self)
-        lbl = QtWidgets.QLabel(item_type)
-        lbl.setAlignment(QtCore.Qt.AlignCenter)
-        layout.addWidget(lbl)
+        # lbl = QtWidgets.QLabel(item_type)
+        # lbl.setAlignment(QtCore.Qt.AlignCenter)
+        # layout.addWidget(lbl)
+        if image_path:  # Show gate image if provided
+            img_label = QtWidgets.QLabel()
+            pixmap = QtGui.QPixmap(image_path)
+            img_label.setPixmap(
+                pixmap.scaled(28, 28, QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation)
+            )
+            img_label.setAlignment(QtCore.Qt.AlignCenter)
+            layout.addWidget(img_label)
 
+        # lbl = QtWidgets.QLabel(img_label)
+        # lbl.setAlignment(QtCore.Qt.AlignCenter)
+        # layout.addWidget(lbl)
         # Apply stylesheet
-        self.setStyleSheet(f"border: 1px solid lightgray; background-color: {color.name() if color != None else 'lightgray'};")
+        self.setStyleSheet(f"border: 1px solid lightgray; background-color: {color.name() if color else 'lightgray'};")
 
         # Define ports
         # TODO: change ports to arrays/list
@@ -61,35 +72,33 @@ class GridItem(QtWidgets.QFrame):
             self.parentWidget().removeConnectionTo(self)
             return
 
-        # normal Move-Drag
+        # Normal Move-Drag
         if event.button() == QtCore.Qt.LeftButton:
             drag = QtGui.QDrag(self)
             mime = QtCore.QMimeData()
-            payload = {"action": "move", "id": self.uid}
+            # Convert QPoint to a tuple of (x, y) for JSON serialization
+            pos = event.position().toPoint()
+            payload = {"action": "move", "id": self.uid, "pos": (pos.x(), pos.y())}
             mime.setData(MIME_TYPE, json.dumps(payload).encode("utf-8"))
             drag.setMimeData(mime)
 
             pix = QtGui.QPixmap(self.size())
             self.render(pix)
             drag.setPixmap(pix)
+            drag.setHotSpot(event.position().toPoint())
 
-            hotspot = event.position().toPoint()  # QPoint relative to widget
-            drag.setHotSpot(hotspot)
-
-            self.hide()
+            self.hide()  # Hide the original to avoid duplication
             result = drag.exec(QtCore.Qt.MoveAction)
             if result == QtCore.Qt.IgnoreAction:
-                self.show()
+                self.show()  # Show back if canceled
 
     def openContextMenu(self):
         """Open a context menu with options like deleting the item."""
-
         menu = QMenu(self)  # Parent the menu to avoid leaks
         deleteAction = QAction("Delete component", self)
         deleteAction.triggered.connect(self.deleteItem)
         menu.addAction(deleteAction)
-
-        menu.exec_(QCursor.pos()) # Display the menu at the cursor's current position
+        menu.exec_(QCursor.pos())  # Display the menu at the cursor's current position
 
     def deleteItem(self):
         """Delete this item from the grid."""

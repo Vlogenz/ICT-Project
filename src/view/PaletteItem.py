@@ -14,7 +14,9 @@ class PaletteItem(QtWidgets.QFrame):
         layout = QtWidgets.QHBoxLayout(self)
         layout.setContentsMargins(4, 2, 4, 2)
 
-        if image_path:  # Show gate image if provided
+        self.image_path = image_path
+
+        if self.image_path:  # Show gate image if provided
             img_label = QtWidgets.QLabel()
             pixmap = QtGui.QPixmap(image_path)
             img_label.setPixmap(
@@ -40,7 +42,7 @@ class PaletteItem(QtWidgets.QFrame):
         if event.button() == QtCore.Qt.LeftButton:
             drag = QtGui.QDrag(self)
             mime = QtCore.QMimeData()
-            payload = {"action": "create", "type": self.label}
+            payload = {"action": "create", "type": self.label, "image_path": self.image_path}
             if self.color:
                 payload["color"] = self.color.name()
             mime.setData(MIME_TYPE, json.dumps(payload).encode("utf-8"))
@@ -51,27 +53,3 @@ class PaletteItem(QtWidgets.QFrame):
             drag.setPixmap(pix)
 
             drag.exec(QtCore.Qt.CopyAction)
-
-
-if __name__ == "__main__":
-    app = QtWidgets.QApplication(sys.argv)
-    window = QtWidgets.QWidget()
-    layout = QtWidgets.QVBoxLayout(window)
-
-    gates = [
-        ("AND", r"C:\Users\hghad\anaconda3\envs\itk213\ICT project\ICT-Project\Gates\andgate.png"),
-        ("OR", r"C:\Users\hghad\anaconda3\envs\itk213\ICT project\ICT-Project\Gates\orgate.png"),
-        ("NOT", r"C:\Users\hghad\anaconda3\envs\itk213\ICT project\ICT-Project\Gates\notgate.png"),
-        ("NAND", r"C:\Users\hghad\anaconda3\envs\itk213\ICT project\ICT-Project\Gates\nandgate.png"),
-        ("NOR", r"C:\Users\hghad\anaconda3\envs\itk213\ICT project\ICT-Project\Gates\norgate.png"),
-        ("XOR", r"C:\Users\hghad\anaconda3\envs\itk213\ICT project\ICT-Project\Gates\xorgate.png"),
-        ("XNOR", r"C:\Users\hghad\anaconda3\envs\itk213\ICT project\ICT-Project\Gates\xnor.png"),
-    ]
-
-    for label, path in gates:
-        item = PaletteItem(label, image_path=path)
-        layout.addWidget(item)
-
-    window.setWindowTitle("Logic Gate Palette")
-    window.show()
-    sys.exit(app.exec())

@@ -25,8 +25,10 @@ class GridItem(QtWidgets.QFrame):
         if image_path:  # Show gate image if provided
             img_label = QtWidgets.QLabel()
             pixmap = QtGui.QPixmap(image_path)
+            # Increase the size to 90% of CELL_SIZE for a larger image
+            img_size = int(CELL_SIZE * 0.9)  # 90% of CELL_SIZE
             img_label.setPixmap(
-                pixmap.scaled(28, 28, QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation)
+                pixmap.scaled(img_size, img_size, QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation)
             )
             img_label.setAlignment(QtCore.Qt.AlignCenter)
             layout.addWidget(img_label)
@@ -37,7 +39,7 @@ class GridItem(QtWidgets.QFrame):
         # Apply stylesheet
         self.setStyleSheet(f"border: 1px solid lightgray; background-color: {color.name() if color else 'lightgray'};")
 
-        # Define ports
+        # Define ports, adjusted for larger image
         # TODO: change ports to arrays/list
         self.output_port = QtCore.QRectF(self.width() - 16, self.height() / 2 - 8, 16, 16)
         self.input_port = QtCore.QRectF(0, self.height() / 2 - 8, 16, 16)

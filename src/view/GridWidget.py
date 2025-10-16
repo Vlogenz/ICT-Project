@@ -103,8 +103,10 @@ class GridWidget(QtWidgets.QWidget):
     def dragEnterEvent(self, event):
         """This gets called when something is dragged into the widget, e.g. from the palette."""
         if event.mimeData().hasFormat(MIME_TYPE):
+            print("Drag entered with format match")
             event.acceptProposedAction()
         else:
+            print("Drag entered ignored")
             event.ignore()
 
     def dragMoveEvent(self, event):
@@ -120,15 +122,14 @@ class GridWidget(QtWidgets.QWidget):
         event.acceptProposedAction()
 
     def dropEvent(self, event):
-        """This gets called when something is dropped onto the widget. If the cell is occupied, the drop is ignored."""
         self.useRandomOffset = True
+        payload = json.loads(event.mimeData().data(MIME_TYPE).data().decode("utf-8"))
         pos = event.position().toPoint()
         cell = self.cellAt(pos)
         if not cell:
             event.ignore()
             return
 
-        payload = json.loads(event.mimeData().data(MIME_TYPE).data().decode("utf-8"))
         action = payload.get("action")
 
         # In case the item is dragged newly from the palette
@@ -136,10 +137,11 @@ class GridWidget(QtWidgets.QWidget):
             if self.isOccupied(cell):
                 event.ignore()
                 return
-            typ = payload.get("type", "Item")
+            item_type = payload.get("type", "Item")
             color = payload.get("color")
             col = QtGui.QColor(color) if color else None
-            item = GridItem(typ, color=col, parent=self)
+            image_path = payload.get("image_path")
+            item = GridItem(item_type, image_path, color=col, parent=self)
             self.addItem(cell, item)
             event.acceptProposedAction()
 
@@ -149,17 +151,20 @@ class GridWidget(QtWidgets.QWidget):
             if uid not in self.items:
                 event.ignore()
                 return
-            _, _, item = self.items[uid]
-            if self.isOccupied(cell) and self.items[uid][:2] != cell:
+            old_x, old_y, item = self.items[uid]
+            if self.isOccupied(cell) and (old_x, old_y) != cell:
                 event.ignore()
-                item.show()
+                item.show()  # Restore if drop is invalid
                 return
+            # Remove from old position visually and logically
+            item.hide()  # Hide before moving to avoid duplicate
             self.items[uid] = (cell[0], cell[1], item)
             item.move(cell[0] * CELL_SIZE + 4, cell[1] * CELL_SIZE + 4)
-            item.show()
+            item.show()  # Show at new position
             self.dragging_item_uid = None
             self.dragging_item_pos = None
-            self.update()
+            self.update()  # Force redraw to clear old position
+            print(f"Moved item {uid} to {cell}")
             event.acceptProposedAction()
 
     # --- Starting a connection ---
@@ -195,7 +200,6 @@ class GridWidget(QtWidgets.QWidget):
             self.dragging_line = None
             self.update()
 
-
     def orthogonalRoute(self, path: QPainterPath, src: QPointF, dst: QPointF):
         """A helper method to draw an orthogonal route from src to dst.
         Args:
@@ -208,7 +212,7 @@ class GridWidget(QtWidgets.QWidget):
 
         # Use a random offset to avoid overlapping lines
         if self.useRandomOffset:
-            offset = random.randint(20,50)
+            offset = random.randint(20, 50)
         else:
             offset = 20
 

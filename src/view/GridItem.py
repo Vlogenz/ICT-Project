@@ -28,16 +28,13 @@ class GridItem(QtWidgets.QFrame):
         self.setStyleSheet(f"border: 1px solid lightgray; background-color: {color.name() if color != None else 'lightgray'};")
 
         # Define ports dynamically based on what the LogicComponent has
-        if not len(self.logicComponent.getOutputs()) == 0:
-            self.outputs = [
-                (port, QtCore.QRectF(self.width() - 16, (i+1)*(self.height() / (len(self.logicComponent.getOutputs())+1)) - 8, 16, 16))
-                for i, port in enumerate(self.logicComponent.getOutputs())
-            ]
-        else:
-            self.outputs = []
+        self.outputs = [
+            (str(key), QtCore.QRectF(self.width() - 16, (i+1)*(self.height() / (len(self.logicComponent.getState())+1)) - 8, 16, 16))
+            for i, key in enumerate(self.logicComponent.getState())
+        ]
         self.inputs = [
-            (port, QtCore.QRectF(0, (i+1)*(self.height() / (len(self.logicComponent.getInputs())+1)) - 8, 16, 16))
-            for i, port in enumerate(self.logicComponent.getInputs())
+            (str(key), QtCore.QRectF(0, (i+1)*(self.height() / (len(self.logicComponent.getInputs())+1)) - 8, 16, 16))
+            for i, key in enumerate(self.logicComponent.getInputs())
         ]
         print(f"outputs: {self.outputs}, inputs: {self.inputs}")
 
@@ -65,7 +62,7 @@ class GridItem(QtWidgets.QFrame):
 
         # If the user clicked on an output, start a connection and pass it to the grid
         if port[0] == "output":
-            self.parentWidget().startConnection(self, port, event)
+            self.parentWidget().startConnection(self, port[1], event)
             return
 
         # If the user clicked on an input, remove the connection going to it (if any)
@@ -111,10 +108,24 @@ class GridItem(QtWidgets.QFrame):
 
     def portAt(self, pos: QtCore.QPoint):
         """Check if pos is over a port."""
-        for output_port, rect in self.outputs:
+        for outputKey, rect in self.outputs:
             if rect.contains(pos):
-                return "output", output_port
-        for input_port, rect in self.inputs:
+                return "output", outputKey
+        for inputKey, rect in self.inputs:
             if rect.contains(pos):
-                return "input", input_port
+                return "input", inputKey
         return None, None
+
+    def getInputRect(self, key: str) -> QtCore.QRectF:
+        """Get the QRectF of the input port with the given key."""
+        for inputKey, rect in self.inputs:
+            if inputKey == key:
+                return rect
+        return None
+
+    def getOutputRect(self, key: str) -> QtCore.QRectF:
+        """Get the QRectF of the output port with the given key."""
+        for outputKey, rect in self.outputs:
+            if outputKey == key:
+                return rect
+        return None

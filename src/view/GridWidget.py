@@ -4,10 +4,12 @@ from PySide6.QtGui import QPainterPath
 
 from src.control.LogicComponentController import LogicComponentController
 from src.constants import GRID_COLS, GRID_ROWS, CELL_SIZE, MIME_TYPE
-from src.view.GridItem import GridItem, portAt
+from src.view.DraggingLine import DraggingLine
+from src.view.GridItem import GridItem
+from src.view.Connection import Connection
 import json
 import random
-
+from typing import List
 
 class GridWidget(QtWidgets.QWidget):
     """Main drop area with grid, items and connections."""
@@ -18,11 +20,13 @@ class GridWidget(QtWidgets.QWidget):
         self.cols = cols
         self.rows = rows
         self.setAcceptDrops(True)
-        self.items = {}  # uid -> (x, y, widget)
-        self.connections = []  # Liste (src_uid, dst_uid)
-        self.dragging_line = None  # (src_uid, start, current)
+        self.items: List[GridItem] = []
+        self.connections: List[Connection] = []
+        self.draggingLine: DraggingLine = None
+        #TODO: rework dragging item handling
         self.dragging_item_pos = None
         self.dragging_item_uid = None
+        self.draggingItem: GridItem = None
         self.setMinimumSize(cols * CELL_SIZE, rows * CELL_SIZE)
 
         # The random offset is used to avoid overlapping lines
@@ -44,31 +48,29 @@ class GridWidget(QtWidgets.QWidget):
             painter.drawLine(0, y, self.cols * CELL_SIZE, y)
 
         # painting connections
+        #TODO: rework connections
         pen_conn = QtGui.QPen(QtGui.QColor("black"), 2)
         painter.setPen(pen_conn)
-        for src, dst in self.connections:
-            if src in self.items and dst in self.items:
-                _, _, src_item = self.items[src]
-                _, _, dst_item = self.items[dst]
+        for connection in self.connections:
+            # Currently dragged item position
+            if self.draggingItem == connection.srcItem:
+                src_pos = self.draggingItem.pos()
+            else:
+                src_pos = connection.srcItem.getOutputRect(connection.srcKey).center().toPoint()
+            if self.draggingItem == connection.dstItem:
+                dst_pos = self.draggingItem.pos()
+            else:
+                dst_pos = connection.dstItem.getInputRect(connection.dstKey).center().toPoint()
 
-                # Currently dragged item position
-                if self.dragging_item_uid == src:
-                    src_pos = self.dragging_item_pos
-                else:
-                    src_pos = src_item.mapToParent(src_item.output_port.center().toPoint())
-                if self.dragging_item_uid == dst:
-                    dst_pos = self.dragging_item_pos
-                else:
-                    dst_pos = dst_item.mapToParent(dst_item.input_port.center().toPoint())
-
-                path = QtGui.QPainterPath(src_pos)
-                # Draw orthogonal route from src to dst
-                self.orthogonalRoute(path, src_pos, dst_pos)
-                painter.drawPath(path)
+            path = QtGui.QPainterPath(src_pos)
+            # Draw orthogonal route from src to dst
+            self.orthogonalRoute(path, src_pos, dst_pos)
+            painter.drawPath(path)
 
         # temporary connections
-        if self.dragging_line:
-            _, start, cur = self.dragging_line
+        if self.draggingLine:
+            start = self.draggingLine.startPos
+            cur = self.draggingLine.currentPos
             path = QtGui.QPainterPath(start)
             self.orthogonalRoute(path, start, cur)
             painter.drawPath(path)
@@ -184,11 +186,10 @@ class GridWidget(QtWidgets.QWidget):
             event.acceptProposedAction()
 
     # --- Starting a connection ---
-    def startConnection(self, item: GridItem, port: str, event: QtGui.QMouseEvent):
+    def startConnection(self, item: GridItem, outputKey: str, event: QtGui.QMouseEvent):
         """Starts drawing a connection line between GridItems."""
-        start = item.mapToParent(item.output_port.center().toPoint())
-        #TODO: rework dragging_line
-        self.dragging_line = (item, start, event.position().toPoint())
+        start = item.mapToParent(item.getOutputRect(outputKey).center().toPoint())
+        self.draggingLine = DraggingLine(item, start, event.position().toPoint())
 
     def removeConnectionTo(self, item: GridItem):
         """Removes the connection going to the given item's input port (if any)."""
@@ -198,24 +199,27 @@ class GridWidget(QtWidgets.QWidget):
     def mouseMoveEvent(self, event):
         """This is called whenever the mouse moves within the widget. If a line is being dragged, it updates the line."""
         self.useRandomOffset = False
-        if self.dragging_line:
-            self.dragging_line = (self.dragging_line[0], self.dragging_line[1], event.pos())
+        if self.draggingLine:
+            self.draggingLine.currentPos = event.pos()
             self.update()
 
     def mouseReleaseEvent(self, event):
         """This is called whenever the mouse button is released. If a line is being dragged, it checks if it ends on an input port."""
         self.useRandomOffset = True
-        if self.dragging_line:
-            src_uid, start, _ = self.dragging_line
+        if self.draggingLine:
+            srcItem =  self.draggingLine.srcItem
+            start = self.draggingLine.startPos
             for uid, (_, _, item) in self.items.items():
                 local = item.mapFromParent(event.pos())
                 # Check if the line ends on an input port of another item and not on itself
-                if item.portAt(local) == "input" and src_uid != uid:
+                if item.portAt(local)[0] == "input" and srcItem.uid != uid:
                     # Add the connection
-                    self.logicController.addConnection(self.dragging_line[0].logicComponent, "out", item.logicComponent, "in")
-                    self.connections.append((src_uid, uid))
+                    outputKey = srcItem.portAt(srcItem.mapFromParent(start))[1]
+                    inputKey = item.portAt(local)[1]
+                    self.logicController.addConnection(self.draggingLine.srcItem.logicComponent, outputKey, item.logicComponent, inputKey)
+                    self.connections.append((srcItem.uid, uid))
                     break
-            self.dragging_line = None
+            self.draggingLine = None
             self.update()
 
 

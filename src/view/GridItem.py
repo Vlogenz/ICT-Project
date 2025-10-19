@@ -106,7 +106,8 @@ class GridItem(QtWidgets.QFrame):
         """Delete this item from the grid."""
         from src.view.GridWidget import GridWidget
         if isinstance(self.parent(), GridWidget):
-            self.parent().removeItem(self.uid)
+            print(f"Deleting item")
+            self.parent().removeItem(self)
 
     def portAt(self, pos: QtCore.QPoint):
         """Check if pos is over a port."""

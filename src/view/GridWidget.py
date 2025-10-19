@@ -100,13 +100,21 @@ class GridWidget(QtWidgets.QWidget):
 
     def removeItem(self, item: GridItem):
         """Removes the give item from the backend and from the grid."""
-        index = self.items.index(item)
-        if index:
+        try:
+            index = self.items.index(item)
+            print("Item found")
             self.logicController.removeLogicComponent(item.logicComponent)
             deleteItem = self.items.pop(index)
             deleteItem.setParent(None)
             deleteItem.deleteLater()
             self.connections = [conn for conn in self.connections if conn.srcItem != deleteItem and conn.dstItem != deleteItem]
+        except ValueError:
+            print("Item not found")
+
+    def removeItemByUID(self, uid):
+        filteredItems = [item for item in self.items]
+        if len(filteredItems) == 1:
+            self.removeItem(filteredItems[0])
 
     # --- Drag & Drop ---
     def dragEnterEvent(self, event):

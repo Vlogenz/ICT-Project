@@ -12,10 +12,10 @@ class OutputGridItem(GridItem):
         self.layout.addWidget(self.stateLabel)
 
         self.bus = getBus()
-        self.bus.subscribe("view:component_updated", self.onComponentUpdated)
+        self.bus.subscribe("view:components_updated", self.onComponentUpdated)
 
-    def onComponentUpdated(self, comp):
-        if comp == self.logicComponent:
+    def onComponentUpdated(self, compList):
+        if self.logicComponent in compList:
             self.updateLabel()
 
     def updateLabel(self):

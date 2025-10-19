@@ -6,3 +6,4 @@ class Connection:
         self.srcKey = srcKey
         self.dstItem = dstItem
         self.dstKey = dstKey
+        self.isActive = False

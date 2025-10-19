@@ -5,7 +5,9 @@ from PySide6.QtGui import QPainterPath
 from src.control.LogicComponentController import LogicComponentController
 from src.constants import GRID_COLS, GRID_ROWS, CELL_SIZE, MIME_TYPE
 from src.model.Input import Input
+from src.model.LogicComponent import LogicComponent
 from src.model.Output import Output
+from src.infrastructure.eventBus import getBus
 from src.view.DraggingLine import DraggingLine
 from src.view.GridItem import GridItem
 from src.view.Connection import Connection
@@ -37,7 +39,12 @@ class GridWidget(QtWidgets.QWidget):
         # It should be set to False when dragging an item or a line so that is does not look weird
         self.useRandomOffset = True
 
+        #Initialize event bus
+        self.eventBus = getBus()
+        self.eventBus.subscribe("view:components_updated", self.updateConnectionActivity)
+
     def paintEvent(self, event):
+        print("paint event")
         """Redraws the entire grid, items and connections. It overrides QWidget.paintEvent, which gets called automatically when update() is called."""
         painter = QtGui.QPainter(self)
 
@@ -52,9 +59,9 @@ class GridWidget(QtWidgets.QWidget):
             painter.drawLine(0, y, self.cols * CELL_SIZE, y)
 
         # painting connections
-        #TODO: rework connections
-        pen_conn = QtGui.QPen(QtGui.QColor("black"), 2)
-        painter.setPen(pen_conn)
+        black_pen = QtGui.QPen(QtGui.QColor("black"), 2)
+        red_pen = QtGui.QPen(QtGui.QColor("red"), 2)
+        painter.setPen(black_pen)
         for connection in self.connections:
             # Currently dragged item position
             if self.draggingItem == connection.srcItem:
@@ -73,6 +80,11 @@ class GridWidget(QtWidgets.QWidget):
             path = QtGui.QPainterPath(src_pos)
             # Draw orthogonal route from src to dst
             self.orthogonalRoute(path, src_pos, dst_pos)
+            if connection.isActive:
+                painter.setPen(red_pen)
+                print("Drawing red")
+            else:
+                painter.setPen(black_pen)
             painter.drawPath(path)
 
         # temporary connections
@@ -275,3 +287,13 @@ class GridWidget(QtWidgets.QWidget):
         path.lineTo(dst.x() - offset, midy)
         path.lineTo(dst.x() - offset, dst.y())
         path.lineTo(dst)
+
+    def updateConnectionActivity(self, components: List[LogicComponent]):
+        print("Updating connection activity")
+        for conn in self.connections:
+            if conn.srcItem.logicComponent in components:
+                print(f"Setting connection to active for {conn.srcItem.logicComponent}")
+                conn.isActive = True
+            else:
+                conn.isActive = False
+        self.repaint()

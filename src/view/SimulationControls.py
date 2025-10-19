@@ -29,7 +29,7 @@ class SimulationControls(QtWidgets.QFrame):
         self.speedSlider.setPageStep(1)
         self.speedSlider.setTickPosition(QSlider.TicksBelow)
         self.speedSlider.setTickInterval(1)
-        self.speedSlider.valueChanged.connect(self.updateSpeedLabel)
+        self.speedSlider.valueChanged.connect(self.updateSpeed)
 
         self.configureControlFunctionality()
 
@@ -38,19 +38,23 @@ class SimulationControls(QtWidgets.QFrame):
         layout.addWidget(self.speedLabel)
         layout.addWidget(self.speedSlider)
 
-        self.updateSpeedLabel(self.speedSlider.value())
+        self.updateSpeed(self.speedSlider.value())
 
-    def updateSpeedLabel(self, value):
-        """Update the speed label based on the slider value.
+    def updateSpeed(self, value):
+        """Update the speed and its label based on the slider value.
         Args:
             value (int): The current value of the speed slider.
         """
         if value == 10:
+            self.logicController.tickLength = 0
             self.speedLabel.setText("Speed: Instant")
-        elif value == 1:
-            self.speedLabel.setText("Speed: 1 step/sec")
         else:
-            self.speedLabel.setText(f"Speed: {value} steps/sec")
+            self.logicController.tickLength = 1 / value
+            if value == 1:
+                self.speedLabel.setText("Speed: 1 step/sec")
+            else:
+                self.speedLabel.setText(f"Speed: {value} steps/sec")
+        print(f"New tick length: {self.logicController.tickLength}")
 
     def configureControlFunctionality(self):
         self.startStopButton.clicked.connect(self.startSimulation)

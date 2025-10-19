@@ -15,3 +15,6 @@ class InputGridItem(GridItem):
     def toggleState(self):
         self.logicComponent.toggleState()
         self.toggleStateButton.setText(f"{self.logicComponent.getState()['outValue'][0]}")
+
+
+

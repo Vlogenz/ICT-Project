@@ -60,5 +60,4 @@ class SimulationControls(QtWidgets.QFrame):
         self.startStopButton.clicked.connect(self.startSimulation)
 
     def startSimulation(self):
-        print("Starting simulation")
         self.logicController.eval()

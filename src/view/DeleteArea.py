@@ -20,7 +20,6 @@ class DeleteArea(QtWidgets.QFrame):
 
     def dragEnterEvent(self, event: QtGui.QDragEnterEvent):
         """Handle drag enter events."""
-        print("handling a drag enter event on delete area")
         if event.mimeData().hasFormat(MIME_TYPE):
             data = json.loads(event.mimeData().data(MIME_TYPE).data().decode("utf-8"))
             if data.get("action_type") == "move":
@@ -32,7 +31,6 @@ class DeleteArea(QtWidgets.QFrame):
 
     def dropEvent(self, event: QtGui.QDropEvent):
         """Handle drop events to delete items."""
-        print("Drop event on delete area")
         if event.mimeData().hasFormat(MIME_TYPE):
             data = json.loads(event.mimeData().data(MIME_TYPE).data().decode("utf-8"))
             if data.get("action_type") == "move":

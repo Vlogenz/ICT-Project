@@ -29,9 +29,9 @@ class GridWidget(QtWidgets.QWidget):
         self.rows = rows
         self.setAcceptDrops(True)
         self.items: List[GridItem] = []
+        # TODO: The connection lines are still quite messy. We have to rework them later.
         self.connections: List[Connection] = []
         self.draggingLine: DraggingLine = None
-        #TODO: rework dragging item handling
         self.draggingItem: GridItem = None
         self.setMinimumSize(cols * CELL_SIZE, rows * CELL_SIZE)
 
@@ -44,7 +44,6 @@ class GridWidget(QtWidgets.QWidget):
         self.eventBus.subscribe("view:components_updated", self.updateConnectionActivity)
 
     def paintEvent(self, event):
-        print("paint event")
         """Redraws the entire grid, items and connections. It overrides QWidget.paintEvent, which gets called automatically when update() is called."""
         painter = QtGui.QPainter(self)
 
@@ -65,10 +64,8 @@ class GridWidget(QtWidgets.QWidget):
         for connection in self.connections:
             # Currently dragged item position
             if self.draggingItem == connection.srcItem:
-                print("Update line to start from dragging item")
                 src_pos = self.draggingItem.pos()
             else:
-                print(f"src key: {connection.srcKey}")
                 item = connection.srcItem
                 src_pos = item.mapToParent(item.getOutputRect(connection.srcKey).center().toPoint())
             if self.draggingItem == connection.dstItem:
@@ -82,7 +79,6 @@ class GridWidget(QtWidgets.QWidget):
             self.orthogonalRoute(path, src_pos, dst_pos)
             if connection.isActive:
                 painter.setPen(red_pen)
-                print("Drawing red")
             else:
                 painter.setPen(black_pen)
             painter.drawPath(path)
@@ -120,14 +116,13 @@ class GridWidget(QtWidgets.QWidget):
         """Removes the give item from the backend and from the grid."""
         try:
             index = self.items.index(item)
-            print("Item found")
             self.logicController.removeLogicComponent(item.logicComponent)
             deleteItem = self.items.pop(index)
             deleteItem.setParent(None)
             deleteItem.deleteLater()
             self.connections = [conn for conn in self.connections if conn.srcItem != deleteItem and conn.dstItem != deleteItem]
         except ValueError:
-            print("Item not found")
+            return
 
     def removeItemByUID(self, uid):
         filteredItems = [item for item in self.items]
@@ -145,7 +140,6 @@ class GridWidget(QtWidgets.QWidget):
     def dragMoveEvent(self, event):
         """This gets called when something is dragged over the widget."""
         self.useRandomOffset = False
-        print(f"move event")
         payload = json.loads(event.mimeData().data(MIME_TYPE).data().decode("utf-8"))
         if payload.get("action_type") == "move":
             if self.draggingItem is None:
@@ -185,13 +179,9 @@ class GridWidget(QtWidgets.QWidget):
             # Dynamically import and create a GridItem of this class
             try:
                 package = __import__(package_name, fromlist=[class_name])
-                print(f"package: {package}")
                 module = getattr(package, class_name)
-                print(f"module: {module}")
                 cls = getattr(module, class_name)
-                print(f"Class: {cls}")
                 component = self.logicController.addLogicComponent(cls)
-                print(f"Component: {component}")
                 if isinstance(component, Input):
                     new_item = InputGridItem(logicComponent=component)
                 elif isinstance(component, Output):
@@ -199,7 +189,6 @@ class GridWidget(QtWidgets.QWidget):
                 else:
                     new_item = GridItem(logicComponent=component)
                 self.addItem(cell, new_item)
-                print(f"Created new {class_name}")
             except Exception as e:
                 print("Error creating GridItem:", e)
         elif action_type == "move":
@@ -289,10 +278,8 @@ class GridWidget(QtWidgets.QWidget):
         path.lineTo(dst)
 
     def updateConnectionActivity(self, components: List[LogicComponent]):
-        print("Updating connection activity")
         for conn in self.connections:
             if conn.srcItem.logicComponent in components:
-                print(f"Setting connection to active for {conn.srcItem.logicComponent}")
                 conn.isActive = True
             else:
                 conn.isActive = False

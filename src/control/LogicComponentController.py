@@ -30,7 +30,6 @@ class LogicComponentController:
         componentsToUpdate = tickList["components"]
         if len(componentsToUpdate) == 0:
             componentsToUpdate = self.components
-        print(f"Updating the following components: {componentsToUpdate}")
         self.bus.emit("view:components_updated", componentsToUpdate)
 
     def khanFrontierEval(self):
@@ -113,7 +112,9 @@ class LogicComponentController:
         Returns:
           Bool: True if evaluation was successful, false if not.
         """
-        #TODO: manual mode prevented the view from updating. Ask Luis if we need this line.
+        # We currently do not know why the manual mode was here.
+        # Using it prevented the view:components_updated event from emitting.
+        # I just left it commented out so we can use it just in case.
         #getBus().setManual()
         if self.khanFrontierEval():
             getBus().setAuto()

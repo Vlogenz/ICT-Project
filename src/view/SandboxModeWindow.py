@@ -31,7 +31,6 @@ class SandboxModeWindow(QtWidgets.QMainWindow):
         self.setPalette(pal)
 
         # Palette
-        # TODO: Show all available logic components here
         palette = QtWidgets.QGridLayout()
         classes = list(self.iter_classes_in_package(model))
         print(f"classes: {classes}")

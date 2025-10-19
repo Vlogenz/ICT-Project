@@ -38,13 +38,10 @@ class GridItem(QtWidgets.QFrame):
             str(key): QtCore.QRectF(0, (i+1)*(self.height() / (len(self.logicComponent.getInputs())+1)) - 8, 16, 16)
             for i, key in enumerate(self.logicComponent.getInputs())
         }
-        print(f"outputs: {self.outputs}, inputs: {self.inputs}")
 
         # Set up right click menu
         self.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.customContextMenuRequested.connect(self.openContextMenu)
-
-        print("Finished GridItem initialization")
 
     def paintEvent(self, event):
         """Draw the item and the ports. Overrides QWidget.paintEvent, which gets called automatically when update() is called."""
@@ -108,7 +105,6 @@ class GridItem(QtWidgets.QFrame):
         """Delete this item from the grid."""
         from src.view.GridWidget import GridWidget
         if isinstance(self.parent(), GridWidget):
-            print(f"Deleting item")
             self.parent().removeItem(self)
 
     def portAt(self, pos: QtCore.QPoint):

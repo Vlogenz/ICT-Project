@@ -5,7 +5,7 @@ from src.model.Input import Input
 from src.constants import MAX_EVAL_CYCLES
 from src.infrastructure.eventBus import getBus
 from src.model.Register import Register
-#from time import sleep
+from time import sleep
 
 class LogicComponentController:    
     
@@ -13,7 +13,7 @@ class LogicComponentController:
         self.components: typing.List["LogicComponent"] = []
         self.inputs: typing.List["Input"] = []
         self.updateInTick: typing.Dict = {}
-        self.playbackSpeed = 0.1
+        self.playbackSpeed = 0
         self.bus = getBus()
         # Registrierung: ab jetzt wird der Handler automatisch aufgerufen
         self.bus.subscribe("model:input_changed", self.onModelInputUpdate)
@@ -71,7 +71,7 @@ class LogicComponentController:
                 for comp in self.updateInTick[tick]:
                     comp.eval()
                 self.updateComponents(components =self.updateInTick[tick])
-                # TODO sleep(self.playbackSpeed)
+                sleep(self.playbackSpeed)
             return True
         
     
@@ -98,7 +98,7 @@ class LogicComponentController:
             
             
             self.updateComponents(components=currentTick)
-            #TODO sleep(self.playbackSpeed)
+            sleep(self.playbackSpeed)
             currentTick = nextTick
             tick +=1
             # if too many ticks, there is probably a circular dependency which don't has a stable state
@@ -186,8 +186,16 @@ class LogicComponentController:
         """
         self.eventDrivenEval(startingComponents=[model])
     
-    def setEvalSpeed(self, speed: float):
-        self.playbackspeed = speed
+    def setEvalSpeed(self, speed: int):
+        """sets the evaluation speed in steps per second
+
+        Args:
+            speed (int): the evaluation speed in steps per second
+        """
+        if speed == 0:
+            self.playbackSpeed = 0
+        else:
+            self.playbackSpeed = 1000/speed
         
     def addConnection(self, origin: "LogicComponent", originKey: str, target: "LogicComponent", targetKey: str) -> bool:
         """

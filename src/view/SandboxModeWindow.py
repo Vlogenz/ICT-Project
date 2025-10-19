@@ -21,6 +21,8 @@ class SandboxModeWindow(QtWidgets.QMainWindow):
         super().__init__()
         self.setWindowTitle("Sandbox Mode")
 
+        self.logicController = logicController
+
         central = QtWidgets.QWidget()
         layout = QtWidgets.QGridLayout(central)
         self.setCentralWidget(central)
@@ -51,7 +53,7 @@ class SandboxModeWindow(QtWidgets.QMainWindow):
         palette_frame.setFixedWidth(200)
 
         # Simulation controls
-        simControls = SimulationControls()
+        simControls = SimulationControls(self.logicController)
 
         # Add the items to the main grid layout
         layout.addWidget(palette_frame, 0, 0, 2, 1)

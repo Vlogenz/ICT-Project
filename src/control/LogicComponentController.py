@@ -29,10 +29,10 @@ class LogicComponentController:
         componentsToUpdate = tickList["components"]
         if len(componentsToUpdate) == 0:
             componentsToUpdate = self.components
-        for comp in self.components:
-            # TODO UI update
-            pass
-    
+        print(f"Updating the following components: {componentsToUpdate}")
+        for comp in componentsToUpdate:
+            self.bus.emit("view:component_updated", comp)
+
     def khanFrontierEval(self):
         """evaluates all the components in topological order
            if there are no circular dependencies
@@ -234,4 +234,3 @@ class LogicComponentController:
                 componentsToUpdate.extend([out[0] for out in comp.getOutputs()])
         componentsToUpdate = list(set(componentsToUpdate))
         self.eventDrivenEval(startingComponents=componentsToUpdate)
-                

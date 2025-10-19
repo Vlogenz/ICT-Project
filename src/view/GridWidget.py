@@ -4,12 +4,18 @@ from PySide6.QtGui import QPainterPath
 
 from src.control.LogicComponentController import LogicComponentController
 from src.constants import GRID_COLS, GRID_ROWS, CELL_SIZE, MIME_TYPE
+from src.model.Input import Input
+from src.model.Output import Output
 from src.view.DraggingLine import DraggingLine
 from src.view.GridItem import GridItem
 from src.view.Connection import Connection
 import json
 import random
 from typing import List, Tuple
+
+from src.view.InputGridItem import InputGridItem
+from src.view.OutputGridItem import OutputGridItem
+
 
 class GridWidget(QtWidgets.QWidget):
     """Main drop area with grid, items and connections."""
@@ -174,7 +180,12 @@ class GridWidget(QtWidgets.QWidget):
                 print(f"Class: {cls}")
                 component = self.logicController.addLogicComponent(cls)
                 print(f"Component: {component}")
-                new_item = GridItem(logicComponent=component)
+                if isinstance(component, Input):
+                    new_item = InputGridItem(logicComponent=component)
+                elif isinstance(component, Output):
+                    new_item = OutputGridItem(logicComponent=component)
+                else:
+                    new_item = GridItem(logicComponent=component)
                 self.addItem(cell, new_item)
                 print(f"Created new {class_name}")
             except Exception as e:

@@ -27,3 +27,5 @@
 * make sure all connections are also removed in the frontend
 
 ## Evaluate the whole thing
+* Ability to change input values
+* Ability to display output values

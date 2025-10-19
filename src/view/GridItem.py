@@ -3,10 +3,12 @@ from PySide6 import QtWidgets, QtGui, QtCore
 import json
 
 from PySide6.QtGui import QAction, QCursor
-from PySide6.QtWidgets import QMenu
+from PySide6.QtWidgets import QMenu, QPushButton
 
+from src.model.Input import Input
 from src.model.LogicComponent import LogicComponent
 from src.constants import CELL_SIZE, MIME_TYPE
+from src.model.Output import Output
 
 
 class GridItem(QtWidgets.QFrame):
@@ -19,10 +21,10 @@ class GridItem(QtWidgets.QFrame):
 
         self.setFixedSize(CELL_SIZE - 8, CELL_SIZE - 8)
 
-        layout = QtWidgets.QVBoxLayout(self)
+        self.layout = QtWidgets.QVBoxLayout(self)
         lbl = QtWidgets.QLabel(self.logicComponent.__class__.__name__)
         lbl.setAlignment(QtCore.Qt.AlignCenter)
-        layout.addWidget(lbl)
+        self.layout.addWidget(lbl)
 
         # Apply stylesheet
         self.setStyleSheet(f"border: 1px solid lightgray; background-color: {color.name() if color != None else 'lightgray'};")

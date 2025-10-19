@@ -14,9 +14,9 @@ class OutputGridItem(GridItem):
         self.bus = getBus()
         self.bus.subscribe("view:component_updated", self.onComponentUpdated)
 
-    # TODO: Fix event listening
     def onComponentUpdated(self, comp):
-        self.updateLabel()
+        if comp == self.logicComponent:
+            self.updateLabel()
 
     def updateLabel(self):
         print(f"Updating output")

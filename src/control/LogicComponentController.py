@@ -113,7 +113,8 @@ class LogicComponentController:
         Returns:
           Bool: True if evaluation was successful, false if not.
         """
-        getBus().setManual()
+        #TODO: manual mode prevented the view from updating. Ask Luis if we need this line.
+        #getBus().setManual()
         if self.khanFrontierEval():
             getBus().setAuto()
             return True

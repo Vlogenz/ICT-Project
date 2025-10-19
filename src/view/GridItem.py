@@ -108,7 +108,12 @@ class GridItem(QtWidgets.QFrame):
             self.parent().removeItem(self)
 
     def portAt(self, pos: QtCore.QPoint):
-        """Check if pos is over a port."""
+        """Check if pos is over a port and return the port type along with the key.
+
+        Returns:
+            str: The type of the port (input or output)
+            str: The key of the port, as used in the backend
+        """
         for outputKey, rect in self.outputs.items():
             if rect.contains(pos):
                 return "output", outputKey

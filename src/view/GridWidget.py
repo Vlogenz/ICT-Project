@@ -13,7 +13,7 @@ from src.view.GridItem import GridItem
 from src.view.Connection import Connection
 import json
 import random
-from typing import List, Tuple
+from typing import List
 
 from src.view.InputGridItem import InputGridItem
 from src.view.OutputGridItem import OutputGridItem
@@ -278,6 +278,13 @@ class GridWidget(QtWidgets.QWidget):
         path.lineTo(dst)
 
     def updateConnectionActivity(self, components: List[LogicComponent]):
+        """Updates the isActive attribute of all the connections on the grid.
+        A connection becomes active if and only if the logicComponent of its srcItem is among the given list.
+
+        Args:
+            components (List[LogicComponent]): The list of logic components that were updated and whose outgoing connections should become active.
+        """
+
         for conn in self.connections:
             if conn.srcItem.logicComponent in components:
                 conn.isActive = True

@@ -28,19 +28,21 @@ class GridItem(QtWidgets.QFrame):
         self.setStyleSheet(f"border: 1px solid lightgray; background-color: {color.name() if color != None else 'lightgray'};")
 
         # Define ports dynamically based on what the LogicComponent has
-        self.outputs = [
-            (str(key), QtCore.QRectF(self.width() - 16, (i+1)*(self.height() / (len(self.logicComponent.getState())+1)) - 8, 16, 16))
-            for i, key in enumerate(self.logicComponent.getState())
-        ]
-        self.inputs = [
-            (str(key), QtCore.QRectF(0, (i+1)*(self.height() / (len(self.logicComponent.getInputs())+1)) - 8, 16, 16))
+        self.outputs = {
+            str(key): QtCore.QRectF(self.width() - 16, (i+1)*(self.height() / (len(self.logicComponent.getState())+1)) - 8, 16, 16)
+            for i, key in enumerate(self.logicComponent.getState().keys())
+        }
+        self.inputs = {
+            str(key): QtCore.QRectF(0, (i+1)*(self.height() / (len(self.logicComponent.getInputs())+1)) - 8, 16, 16)
             for i, key in enumerate(self.logicComponent.getInputs())
-        ]
+        }
         print(f"outputs: {self.outputs}, inputs: {self.inputs}")
 
         # Set up right click menu
         self.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.customContextMenuRequested.connect(self.openContextMenu)
+
+        print("Finished GridItem initialization")
 
     def paintEvent(self, event):
         """Draw the item and the ports. Overrides QWidget.paintEvent, which gets called automatically when update() is called."""
@@ -48,12 +50,12 @@ class GridItem(QtWidgets.QFrame):
         painter = QtGui.QPainter(self)
         # Output-Port on the right (blue)
         painter.setBrush(QtGui.QColor("blue"))
-        for output_port in self.inputs:
-            painter.drawEllipse(output_port[1])
+        for output_port in self.outputs.values():
+            painter.drawEllipse(output_port)
         # Input-Port on the left (green)
         painter.setBrush(QtGui.QColor("green"))
-        for input_port in self.outputs:
-            painter.drawEllipse(input_port[1])
+        for input_port in self.inputs.values():
+            painter.drawEllipse(input_port)
 
     def mousePressEvent(self, event: QtGui.QMouseEvent):
         """Handle dragging of the item or starting a connection from a port."""
@@ -67,7 +69,7 @@ class GridItem(QtWidgets.QFrame):
 
         # If the user clicked on an input, remove the connection going to it (if any)
         elif port[0] == "input":
-            self.parentWidget().removeConnectionTo(self)
+            self.parentWidget().removeConnectionTo(self, port[1])
             return
 
         # normal Move-Drag
@@ -108,24 +110,18 @@ class GridItem(QtWidgets.QFrame):
 
     def portAt(self, pos: QtCore.QPoint):
         """Check if pos is over a port."""
-        for outputKey, rect in self.outputs:
+        for outputKey, rect in self.outputs.items():
             if rect.contains(pos):
                 return "output", outputKey
-        for inputKey, rect in self.inputs:
+        for inputKey, rect in self.inputs.items():
             if rect.contains(pos):
                 return "input", inputKey
         return None, None
 
     def getInputRect(self, key: str) -> QtCore.QRectF:
         """Get the QRectF of the input port with the given key."""
-        for inputKey, rect in self.inputs:
-            if inputKey == key:
-                return rect
-        return None
+        return self.inputs.get(key, None)
 
     def getOutputRect(self, key: str) -> QtCore.QRectF:
         """Get the QRectF of the output port with the given key."""
-        for outputKey, rect in self.outputs:
-            if outputKey == key:
-                return rect
-        return None
+        return self.outputs.get(key)

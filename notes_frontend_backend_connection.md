@@ -5,16 +5,19 @@
 ## Events:
 
 ### Add a component (GridWidget -> dropEvent)
+(DONE)
 * call addComponent on the logic controller
 * Create a GridWidget with the right amount of inputs and outputs, including their "labels" (can be derived from the dict keys)
 * The order of inputs and outputs should be right
 
 ### Create a connection (GridWidget -> mouseReleaseEvent -> if draggingLine)
+(DONE)
 * call addConnection on the logic controller
   * four parameters: origin, originKey, target, targetKey
 * Only create the connection if addConnection returns True
 
 ### Remove connection (GridWidget -> removeConnectionTo)
+(DONE)
 * call removeConnection on the logic controller
   * parameters: same as createConnection
 
@@ -22,3 +25,5 @@
 * call removeComponent (Luis makes sure the connections are removed in the backend)
   * pass reference to component
 * make sure all connections are also removed in the frontend
+
+## Evaluate the whole thing

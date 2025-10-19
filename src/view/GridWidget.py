@@ -9,7 +9,7 @@ from src.view.GridItem import GridItem
 from src.view.Connection import Connection
 import json
 import random
-from typing import List
+from typing import List, Tuple
 
 class GridWidget(QtWidgets.QWidget):
     """Main drop area with grid, items and connections."""
@@ -24,8 +24,6 @@ class GridWidget(QtWidgets.QWidget):
         self.connections: List[Connection] = []
         self.draggingLine: DraggingLine = None
         #TODO: rework dragging item handling
-        self.dragging_item_pos = None
-        self.dragging_item_uid = None
         self.draggingItem: GridItem = None
         self.setMinimumSize(cols * CELL_SIZE, rows * CELL_SIZE)
 
@@ -54,13 +52,17 @@ class GridWidget(QtWidgets.QWidget):
         for connection in self.connections:
             # Currently dragged item position
             if self.draggingItem == connection.srcItem:
+                print("Update line to start from dragging item")
                 src_pos = self.draggingItem.pos()
             else:
-                src_pos = connection.srcItem.getOutputRect(connection.srcKey).center().toPoint()
+                print(f"src key: {connection.srcKey}")
+                item = connection.srcItem
+                src_pos = item.mapToParent(item.getOutputRect(connection.srcKey).center().toPoint())
             if self.draggingItem == connection.dstItem:
                 dst_pos = self.draggingItem.pos()
             else:
-                dst_pos = connection.dstItem.getInputRect(connection.dstKey).center().toPoint()
+                item = connection.dstItem
+                dst_pos = item.mapToParent(item.getInputRect(connection.dstKey).center().toPoint())
 
             path = QtGui.QPainterPath(src_pos)
             # Draw orthogonal route from src to dst
@@ -85,23 +87,26 @@ class GridWidget(QtWidgets.QWidget):
 
     def isOccupied(self, cell):
         """Returns true if and only if a GridItem occupies the given cell."""
-        return any((gx, gy) == cell for gx, gy, _ in self.items.values())
+        return any(self.cellAt(item.pos()) == cell for item in self.items)
 
-    def addItem(self, cell, widget: GridItem):
-        """Adds the given widget at the given cell (x, y). The cell must be free."""
+    def addItem(self, cell, item: GridItem):
+        """
+        Also adds the item at the given cell (x, y). The cell must be free."""
         gx, gy = cell
-        self.items[widget.uid] = (gx, gy, widget)
-        widget.setParent(self)
-        widget.move(gx * CELL_SIZE + 4, gy * CELL_SIZE + 4)
-        widget.show()
+        self.items.append(item)
+        item.setParent(self)
+        item.move(gx * CELL_SIZE + 4, gy * CELL_SIZE + 4)
+        item.show()
 
-    def removeItem(self, uid):
-        """Removes the item with the given uid from the grid."""
-        if uid in self.items:
-            _, _, w = self.items.pop(uid)
-            w.setParent(None)
-            w.deleteLater()
-            self.connections = [(s, d) for s, d in self.connections if s != uid and d != uid]
+    def removeItem(self, item: GridItem):
+        """Removes the give item from the backend and from the grid."""
+        index = self.items.index(item)
+        if index:
+            self.logicController.removeLogicComponent(item.logicComponent)
+            deleteItem = self.items.pop(index)
+            deleteItem.setParent(None)
+            deleteItem.deleteLater()
+            self.connections = [conn for conn in self.connections if conn.srcItem != deleteItem and conn.dstItem != deleteItem]
 
     # --- Drag & Drop ---
     def dragEnterEvent(self, event):
@@ -114,13 +119,15 @@ class GridWidget(QtWidgets.QWidget):
     def dragMoveEvent(self, event):
         """This gets called when something is dragged over the widget."""
         self.useRandomOffset = False
+        print(f"move event")
         payload = json.loads(event.mimeData().data(MIME_TYPE).data().decode("utf-8"))
         if payload.get("action_type") == "move":
-            uid = payload.get("id")
-            if uid in self.items:
-                self.dragging_item_pos = event.position().toPoint()
-                self.dragging_item_uid = uid
-                self.update()
+            if self.draggingItem is None:
+                uid = payload.get("id")
+                filteredItems = [item for item in self.items if item.uid == uid]
+                if len(filteredItems)!=0:
+                    self.draggingItem = filteredItems[0]
+            self.update()
         event.acceptProposedAction()
 
     def dropEvent(self, event):
@@ -157,7 +164,7 @@ class GridWidget(QtWidgets.QWidget):
                 print(f"module: {module}")
                 cls = getattr(module, class_name)
                 print(f"Class: {cls}")
-                component = cls()
+                component = self.logicController.addLogicComponent(cls)
                 print(f"Component: {component}")
                 new_item = GridItem(logicComponent=component)
                 self.addItem(cell, new_item)
@@ -166,19 +173,17 @@ class GridWidget(QtWidgets.QWidget):
                 print("Error creating GridItem:", e)
         elif action_type == "move":
             uid = payload.get("id")
-            if uid not in self.items:
+            if not any(item.uid == uid for item in self.items):
                 event.ignore()
                 return
-            _, _, item = self.items[uid]
-            if self.isOccupied(cell) and self.items[uid][:2] != cell:
+            item = [item for item in self.items if item.uid == uid][0]
+            if self.isOccupied(cell) and self.cellAt(item.pos()) != cell:
                 event.ignore()
                 item.show()
                 return
-            self.items[uid] = (cell[0], cell[1], item)
             item.move(cell[0] * CELL_SIZE + 4, cell[1] * CELL_SIZE + 4)
             item.show()
-            self.dragging_item_uid = None
-            self.dragging_item_pos = None
+            self.draggingItem = None
             self.update()
             event.acceptProposedAction()
         else:
@@ -189,11 +194,14 @@ class GridWidget(QtWidgets.QWidget):
     def startConnection(self, item: GridItem, outputKey: str, event: QtGui.QMouseEvent):
         """Starts drawing a connection line between GridItems."""
         start = item.mapToParent(item.getOutputRect(outputKey).center().toPoint())
-        self.draggingLine = DraggingLine(item, start, event.position().toPoint())
+        self.draggingLine = DraggingLine(item, outputKey, start, event.position().toPoint())
 
-    def removeConnectionTo(self, item: GridItem):
+    def removeConnectionTo(self, dstItem: GridItem, dstKey: str):
         """Removes the connection going to the given item's input port (if any)."""
-        self.connections = [(s, d) for s, d in self.connections if d != item.uid]
+        connectionsToDelete = [conn for conn in self.connections if conn.dstItem == dstItem and conn.dstKey == dstKey]
+        for conn in connectionsToDelete:
+            self.logicController.removeConnection(conn.srcItem.logicComponent, conn.srcKey, conn.dstItem.logicComponent, conn.dstKey)
+        self.connections = list(set(self.connections) - set(connectionsToDelete))
         self.update()
 
     def mouseMoveEvent(self, event):
@@ -208,16 +216,18 @@ class GridWidget(QtWidgets.QWidget):
         self.useRandomOffset = True
         if self.draggingLine:
             srcItem =  self.draggingLine.srcItem
+            srcKey = self.draggingLine.srcKey
             start = self.draggingLine.startPos
-            for uid, (_, _, item) in self.items.items():
+            for item in self.items:
                 local = item.mapFromParent(event.pos())
+                port = item.portAt(local)
                 # Check if the line ends on an input port of another item and not on itself
-                if item.portAt(local)[0] == "input" and srcItem.uid != uid:
+                if port[0] == "input" and srcItem.uid != item.uid:
                     # Add the connection
                     outputKey = srcItem.portAt(srcItem.mapFromParent(start))[1]
                     inputKey = item.portAt(local)[1]
                     self.logicController.addConnection(self.draggingLine.srcItem.logicComponent, outputKey, item.logicComponent, inputKey)
-                    self.connections.append((srcItem.uid, uid))
+                    self.connections.append(Connection(srcItem, srcKey, item, port[1]))
                     break
             self.draggingLine = None
             self.update()

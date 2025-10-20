@@ -2,10 +2,10 @@ import typing
 
 from src.model.LogicComponent import LogicComponent
 from src.model.Input import Input
-from constants import MAX_EVAL_CYCLES
+from src.constants import MAX_EVAL_CYCLES
 from src.infrastructure.eventBus import getBus
 from src.model.Register import Register
-#from time import sleep
+from time import sleep
 
 class LogicComponentController:    
     
@@ -13,7 +13,8 @@ class LogicComponentController:
         self.components: typing.List["LogicComponent"] = []
         self.inputs: typing.List["Input"] = []
         self.updateInTick: typing.Dict = {}
-        self.playbackSpeed = 0.1
+        # tickLength defaults to 0, i.e. the evaluation happens instantly
+        self.tickLength = 0
         self.bus = getBus()
         # Registrierung: ab jetzt wird der Handler automatisch aufgerufen
         self.bus.subscribe("model:input_changed", self.onModelInputUpdate)
@@ -29,10 +30,8 @@ class LogicComponentController:
         componentsToUpdate = tickList["components"]
         if len(componentsToUpdate) == 0:
             componentsToUpdate = self.components
-        for comp in self.components:
-            # TODO UI update
-            pass
-    
+        self.bus.emit("view:components_updated", componentsToUpdate)
+
     def khanFrontierEval(self):
         """evaluates all the components in topological order
            if there are no circular dependencies
@@ -41,33 +40,37 @@ class LogicComponentController:
             bool: if evaluation was successful or not
         """
         tick = 0
-        indeg = {}
+        indeg = {} # indegree of each component
         for comp in self.components:
             if type(comp) != Input:
+                # create a list of all components which are inputs to this component
                 compo = [tuple[0] for tuple in comp.inputs.values() if tuple is not None and type(tuple[0])!= Register]
-                indeg[comp] = len(set(compo))
+                indeg[comp] = len(set(compo)) # count only unique components
                 
-        currentTick = self.inputs.copy()
-        while len(currentTick) > 0:
-            self.updateInTick[tick] = currentTick.copy()
-            nextTick = []
+        currentTick = self.inputs.copy() # start with inputs
+        while len(currentTick) > 0: # while there are still components to process
+            self.updateInTick[tick] = currentTick.copy() # store current components in tick dictionary
+            nextTick = [] # list of components for next tick
             for u in currentTick:
-                vs = [tuple[0] for tuple in u.getOutputs()]
+                vs = [tuple[0] for tuple in u.getOutputs()] # get all components which are outputs of current component
                 for v in vs:
-                    indeg[v] -= 1
-                    if indeg[v] == 0:
+                    indeg[v] -= 1 # decrease indegree of output component
+                    if indeg[v] == 0: # if indegree is 0, add to next tick
                         nextTick.append(v)
+            # move to next tick
             currentTick = nextTick
-            tick +=1
+            tick +=1 # increase tick count
         
+        # if there are still components with indegree > 0, there is a circular dependency
         if sum(indeg.values()) > 0:
             return False
         else:
+            # evaluate components tick by tick
             for tick in self.updateInTick:
                 for comp in self.updateInTick[tick]:
                     comp.eval()
                 self.updateComponents(components =self.updateInTick[tick])
-                # TODO sleep(self.playbackSpeed)
+                sleep(self.tickLength)
             return True
         
     
@@ -81,22 +84,23 @@ class LogicComponentController:
         Returns:
             bool: wether evaluation was successful or not
         """
-        tick = 0
-        currentTick = kw.get("startingComponents",self.inputs.copy())
-        while len(currentTick)>0:
-            nextTick = []
+        tick = 0 
+        currentTick = kw.get("startingComponents",self.inputs.copy()) # start with inputs or given components
+        while len(currentTick)>0: # while there are still components to process
+            nextTick = [] # list of components for next tick
             for g in currentTick:
-                if g.eval():
+                if g.eval(): # evaluate component
+                    # if evaluation changed the output, add all connected components to next tick
                     gOut = [tuple[0] for tuple in g.getOutputs()]
                     for out in gOut:
                         nextTick.append(out)
             
             
             self.updateComponents(components=currentTick)
-            #TODO sleep(self.playbackSpeed)
+            sleep(self.tickLength)
             currentTick = nextTick
             tick +=1
-            
+            # if too many ticks, there is probably a circular dependency which don't has a stable state
             if tick > MAX_EVAL_CYCLES*len(self.components):
                 return False
         return True
@@ -108,7 +112,10 @@ class LogicComponentController:
         Returns:
           Bool: True if evaluation was successful, false if not.
         """
-        getBus().setManual()
+        # We currently do not know why the manual mode was here.
+        # Using it prevented the view:components_updated event from emitting.
+        # I just left it commented out so we can use it just in case.
+        #getBus().setManual()
         if self.khanFrontierEval():
             getBus().setAuto()
             return True
@@ -150,6 +157,19 @@ class LogicComponentController:
             ReferenceError: If component was not present in the controllers list
         """
         if component in self.components:
+            # remove all connections to and from this component
+            
+            # Remove the component from the inputs' outputs
+            for inputKey, origin in component.getInputs().items():
+                if origin is not None:
+                    origin[0].removeOutput(component, inputKey)
+            
+            for output in component.getOutputs():
+                # Remove the input from the output's inputs
+                # output[0] is the target component, output[1] is the target key
+                # output[0].getInputs()[output[1]] is the internal state key
+                output[0].removeInput(component, output[0].getInputs()[output[1]][1], output[1])
+
             self.components.remove(component)
             if type(component) == Input:
                 self.inputs.remove(component)
@@ -216,4 +236,3 @@ class LogicComponentController:
                 componentsToUpdate.extend([out[0] for out in comp.getOutputs()])
         componentsToUpdate = list(set(componentsToUpdate))
         self.eventDrivenEval(startingComponents=componentsToUpdate)
-                

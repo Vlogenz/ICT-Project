@@ -51,7 +51,36 @@ def test_removeLogicComponent(lC):
     
     with pytest.raises(ReferenceError):
         lC.removeLogicComponent(and1)
+        
+def test_removeLogicComponentWithConnections(lC):
+    in1 = lC.addLogicComponent(Input)
+    in2 = lC.addLogicComponent(Input)
+    and1 = lC.addLogicComponent(And)
+    or1 = lC.addLogicComponent(Or)
+    out1 = lC.addLogicComponent(Output)
     
+    in1.addOutput(and1,"input1")
+    in2.addOutput(and1,"input2")
+    and1.addInput(in1,"outValue","input1")
+    and1.addInput(in2,"outValue","input2")
+    
+    and1.addOutput(or1,"input1")
+    in2.addOutput(or1,"input2")
+    or1.addInput(and1,"outValue","input1")
+    or1.addInput(in2,"outValue","input2")
+    
+    or1.addOutput(out1,"input")
+    out1.addInput(or1,"outValue","input")
+    
+    assert len(lC.getComponents()) == 5
+    assert len(lC.getInputs()) == 2
+    
+    lC.removeLogicComponent(and1)
+    assert len(lC.getComponents()) == 4
+    assert len(lC.getInputs()) == 2
+    assert and1 not in in1.outputs
+    assert and1 not in in2.outputs
+    assert or1.inputs["input1"] == None
 
 def test_khanFrontierEval(lC):
     in1 = lC.addLogicComponent(Input)

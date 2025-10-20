@@ -2,30 +2,46 @@ from PySide6 import QtCore, QtGui, QtWidgets
 from PySide6.QtCore import QPointF
 from PySide6.QtGui import QPainterPath
 
-from constants import GRID_COLS, GRID_ROWS, CELL_SIZE, MIME_TYPE
-from src.view.GridItem import GridItem, portAt
+from src.control.LogicComponentController import LogicComponentController
+from src.constants import GRID_COLS, GRID_ROWS, CELL_SIZE, MIME_TYPE
+from src.model.Input import Input
+from src.model.LogicComponent import LogicComponent
+from src.model.Output import Output
+from src.infrastructure.eventBus import getBus
+from src.view.DraggingLine import DraggingLine
+from src.view.GridItem import GridItem
+from src.view.Connection import Connection
 import json
 import random
+from typing import List
+
+from src.view.InputGridItem import InputGridItem
+from src.view.OutputGridItem import OutputGridItem
 
 
 class GridWidget(QtWidgets.QWidget):
     """Main drop area with grid, items and connections."""
 
-    def __init__(self, cols=GRID_COLS, rows=GRID_ROWS, parent=None):
+    def __init__(self, logicController: LogicComponentController, cols=GRID_COLS, rows=GRID_ROWS, parent=None):
         super().__init__(parent)
+        self.logicController = logicController
         self.cols = cols
         self.rows = rows
         self.setAcceptDrops(True)
-        self.items = {}  # uid -> (x, y, widget)
-        self.connections = []  # Liste (src_uid, dst_uid)
-        self.dragging_line = None  # (src_uid, start, current)
-        self.dragging_item_pos = None
-        self.dragging_item_uid = None
+        self.items: List[GridItem] = []
+        # TODO: The connection lines are still quite messy. We have to rework them later.
+        self.connections: List[Connection] = []
+        self.draggingLine: DraggingLine = None
+        self.draggingItem: GridItem = None
         self.setMinimumSize(cols * CELL_SIZE, rows * CELL_SIZE)
 
         # The random offset is used to avoid overlapping lines
         # It should be set to False when dragging an item or a line so that is does not look weird
         self.useRandomOffset = True
+
+        #Initialize event bus
+        self.eventBus = getBus()
+        self.eventBus.subscribe("view:components_updated", self.updateConnectionActivity)
 
     def paintEvent(self, event):
         """Redraws the entire grid, items and connections. It overrides QWidget.paintEvent, which gets called automatically when update() is called."""
@@ -42,31 +58,35 @@ class GridWidget(QtWidgets.QWidget):
             painter.drawLine(0, y, self.cols * CELL_SIZE, y)
 
         # painting connections
-        pen_conn = QtGui.QPen(QtGui.QColor("black"), 2)
-        painter.setPen(pen_conn)
-        for src, dst in self.connections:
-            if src in self.items and dst in self.items:
-                _, _, src_item = self.items[src]
-                _, _, dst_item = self.items[dst]
+        black_pen = QtGui.QPen(QtGui.QColor("black"), 2)
+        red_pen = QtGui.QPen(QtGui.QColor("red"), 2)
+        painter.setPen(black_pen)
+        for connection in self.connections:
+            # Currently dragged item position
+            if self.draggingItem == connection.srcItem:
+                src_pos = self.draggingItem.pos()
+            else:
+                item = connection.srcItem
+                src_pos = item.mapToParent(item.getOutputRect(connection.srcKey).center().toPoint())
+            if self.draggingItem == connection.dstItem:
+                dst_pos = self.draggingItem.pos()
+            else:
+                item = connection.dstItem
+                dst_pos = item.mapToParent(item.getInputRect(connection.dstKey).center().toPoint())
 
-                # Currently dragged item position
-                if self.dragging_item_uid == src:
-                    src_pos = self.dragging_item_pos
-                else:
-                    src_pos = src_item.mapToParent(src_item.output_port.center().toPoint())
-                if self.dragging_item_uid == dst:
-                    dst_pos = self.dragging_item_pos
-                else:
-                    dst_pos = dst_item.mapToParent(dst_item.input_port.center().toPoint())
-
-                path = QtGui.QPainterPath(src_pos)
-                # Draw orthogonal route from src to dst
-                self.orthogonalRoute(path, src_pos, dst_pos)
-                painter.drawPath(path)
+            path = QtGui.QPainterPath(src_pos)
+            # Draw orthogonal route from src to dst
+            self.orthogonalRoute(path, src_pos, dst_pos)
+            if connection.isActive:
+                painter.setPen(red_pen)
+            else:
+                painter.setPen(black_pen)
+            painter.drawPath(path)
 
         # temporary connections
-        if self.dragging_line:
-            _, start, cur = self.dragging_line
+        if self.draggingLine:
+            start = self.draggingLine.startPos
+            cur = self.draggingLine.currentPos
             path = QtGui.QPainterPath(start)
             self.orthogonalRoute(path, start, cur)
             painter.drawPath(path)
@@ -81,47 +101,57 @@ class GridWidget(QtWidgets.QWidget):
 
     def isOccupied(self, cell):
         """Returns true if and only if a GridItem occupies the given cell."""
-        return any((gx, gy) == cell for gx, gy, _ in self.items.values())
+        return any(self.cellAt(item.pos()) == cell for item in self.items)
 
-    def addItem(self, cell, widget: GridItem):
-        """Adds the given widget at the given cell (x, y). The cell must be free."""
+    def addItem(self, cell, item: GridItem):
+        """
+        Also adds the item at the given cell (x, y). The cell must be free."""
         gx, gy = cell
-        self.items[widget.uid] = (gx, gy, widget)
-        widget.setParent(self)
-        widget.move(gx * CELL_SIZE + 4, gy * CELL_SIZE + 4)
-        widget.show()
+        self.items.append(item)
+        item.setParent(self)
+        item.move(gx * CELL_SIZE + 4, gy * CELL_SIZE + 4)
+        item.show()
 
-    def removeItem(self, uid):
-        """Removes the item with the given uid from the grid."""
-        if uid in self.items:
-            _, _, w = self.items.pop(uid)
-            w.setParent(None)
-            w.deleteLater()
-            self.connections = [(s, d) for s, d in self.connections if s != uid and d != uid]
+    def removeItem(self, item: GridItem):
+        """Removes the give item from the backend and from the grid."""
+        try:
+            index = self.items.index(item)
+            self.logicController.removeLogicComponent(item.logicComponent)
+            deleteItem = self.items.pop(index)
+            deleteItem.setParent(None)
+            deleteItem.deleteLater()
+            self.connections = [conn for conn in self.connections if conn.srcItem != deleteItem and conn.dstItem != deleteItem]
+        except ValueError:
+            return
+
+    def removeItemByUID(self, uid):
+        filteredItems = [item for item in self.items]
+        if len(filteredItems) == 1:
+            self.removeItem(filteredItems[0])
 
     # --- Drag & Drop ---
     def dragEnterEvent(self, event):
         """This gets called when something is dragged into the widget, e.g. from the palette."""
         if event.mimeData().hasFormat(MIME_TYPE):
-            print("Drag entered with format match")
             event.acceptProposedAction()
         else:
-            print("Drag entered ignored")
             event.ignore()
 
     def dragMoveEvent(self, event):
         """This gets called when something is dragged over the widget."""
         self.useRandomOffset = False
         payload = json.loads(event.mimeData().data(MIME_TYPE).data().decode("utf-8"))
-        if payload.get("action") == "move":
-            uid = payload.get("id")
-            if uid in self.items:
-                self.dragging_item_pos = event.position().toPoint()
-                self.dragging_item_uid = uid
-                self.update()
+        if payload.get("action_type") == "move":
+            if self.draggingItem is None:
+                uid = payload.get("id")
+                filteredItems = [item for item in self.items if item.uid == uid]
+                if len(filteredItems)!=0:
+                    self.draggingItem = filteredItems[0]
+            self.update()
         event.acceptProposedAction()
 
     def dropEvent(self, event):
+        """This gets called when something is dropped onto the widget. If the cell is occupied, the drop is ignored."""
         self.useRandomOffset = True
         payload = json.loads(event.mimeData().data(MIME_TYPE).data().decode("utf-8"))
         pos = event.position().toPoint()
@@ -130,74 +160,97 @@ class GridWidget(QtWidgets.QWidget):
             event.ignore()
             return
 
-        action = payload.get("action")
+        if not event.mimeData().hasFormat(MIME_TYPE):
+            event.ignore()
+            return
 
-        # In case the item is dragged newly from the palette
-        if action == "create":
-            if self.isOccupied(cell):
-                event.ignore()
-                return
-            item_type = payload.get("type", "Item")
-            color = payload.get("color")
-            col = QtGui.QColor(color) if color else None
-            image_path = payload.get("image_path")
-            item = GridItem(item_type, image_path, color=col, parent=self)
-            self.addItem(cell, item)
-            event.acceptProposedAction()
+        try:
+            raw_data = bytes(event.mimeData().data(MIME_TYPE)).decode("utf-8")
+            payload = json.loads(raw_data)
+        except Exception as e:
+            print("Failed to parse MIME data:", e)
+            event.ignore()
+            return
 
-        # In case the item is moved within the grid
-        elif action == "move":
+        action_type = payload.get("action_type")
+        class_name = payload.get("class_name")
+        package_name = "src.model"
+
+        if action_type == "create":
+            # Dynamically import and create a GridItem of this class
+            try:
+                package = __import__(package_name, fromlist=[class_name])
+                module = getattr(package, class_name)
+                cls = getattr(module, class_name)
+                component = self.logicController.addLogicComponent(cls)
+                if isinstance(component, Input):
+                    new_item = InputGridItem(logicComponent=component)
+                elif isinstance(component, Output):
+                    new_item = OutputGridItem(logicComponent=component)
+                else:
+                    new_item = GridItem(logicComponent=component)
+                self.addItem(cell, new_item)
+            except Exception as e:
+                print("Error creating GridItem:", e)
+        elif action_type == "move":
             uid = payload.get("id")
-            if uid not in self.items:
+            if not any(item.uid == uid for item in self.items):
                 event.ignore()
                 return
-            old_x, old_y, item = self.items[uid]
-            if self.isOccupied(cell) and (old_x, old_y) != cell:
+            item = [item for item in self.items if item.uid == uid][0]
+            if self.isOccupied(cell) and self.cellAt(item.pos()) != cell:
                 event.ignore()
-                item.show()  # Restore if drop is invalid
+                item.show()
                 return
-            # Remove from old position visually and logically
-            item.hide()  # Hide before moving to avoid duplicate
-            self.items[uid] = (cell[0], cell[1], item)
             item.move(cell[0] * CELL_SIZE + 4, cell[1] * CELL_SIZE + 4)
-            item.show()  # Show at new position
-            self.dragging_item_uid = None
-            self.dragging_item_pos = None
-            self.update()  # Force redraw to clear old position
-            print(f"Moved item {uid} to {cell}")
+            item.show()
+            self.draggingItem = None
+            self.update()
+            event.acceptProposedAction()
+        else:
+            print("Unknown action type:", action_type)
             event.acceptProposedAction()
 
     # --- Starting a connection ---
-    def startConnection(self, item: GridItem, port: str, event: QtGui.QMouseEvent):
+    def startConnection(self, item: GridItem, outputKey: str, event: QtGui.QMouseEvent):
         """Starts drawing a connection line between GridItems."""
-        if port == "output":
-            start = item.mapToParent(item.output_port.center().toPoint())
-            self.dragging_line = (item.uid, start, event.position().toPoint())
+        start = item.mapToParent(item.getOutputRect(outputKey).center().toPoint())
+        self.draggingLine = DraggingLine(item, outputKey, start, event.position().toPoint())
 
-    def removeConnectionTo(self, item: GridItem):
+    def removeConnectionTo(self, dstItem: GridItem, dstKey: str):
         """Removes the connection going to the given item's input port (if any)."""
-        self.connections = [(s, d) for s, d in self.connections if d != item.uid]
+        connectionsToDelete = [conn for conn in self.connections if conn.dstItem == dstItem and conn.dstKey == dstKey]
+        for conn in connectionsToDelete:
+            self.logicController.removeConnection(conn.srcItem.logicComponent, conn.srcKey, conn.dstItem.logicComponent, conn.dstKey)
+        self.connections = list(set(self.connections) - set(connectionsToDelete))
         self.update()
 
     def mouseMoveEvent(self, event):
         """This is called whenever the mouse moves within the widget. If a line is being dragged, it updates the line."""
         self.useRandomOffset = False
-        if self.dragging_line:
-            self.dragging_line = (self.dragging_line[0], self.dragging_line[1], event.pos())
+        if self.draggingLine:
+            self.draggingLine.currentPos = event.pos()
             self.update()
 
     def mouseReleaseEvent(self, event):
         """This is called whenever the mouse button is released. If a line is being dragged, it checks if it ends on an input port."""
         self.useRandomOffset = True
-        if self.dragging_line:
-            src_uid, start, _ = self.dragging_line
-            for uid, (_, _, item) in self.items.items():
+        if self.draggingLine:
+            srcItem =  self.draggingLine.srcItem
+            srcKey = self.draggingLine.srcKey
+            start = self.draggingLine.startPos
+            for item in self.items:
                 local = item.mapFromParent(event.pos())
+                port = item.portAt(local)
                 # Check if the line ends on an input port of another item and not on itself
-                if portAt(item.output_port, item.input_port, local) == "input" and src_uid != uid:
-                    self.connections.append((src_uid, uid))
+                if port[0] == "input" and srcItem.uid != item.uid:
+                    # Add the connection
+                    outputKey = srcItem.portAt(srcItem.mapFromParent(start))[1]
+                    inputKey = item.portAt(local)[1]
+                    self.logicController.addConnection(self.draggingLine.srcItem.logicComponent, outputKey, item.logicComponent, inputKey)
+                    self.connections.append(Connection(srcItem, srcKey, item, port[1]))
                     break
-            self.dragging_line = None
+            self.draggingLine = None
             self.update()
 
     def orthogonalRoute(self, path: QPainterPath, src: QPointF, dst: QPointF):
@@ -223,3 +276,18 @@ class GridWidget(QtWidgets.QWidget):
         path.lineTo(dst.x() - offset, midy)
         path.lineTo(dst.x() - offset, dst.y())
         path.lineTo(dst)
+
+    def updateConnectionActivity(self, components: List[LogicComponent]):
+        """Updates the isActive attribute of all the connections on the grid.
+        A connection becomes active if and only if the logicComponent of its srcItem is among the given list.
+
+        Args:
+            components (List[LogicComponent]): The list of logic components that were updated and whose outgoing connections should become active.
+        """
+
+        for conn in self.connections:
+            if conn.srcItem.logicComponent in components:
+                conn.isActive = True
+            else:
+                conn.isActive = False
+        self.repaint()

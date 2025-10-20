@@ -14,7 +14,6 @@ class EventBus:
         
     
     def emit(self, event, *args, **kwargs):
-        
         if not self.manual:
             for h in list(self._subs.get(event, [])):
                 h(*args, **kwargs)

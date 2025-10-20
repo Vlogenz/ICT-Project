@@ -3,33 +3,41 @@ from PySide6 import QtWidgets, QtGui, QtCore
 import json
 
 from PySide6.QtGui import QAction, QCursor
-from PySide6.QtWidgets import QMenu
+from PySide6.QtWidgets import QMenu, QPushButton
 
+from src.model.Input import Input
+from src.model.LogicComponent import LogicComponent
 from src.constants import CELL_SIZE, MIME_TYPE
+from src.model.Output import Output
 
 
 class GridItem(QtWidgets.QFrame):
     """An Element in the grid with inputs and outputs"""
 
-    def __init__(self, item_type: str, color: QtGui.QColor = None, uid=None, parent=None):
+    def __init__(self, logicComponent: LogicComponent, color: QtGui.QColor = None, uid=None, parent=None):
         super().__init__(parent)
         self.uid = uid or str(uuid.uuid4())
-        self.item_type = item_type
+        self.logicComponent = logicComponent
 
         self.setFixedSize(CELL_SIZE - 8, CELL_SIZE - 8)
 
-        layout = QtWidgets.QVBoxLayout(self)
-        lbl = QtWidgets.QLabel(item_type)
+        self.layout = QtWidgets.QVBoxLayout(self)
+        lbl = QtWidgets.QLabel(self.logicComponent.__class__.__name__)
         lbl.setAlignment(QtCore.Qt.AlignCenter)
-        layout.addWidget(lbl)
+        self.layout.addWidget(lbl)
 
         # Apply stylesheet
         self.setStyleSheet(f"border: 1px solid lightgray; background-color: {color.name() if color != None else 'lightgray'};")
 
-        # Define ports
-        # TODO: change ports to arrays/list
-        self.output_port = QtCore.QRectF(self.width() - 16, self.height() / 2 - 8, 16, 16)
-        self.input_port = QtCore.QRectF(0, self.height() / 2 - 8, 16, 16)
+        # Define ports dynamically based on what the LogicComponent has
+        self.outputs = {
+            str(key): QtCore.QRectF(self.width() - 16, (i+1)*(self.height() / (len(self.logicComponent.getState())+1)) - 8, 16, 16)
+            for i, key in enumerate(self.logicComponent.getState().keys())
+        }
+        self.inputs = {
+            str(key): QtCore.QRectF(0, (i+1)*(self.height() / (len(self.logicComponent.getInputs())+1)) - 8, 16, 16)
+            for i, key in enumerate(self.logicComponent.getInputs())
+        }
 
         # Set up right click menu
         self.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
@@ -41,31 +49,33 @@ class GridItem(QtWidgets.QFrame):
         painter = QtGui.QPainter(self)
         # Output-Port on the right (blue)
         painter.setBrush(QtGui.QColor("blue"))
-        painter.drawEllipse(self.output_port)
+        for output_port in self.outputs.values():
+            painter.drawEllipse(output_port)
         # Input-Port on the left (green)
         painter.setBrush(QtGui.QColor("green"))
-        painter.drawEllipse(self.input_port)
+        for input_port in self.inputs.values():
+            painter.drawEllipse(input_port)
 
     def mousePressEvent(self, event: QtGui.QMouseEvent):
         """Handle dragging of the item or starting a connection from a port."""
         local_pos = event.position().toPoint()
-        port = portAt(self.output_port, self.input_port, local_pos)
+        port = self.portAt(local_pos)
 
         # If the user clicked on an output, start a connection and pass it to the grid
-        if port == "output":
-            self.parentWidget().startConnection(self, "output", event)
+        if port[0] == "output":
+            self.parentWidget().startConnection(self, port[1], event)
             return
 
         # If the user clicked on an input, remove the connection going to it (if any)
-        elif port == "input":
-            self.parentWidget().removeConnectionTo(self)
+        elif port[0] == "input":
+            self.parentWidget().removeConnectionTo(self, port[1])
             return
 
         # normal Move-Drag
         if event.button() == QtCore.Qt.LeftButton:
             drag = QtGui.QDrag(self)
             mime = QtCore.QMimeData()
-            payload = {"action": "move", "id": self.uid}
+            payload = {"action_type": "move", "id": self.uid}
             mime.setData(MIME_TYPE, json.dumps(payload).encode("utf-8"))
             drag.setMimeData(mime)
 
@@ -95,13 +105,27 @@ class GridItem(QtWidgets.QFrame):
         """Delete this item from the grid."""
         from src.view.GridWidget import GridWidget
         if isinstance(self.parent(), GridWidget):
-            self.parent().removeItem(self.uid)
+            self.parent().removeItem(self)
 
+    def portAt(self, pos: QtCore.QPoint):
+        """Check if pos is over a port and return the port type along with the key.
 
-def portAt(output_port, input_port, pos: QtCore.QPoint):
-    """Check if pos is over a port."""
-    if output_port.contains(pos):
-        return "output"
-    if input_port.contains(pos):
-        return "input"
-    return None
+        Returns:
+            str: The type of the port (input or output)
+            str: The key of the port, as used in the backend
+        """
+        for outputKey, rect in self.outputs.items():
+            if rect.contains(pos):
+                return "output", outputKey
+        for inputKey, rect in self.inputs.items():
+            if rect.contains(pos):
+                return "input", inputKey
+        return None, None
+
+    def getInputRect(self, key: str) -> QtCore.QRectF:
+        """Get the QRectF of the input port with the given key."""
+        return self.inputs.get(key, None)
+
+    def getOutputRect(self, key: str) -> QtCore.QRectF:
+        """Get the QRectF of the output port with the given key."""
+        return self.outputs.get(key)

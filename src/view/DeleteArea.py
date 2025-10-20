@@ -22,7 +22,7 @@ class DeleteArea(QtWidgets.QFrame):
         """Handle drag enter events."""
         if event.mimeData().hasFormat(MIME_TYPE):
             data = json.loads(event.mimeData().data(MIME_TYPE).data().decode("utf-8"))
-            if data.get("action") == "move":
+            if data.get("action_type") == "move":
                 event.acceptProposedAction()
             else:
                 event.ignore()
@@ -33,10 +33,10 @@ class DeleteArea(QtWidgets.QFrame):
         """Handle drop events to delete items."""
         if event.mimeData().hasFormat(MIME_TYPE):
             data = json.loads(event.mimeData().data(MIME_TYPE).data().decode("utf-8"))
-            if data.get("action") == "move":
+            if data.get("action_type") == "move":
                 uid = data.get("id")
                 if uid:
-                    self.gridWidget.removeItem(uid)
+                    self.gridWidget.removeItemByUID(uid)
                 event.acceptProposedAction()
             else:
                 event.ignore()

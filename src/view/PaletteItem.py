@@ -1,4 +1,6 @@
 import json
+from symtable import Class
+
 from PySide6 import QtWidgets, QtGui, QtCore
 from src.constants import MIME_TYPE
 
@@ -6,18 +8,18 @@ from src.constants import MIME_TYPE
 class PaletteItem(QtWidgets.QFrame):
     """Drag-Source in the palette on the side."""
 
-    def __init__(self, label: str, color: QtGui.QColor = None, parent=None):
+    def __init__(self, logicComponentClass: Class, color: QtGui.QColor = None, parent=None):
         super().__init__(parent)
         self.setFrameShape(QtWidgets.QFrame.NoFrame)
         self.setFixedSize(70, 40)
 
         layout = QtWidgets.QHBoxLayout(self)
         layout.setContentsMargins(0,0,0,0)
-        lbl = QtWidgets.QLabel(label)
+        lbl = QtWidgets.QLabel(logicComponentClass.__name__)
         lbl.setAlignment(QtCore.Qt.AlignCenter)
         layout.addWidget(lbl)
 
-        self.label = label
+        self.logicComponentClass = logicComponentClass
         self.color = color
 
         # Apply stylesheet
@@ -29,12 +31,13 @@ class PaletteItem(QtWidgets.QFrame):
 
         if event.button() == QtCore.Qt.LeftButton:
             drag = QtGui.QDrag(self)
-            mime = QtCore.QMimeData()
-            payload = {"action": "create", "type": self.label}
-            if self.color:
-                payload["color"] = self.color.name()
-            mime.setData(MIME_TYPE, json.dumps(payload).encode("utf-8"))
-            drag.setMimeData(mime)
+            mime_data = QtCore.QMimeData()
+            payload = {
+                "action_type": "create",  # or "move"
+                "class_name": f"{self.logicComponentClass.__name__}",
+            }
+            mime_data.setData(MIME_TYPE, QtCore.QByteArray(json.dumps(payload).encode("utf-8")))
+            drag.setMimeData(mime_data)
 
             pix = QtGui.QPixmap(self.size())
             self.render(pix)

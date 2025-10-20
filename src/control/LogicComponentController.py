@@ -5,7 +5,7 @@ from src.model.Input import Input
 from src.constants import MAX_EVAL_CYCLES
 from src.infrastructure.eventBus import getBus
 from src.model.Register import Register
-#from time import sleep
+from time import sleep
 
 class LogicComponentController:    
     
@@ -13,7 +13,8 @@ class LogicComponentController:
         self.components: typing.List["LogicComponent"] = []
         self.inputs: typing.List["Input"] = []
         self.updateInTick: typing.Dict = {}
-        self.playbackSpeed = 0.1
+        # tickLength defaults to 0, i.e. the evaluation happens instantly
+        self.tickLength = 0
         self.bus = getBus()
         # Registrierung: ab jetzt wird der Handler automatisch aufgerufen
         self.bus.subscribe("model:input_changed", self.onModelInputUpdate)
@@ -29,10 +30,8 @@ class LogicComponentController:
         componentsToUpdate = tickList["components"]
         if len(componentsToUpdate) == 0:
             componentsToUpdate = self.components
-        for comp in self.components:
-            # TODO UI update
-            pass
-    
+        self.bus.emit("view:components_updated", componentsToUpdate)
+
     def khanFrontierEval(self):
         """evaluates all the components in topological order
            if there are no circular dependencies
@@ -71,7 +70,7 @@ class LogicComponentController:
                 for comp in self.updateInTick[tick]:
                     comp.eval()
                 self.updateComponents(components =self.updateInTick[tick])
-                # TODO sleep(self.playbackSpeed)
+                sleep(self.tickLength)
             return True
         
     
@@ -98,7 +97,7 @@ class LogicComponentController:
             
             
             self.updateComponents(components=currentTick)
-            #TODO sleep(self.playbackSpeed)
+            sleep(self.tickLength)
             currentTick = nextTick
             tick +=1
             # if too many ticks, there is probably a circular dependency which don't has a stable state
@@ -113,7 +112,10 @@ class LogicComponentController:
         Returns:
           Bool: True if evaluation was successful, false if not.
         """
-        getBus().setManual()
+        # We currently do not know why the manual mode was here.
+        # Using it prevented the view:components_updated event from emitting.
+        # I just left it commented out so we can use it just in case.
+        #getBus().setManual()
         if self.khanFrontierEval():
             getBus().setAuto()
             return True
@@ -234,4 +236,3 @@ class LogicComponentController:
                 componentsToUpdate.extend([out[0] for out in comp.getOutputs()])
         componentsToUpdate = list(set(componentsToUpdate))
         self.eventDrivenEval(startingComponents=componentsToUpdate)
-                

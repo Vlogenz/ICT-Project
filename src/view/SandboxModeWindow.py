@@ -29,13 +29,13 @@ class SandboxModeWindow(QtWidgets.QMainWindow):
         # palette.addWidget(PaletteItem("Red Node", QtGui.QColor("#ff9999")))
         palette
         gates = [
-        ("AND", r"C:\Users\hghad\anaconda3\envs\itk213\ICT project\ICT-Project\Gates\andgate.png"),
-        ("OR", r"C:\Users\hghad\anaconda3\envs\itk213\ICT project\ICT-Project\Gates\orgate.png"),
-        ("NOT", r"C:\Users\hghad\anaconda3\envs\itk213\ICT project\ICT-Project\Gates\notgate.png"),
-        ("NAND", r"C:\Users\hghad\anaconda3\envs\itk213\ICT project\ICT-Project\Gates\nandgate.png"),
-        ("NOR", r"C:\Users\hghad\anaconda3\envs\itk213\ICT project\ICT-Project\Gates\norgate.png"),
-        ("XOR", r"C:\Users\hghad\anaconda3\envs\itk213\ICT project\ICT-Project\Gates\xorgate.png"),
-        ("XNOR", r"C:\Users\hghad\anaconda3\envs\itk213\ICT project\ICT-Project\Gates\xnor.png"),
+        ("AND", u"Gates/andgate.png"),
+        ("OR", u"Gates/orgate.png"),
+        ("NOT", u"Gates/notgate.png"),
+        ("NAND", u"Gates/nandgate.png"),
+        ("NOR", u"Gates/norgate.png"),
+        ("XOR", u"Gates/xorgate.png"),
+        ("XNOR", u"Gates/xnor.png"),
         ]
 
         for label, path in gates:

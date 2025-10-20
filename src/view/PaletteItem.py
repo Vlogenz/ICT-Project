@@ -32,8 +32,6 @@ class PaletteItem(QtWidgets.QFrame):
         if event.button() == QtCore.Qt.LeftButton:
             drag = QtGui.QDrag(self)
             mime_data = QtCore.QMimeData()
-
-            mime_data = QtCore.QMimeData()
             payload = {
                 "action_type": "create",  # or "move"
                 "class_name": f"{self.logicComponentClass.__name__}",

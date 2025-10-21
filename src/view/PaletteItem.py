@@ -16,20 +16,20 @@ class PaletteItem(QtWidgets.QFrame):
         layout = QtWidgets.QHBoxLayout(self)
         layout.setContentsMargins(4, 2, 4, 2)
 
-        self.image_path = image_path
+        self.image_path = f"Gates/{logicComponentClass.__name__}.png"
 
-        if self.image_path:  # Show gate image if provided
-            img_label = QtWidgets.QLabel()
-            pixmap = QtGui.QPixmap(image_path)
+        img_label = QtWidgets.QLabel()
+        pixmap = QtGui.QPixmap(self.image_path)
+        if not pixmap.isNull():
             img_label.setPixmap(
                 pixmap.scaled(28, 28, QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation)
             )
             img_label.setAlignment(QtCore.Qt.AlignCenter)
-            layout.addWidget(img_label)
+        else:
+            img_label.setText(logicComponentClass.__name__)
 
-        lbl = QtWidgets.QLabel(label)
-        lbl.setAlignment(QtCore.Qt.AlignCenter)
-        layout.addWidget(lbl)
+        img_label.setAlignment(QtCore.Qt.AlignCenter)
+        layout.addWidget(img_label)
 
         self.logicComponentClass = logicComponentClass
         self.color = color
@@ -56,4 +56,3 @@ class PaletteItem(QtWidgets.QFrame):
             drag.setPixmap(pix)
 
             drag.exec(QtCore.Qt.CopyAction)
-

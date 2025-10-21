@@ -5,10 +5,9 @@ import json
 from PySide6.QtGui import QAction, QCursor
 from PySide6.QtWidgets import QMenu, QPushButton
 
-from src.model.Input import Input
 from src.model.LogicComponent import LogicComponent
 from src.constants import CELL_SIZE, MIME_TYPE
-from src.model.Output import Output
+from src.infrastructure.eventBus import getBus
 
 
 class GridItem(QtWidgets.QFrame):
@@ -21,24 +20,22 @@ class GridItem(QtWidgets.QFrame):
 
         self.setFixedSize(CELL_SIZE - 8, CELL_SIZE - 8)
 
-        layout = QtWidgets.QVBoxLayout(self)
-        # lbl = QtWidgets.QLabel(item_type)
-        # lbl.setAlignment(QtCore.Qt.AlignCenter)
-        # layout.addWidget(lbl)
-        if image_path:  # Show gate image if provided
-            img_label = QtWidgets.QLabel()
-            pixmap = QtGui.QPixmap(image_path)
-            # Increase the size to 90% of CELL_SIZE for a larger image
-            img_size = int(CELL_SIZE * 0.9)  # 90% of CELL_SIZE
-            img_label.setPixmap(
-                pixmap.scaled(img_size, img_size, QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation)
-            )
-            img_label.setAlignment(QtCore.Qt.AlignCenter)
-            layout.addWidget(img_label)
+        self.layout = QtWidgets.QVBoxLayout(self)
+        self.layout.setContentsMargins(16,16,16,0)
 
-        # lbl = QtWidgets.QLabel(img_label)
-        # lbl.setAlignment(QtCore.Qt.AlignCenter)
-        # layout.addWidget(lbl)
+        self.image_path = f"Gates/{self.logicComponent.__class__.__name__}.png"
+        print(self.image_path)
+
+        imgLabel = QtWidgets.QLabel()
+        imgLabel.setScaledContents(True)
+        pixmap = QtGui.QPixmap(self.image_path)
+        if not pixmap.isNull():
+            imgLabel.setPixmap(pixmap)
+        else:
+            imgLabel.setText(self.logicComponent.__class__.__name__)
+
+        self.layout.addWidget(imgLabel)
+
         # Apply stylesheet
         self.setStyleSheet(f"border: 1px solid lightgray; background-color: {color.name() if color else 'lightgray'};")
 
@@ -55,6 +52,15 @@ class GridItem(QtWidgets.QFrame):
         # Set up right click menu
         self.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.customContextMenuRequested.connect(self.openContextMenu)
+
+        # Add state label
+        self.stateLabel = QtWidgets.QLabel(f"{self.logicComponent.getState()['outValue'][0]}")
+        self.stateLabel.setAlignment(QtCore.Qt.AlignCenter)
+        self.layout.addWidget(self.stateLabel)
+
+        # Subscribe to component update
+        self.bus = getBus()
+        self.bus.subscribe("view:components_updated", self.onComponentUpdated)
 
     def paintEvent(self, event):
         """Draw the item and the ports. Overrides QWidget.paintEvent, which gets called automatically when update() is called."""
@@ -138,3 +144,10 @@ class GridItem(QtWidgets.QFrame):
     def getOutputRect(self, key: str) -> QtCore.QRectF:
         """Get the QRectF of the output port with the given key."""
         return self.outputs.get(key)
+
+    def onComponentUpdated(self, compList):
+        if self.logicComponent in compList:
+            self.updateLabel()
+
+    def updateLabel(self):
+        self.stateLabel.setText(f"{self.logicComponent.getState()['outValue'][0]}")

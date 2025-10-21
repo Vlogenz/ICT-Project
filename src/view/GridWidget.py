@@ -16,8 +16,6 @@ import random
 from typing import List
 
 from src.view.InputGridItem import InputGridItem
-from src.view.OutputGridItem import OutputGridItem
-
 
 class GridWidget(QtWidgets.QWidget):
     """Main drop area with grid, items and connections."""
@@ -185,8 +183,6 @@ class GridWidget(QtWidgets.QWidget):
                 component = self.logicController.addLogicComponent(cls)
                 if isinstance(component, Input):
                     new_item = InputGridItem(logicComponent=component)
-                elif isinstance(component, Output):
-                    new_item = OutputGridItem(logicComponent=component)
                 else:
                     new_item = GridItem(logicComponent=component)
                 self.addItem(cell, new_item)

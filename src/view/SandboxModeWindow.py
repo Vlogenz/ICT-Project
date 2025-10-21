@@ -39,21 +39,6 @@ class SandboxModeWindow(QtWidgets.QMainWindow):
             # Use index for a two-column grid
             palette.addWidget(PaletteItem(class_), i//2, i%2)
 
-        gates = [
-        ("AND", u"Gates/andgate.png"),
-        ("OR", u"Gates/orgate.png"),
-        ("NOT", u"Gates/notgate.png"),
-        ("NAND", u"Gates/nandgate.png"),
-        ("NOR", u"Gates/norgate.png"),
-        ("XOR", u"Gates/xorgate.png"),
-        ("XNOR", u"Gates/xnor.png"),
-        ]
-
-        #for label, path in gates:
-        #    item = PaletteItem(label, image_path=path)
-        #    palette.addWidget(item)
-        #palette.addStretch()
-
         # Grid
         grid = GridWidget(logicController)
 

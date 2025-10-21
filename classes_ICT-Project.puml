@@ -1,0 +1,387 @@
+@startuml classes_ICT-Project
+set namespaceSeparator none
+skinparam linetype ortho
+skinparam classAttributeIconSize 0
+skinparam classFontSize 10
+skinparam classFontName "Courier New"
+skinparam classArrowFontSize 10
+skinparam packageStyle rectangle
+skinparam class {
+  BackgroundColor lightblue
+  BorderColor darkblue
+}
+skinparam package {
+  BackgroundColor lightgray
+  BorderColor darkgray
+}
+
+' Layout directives for better organization
+!define LAYOUT top to bottom direction
+
+package "View" {
+  class "DeleteArea" as src.view.DeleteArea.DeleteArea {
+    gridWidget
+    dragEnterEvent(event)
+    dropEvent(event)
+  }
+  
+  class "GridItem" as src.view.GridItem.GridItem {
+    input_port
+    item_type : str
+    output_port
+    uid : str
+    deleteItem()
+    mousePressEvent(event)
+    openContextMenu()
+    paintEvent(event)
+  }
+  
+  class "GridWidget" as src.view.GridWidget.GridWidget {
+    cols : int
+    connections : list
+    dragging_item_pos : NoneType
+    dragging_item_uid : NoneType
+    dragging_line : NoneType, tuple
+    items : dict
+    rows : int
+    useRandomOffset : bool
+    addItem(cell, widget)
+    cellAt(pos)
+    dragEnterEvent(event)
+    dragMoveEvent(event)
+    dropEvent(event)
+    isOccupied(cell)
+    mouseMoveEvent(event)
+    mouseReleaseEvent(event)
+    orthogonalRoute(path, src, dst)
+    paintEvent(event)
+    removeConnectionTo(item)
+    removeItem(uid)
+    startConnection(item, port, event)
+  }
+  
+  class "PaletteItem" as src.view.PaletteItem.PaletteItem {
+    color
+    label : str
+    mousePressEvent(event)
+  }
+  
+  class "SandboxModeWindow" as src.view.SandboxModeWindow.SandboxModeWindow {
+  }
+  
+  class "SimulationControls" as src.view.SimulationControls.SimulationControls {
+    resetButton
+    speedLabel
+    speedSlider
+    startStopButton
+    updateSpeedLabel(value)
+  }
+}
+
+package "Control" {
+
+  package "Infrastructure" {
+  class "EventBus" as src.infrastructure.eventBus.EventBus {
+    manual : bool
+    emit(event)
+    setAuto()
+    setManual()
+    subscribe(event, handler)
+  }
+}
+
+  class "AppController" as src.control.AppController.AppController {
+    app
+    window
+    run()
+  }
+  
+  class "LogicComponentController" as src.control.LogicComponentController.LogicComponentController {
+    T : T
+    bus : NoneType
+    components : typing.List['LogicComponent']
+    inputs : typing.List['Input']
+    playbackSpeed : float
+    playbackspeed : float
+    updateInTick : Dict
+    addConnection(origin, originKey, target, targetKey) -> bool
+    addLogicComponent(component)
+    eval()
+    eventDrivenEval()
+    getComponents()
+    getInputs()
+    khanFrontierEval()
+    onModelInputUpdate(model)
+    removeConnection(origin, originKey, target, targetKey)
+    removeLogicComponent(component)
+    setEvalSpeed(speed)
+    updateComponents()
+    updateRegisters()
+  }
+}
+
+package "Model - Core" {
+  abstract class "LogicComponent" as src.model.LogicComponent.LogicComponent {
+    bus : NoneType
+    id : int
+    inputBitwidths : Dict
+    inputs : Dict
+    outputs : typing.List['LogicComponent', str]
+    state : dict
+    addInput(input, key, internalKey)
+    addOutput(output, key)
+    {abstract}eval() -> bool
+    getBitwidth(key) -> int
+    getInputs() -> typing.List['LogicComponent']
+    getOutputs() -> typing.List[tuple]
+    {abstract}getSprite() -> None
+    getState()
+    removeInput(input, key, internalKey)
+    removeOutput(output, key)
+  }
+  
+  class "Input" as src.model.Input.Input {
+    id : int
+    inputs : dict
+    outputs : typing.List['LogicComponent']
+    state : bool, dict
+    eval() -> bool
+    getState() -> dict
+    setState(state)
+    toggleState()
+  }
+  
+  class "Output" as src.model.Output.Output {
+    inputBitwidths : Dict
+    inputs : Dict
+    state : dict
+    eval() -> bool
+  }
+}
+
+package "Model - Basic Logic Gates" #lightgreen {
+  class "And" as src.model.And.And {
+    inputBitwidths : Dict
+    inputs : Dict
+    state : dict
+    eval() -> bool
+  }
+  
+  class "Or" as src.model.Or.Or {
+    inputBitwidths : Dict
+    inputs : Dict
+    state : dict
+    eval() -> bool
+  }
+  
+  class "Not" as src.model.Not.Not {
+    inputBitwidths : Dict
+    inputs : Dict
+    state : dict
+    eval() -> bool
+  }
+  
+  class "Nand" as src.model.Nand.Nand {
+    inputBitwidths : Dict
+    inputs : Dict
+    state : dict
+    eval() -> bool
+  }
+  
+  class "Nor" as src.model.Nor.Nor {
+    inputBitwidths : Dict
+    inputs : Dict
+    state : dict
+    eval() -> bool
+  }
+  
+  class "Xor" as src.model.Xor.Xor {
+    inputBitwidths : Dict
+    inputs : Dict
+    state : dict
+    eval() -> bool
+  }
+  
+  class "Xnor" as src.model.Xnor.Xnor {
+    inputBitwidths : Dict
+    inputs : Dict
+    state : dict
+    eval() -> bool
+  }
+}
+
+package "Model - Advanced Logic" #lightyellow {
+  class "ALUAdvanced" as src.model.ALUAdvanced.ALUAdvanced {
+    inputBitwidths : Dict
+    inputs : Dict
+    state : dict
+    eval() -> bool
+  }
+  
+  class "ALUSimple" as src.model.ALUSimple.ALUSimple {
+    inputBitwidths : Dict
+    inputs : Dict
+    state : dict
+    eval() -> bool
+  }
+  
+  class "FullAdder" as src.model.FullAdder.FullAdder {
+    inputBitwidths : dict
+    inputs : dict
+    state : dict
+    eval() -> bool
+  }
+  
+  class "HalfAdder" as src.model.HalfAdder.HalfAdder {
+    inputBitwidths : Dict
+    inputs : dict
+    state : dict
+    eval() -> bool
+  }
+  
+  class "DecoderThreeBit" as src.model.DecoderThreeBit.DecoderThreeBit {
+    inputBitwidths : Dict
+    inputs : Dict
+    state : dict
+    eval() -> bool
+  }
+  
+  class "DLatch" as src.model.DLatch.DLatch {
+    inputBitwidths : Dict
+    inputs : Dict
+    state : dict
+    eval() -> bool
+  }
+  
+  class "Register" as src.model.Register.Register {
+    inputBitwidths : Dict
+    inputs : Dict
+    nextState : tuple
+    state : dict
+    eval() -> bool
+    updateState() -> bool
+  }
+}
+
+package "Model - Data Processing" #lightcoral {
+  class "Collector1to8" as src.model.Collector1to8.Collector1to8 {
+    inputBitwidths : Dict
+    inputs : Dict
+    state : dict
+    eval()
+  }
+  
+  class "Collector8to32" as src.model.Collector8to32.Collector8to32 {
+    inputBitwidths : Dict
+    inputs : Dict
+    state : dict
+    eval()
+  }
+  
+  class "Splitter32to8" as src.model.Splitter32to8.Splitter32to8 {
+    inputBitwidths : Dict
+    inputs : Dict
+    state : dict
+    eval()
+  }
+  
+  class "Splitter8to1" as src.model.Splitter8to1.Splitter8to1 {
+    inputBitwidths : Dict
+    inputs : Dict
+    state : dict
+    eval()
+  }
+  
+  class "ShiftLeft2" as src.model.ShiftLeft2.ShiftLeft2 {
+    inputBitwidths : Dict
+    inputs : Dict
+    state : dict
+    addInput(input, key, internalKey)
+    addOutput(output, key)
+    eval() -> bool
+    removeInput(input, key, internalKey)
+    removeOutput(output, key)
+  }
+  
+  class "SignExtend" as src.model.SignExtend.SignExtend {
+    inputBitwidths : Dict
+    inputs : Dict
+    state : dict
+    eval() -> bool
+  }
+  
+  class "Multiplexer2Inp" as src.model.Multiplexer.Multiplexer2Inp {
+    inputBitwidths : Dict
+    inputs : Dict
+    state : Dict, dict
+    addInput(input, key, internalKey)
+    addOutput(output, key) -> bool
+    eval() -> bool
+    getOutputBitwidth() -> int
+    removeInput(input, key, internalKey)
+    removeOutput(output, key)
+  }
+  
+  class "Multiplexer4Inp" as src.model.Multiplexer.Multiplexer4Inp {
+    inputBitwidths : Dict
+    inputs : Dict
+    state : Dict, dict
+    addInput(input, key, internalKey)
+    addOutput(output, key) -> bool
+    eval() -> bool
+    getOutputBitwidth() -> int
+    removeInput(input, key, internalKey)
+    removeOutput(output, key)
+  }
+  
+  class "Multiplexer8Inp" as src.model.Multiplexer.Multiplexer8Inp {
+    inputBitwidths : Dict
+    inputs : Dict
+    state : Dict, dict
+    addInput(input, key, internalKey)
+    addOutput(output, key) -> bool
+    eval() -> bool
+    getOutputBitwidth() -> int
+    removeInput(input, key, internalKey)
+    removeOutput(output, key)
+  }
+}
+
+' Inheritance Relationships
+src.model.ALUAdvanced.ALUAdvanced --|> src.model.LogicComponent.LogicComponent
+src.model.ALUSimple.ALUSimple --|> src.model.LogicComponent.LogicComponent
+src.model.And.And --|> src.model.LogicComponent.LogicComponent
+src.model.Or.Or --|> src.model.LogicComponent.LogicComponent
+src.model.Not.Not --|> src.model.LogicComponent.LogicComponent
+src.model.Nand.Nand --|> src.model.LogicComponent.LogicComponent
+src.model.Nor.Nor --|> src.model.LogicComponent.LogicComponent
+src.model.Xor.Xor --|> src.model.LogicComponent.LogicComponent
+src.model.Xnor.Xnor --|> src.model.LogicComponent.LogicComponent
+src.model.Collector1to8.Collector1to8 --|> src.model.LogicComponent.LogicComponent
+src.model.Collector8to32.Collector8to32 --|> src.model.LogicComponent.LogicComponent
+src.model.Splitter32to8.Splitter32to8 --|> src.model.LogicComponent.LogicComponent
+src.model.Splitter8to1.Splitter8to1 --|> src.model.LogicComponent.LogicComponent
+src.model.ShiftLeft2.ShiftLeft2 --|> src.model.LogicComponent.LogicComponent
+src.model.SignExtend.SignExtend --|> src.model.LogicComponent.LogicComponent
+src.model.Multiplexer.Multiplexer2Inp --|> src.model.LogicComponent.LogicComponent
+src.model.Multiplexer.Multiplexer4Inp --|> src.model.LogicComponent.LogicComponent
+src.model.Multiplexer.Multiplexer8Inp --|> src.model.LogicComponent.LogicComponent
+src.model.DLatch.DLatch --|> src.model.LogicComponent.LogicComponent
+src.model.DecoderThreeBit.DecoderThreeBit --|> src.model.LogicComponent.LogicComponent
+src.model.FullAdder.FullAdder --|> src.model.LogicComponent.LogicComponent
+src.model.HalfAdder.HalfAdder --|> src.model.LogicComponent.LogicComponent
+src.model.Register.Register --|> src.model.LogicComponent.LogicComponent
+src.model.Input.Input --|> src.model.LogicComponent.LogicComponent
+src.model.Output.Output --|> src.model.LogicComponent.LogicComponent
+
+' Composition/Aggregation Relationships
+src.infrastructure.eventBus.EventBus --* src.control.LogicComponentController.LogicComponentController : bus
+src.infrastructure.eventBus.EventBus --* src.model.LogicComponent.LogicComponent : bus
+src.view.SandboxModeWindow.SandboxModeWindow --* src.control.AppController.AppController : window
+
+' Layout hints for better organization
+src.control.AppController.AppController -down-> src.control.LogicComponentController.LogicComponentController
+src.control.LogicComponentController.LogicComponentController -down-> src.model.LogicComponent.LogicComponent
+src.model.LogicComponent.LogicComponent -down-> src.model.Input.Input
+src.model.LogicComponent.LogicComponent -down-> src.model.Output.Output
+@enduml

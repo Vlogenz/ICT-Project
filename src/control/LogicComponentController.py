@@ -188,8 +188,13 @@ class LogicComponentController:
         """
         self.eventDrivenEval(startingComponents=[model])
     
-    def setEvalSpeed(self, speed: float):
-        self.playbackspeed = speed
+    def setTickLength(self, length: float):
+        """sets the tick length for evaulation in seconds
+
+        Args:
+            length (float): The tick length in seconds
+        """
+        self.tickLength = length
         
     def addConnection(self, origin: "LogicComponent", originKey: str, target: "LogicComponent", targetKey: str) -> bool:
         """

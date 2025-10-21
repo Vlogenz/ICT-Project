@@ -5,10 +5,9 @@ import json
 from PySide6.QtGui import QAction, QCursor
 from PySide6.QtWidgets import QMenu, QPushButton
 
-from src.model.Input import Input
 from src.model.LogicComponent import LogicComponent
 from src.constants import CELL_SIZE, MIME_TYPE
-from src.model.Output import Output
+from src.infrastructure.eventBus import getBus
 
 
 class GridItem(QtWidgets.QFrame):
@@ -22,12 +21,23 @@ class GridItem(QtWidgets.QFrame):
         self.setFixedSize(CELL_SIZE - 8, CELL_SIZE - 8)
 
         self.layout = QtWidgets.QVBoxLayout(self)
-        lbl = QtWidgets.QLabel(self.logicComponent.__class__.__name__)
-        lbl.setAlignment(QtCore.Qt.AlignCenter)
-        self.layout.addWidget(lbl)
+        self.layout.setContentsMargins(16,16,16,0)
+
+        self.image_path = f"Gates/{self.logicComponent.__class__.__name__}.png"
+        print(self.image_path)
+
+        imgLabel = QtWidgets.QLabel()
+        imgLabel.setScaledContents(True)
+        pixmap = QtGui.QPixmap(self.image_path)
+        if not pixmap.isNull():
+            imgLabel.setPixmap(pixmap)
+        else:
+            imgLabel.setText(self.logicComponent.__class__.__name__)
+
+        self.layout.addWidget(imgLabel)
 
         # Apply stylesheet
-        self.setStyleSheet(f"border: 1px solid lightgray; background-color: {color.name() if color != None else 'lightgray'};")
+        self.setStyleSheet(f"border: 1px solid lightgray; background-color: {color.name() if color else 'lightgray'};")
 
         # Define ports dynamically based on what the LogicComponent has
         self.outputs = {
@@ -42,6 +52,15 @@ class GridItem(QtWidgets.QFrame):
         # Set up right click menu
         self.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.customContextMenuRequested.connect(self.openContextMenu)
+
+        # Add state label
+        self.stateLabel = QtWidgets.QLabel(f"{self.logicComponent.getState()['outValue'][0]}")
+        self.stateLabel.setAlignment(QtCore.Qt.AlignCenter)
+        self.layout.addWidget(self.stateLabel)
+
+        # Subscribe to component update
+        self.bus = getBus()
+        self.bus.subscribe("view:components_updated", self.onComponentUpdated)
 
     def paintEvent(self, event):
         """Draw the item and the ports. Overrides QWidget.paintEvent, which gets called automatically when update() is called."""
@@ -71,7 +90,7 @@ class GridItem(QtWidgets.QFrame):
             self.parentWidget().removeConnectionTo(self, port[1])
             return
 
-        # normal Move-Drag
+        # Normal Move-Drag
         if event.button() == QtCore.Qt.LeftButton:
             drag = QtGui.QDrag(self)
             mime = QtCore.QMimeData()
@@ -82,24 +101,20 @@ class GridItem(QtWidgets.QFrame):
             pix = QtGui.QPixmap(self.size())
             self.render(pix)
             drag.setPixmap(pix)
+            drag.setHotSpot(event.position().toPoint())
 
-            hotspot = event.position().toPoint()  # QPoint relative to widget
-            drag.setHotSpot(hotspot)
-
-            self.hide()
+            self.hide()  # Hide the original to avoid duplication
             result = drag.exec(QtCore.Qt.MoveAction)
             if result == QtCore.Qt.IgnoreAction:
-                self.show()
+                self.show()  # Show back if canceled
 
     def openContextMenu(self):
         """Open a context menu with options like deleting the item."""
-
         menu = QMenu(self)  # Parent the menu to avoid leaks
         deleteAction = QAction("Delete component", self)
         deleteAction.triggered.connect(self.deleteItem)
         menu.addAction(deleteAction)
-
-        menu.exec_(QCursor.pos()) # Display the menu at the cursor's current position
+        menu.exec_(QCursor.pos())  # Display the menu at the cursor's current position
 
     def deleteItem(self):
         """Delete this item from the grid."""
@@ -129,3 +144,10 @@ class GridItem(QtWidgets.QFrame):
     def getOutputRect(self, key: str) -> QtCore.QRectF:
         """Get the QRectF of the output port with the given key."""
         return self.outputs.get(key)
+
+    def onComponentUpdated(self, compList):
+        if self.logicComponent in compList:
+            self.updateLabel()
+
+    def updateLabel(self):
+        self.stateLabel.setText(f"{self.logicComponent.getState()['outValue'][0]}")

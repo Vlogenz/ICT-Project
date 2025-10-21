@@ -35,10 +35,8 @@ class SandboxModeWindow(QtWidgets.QMainWindow):
         classes = list(self.iter_classes_in_package(model))
         print(f"classes: {classes}")
         for i, class_ in enumerate(classes):
-            print(f"{class_}")
             # Use index for a two-column grid
             palette.addWidget(PaletteItem(class_), i//2, i%2)
-        #palette.addStretch()
 
         # Grid
         grid = GridWidget(logicController)
@@ -58,10 +56,6 @@ class SandboxModeWindow(QtWidgets.QMainWindow):
         layout.addWidget(palette_frame, 0, 0, 2, 1)
         layout.addWidget(simControls, 0, 1)
         layout.addWidget(grid, 1, 1)
-
-        #class_list = self.get_classes_in_package("src.model")
-        #for cls in class_list:
-        #    print(cls)
 
     def iter_classes_in_package(self, package):
         for _, module_name, is_pkg in pkgutil.walk_packages(package.__path__, package.__name__ + "."):

@@ -10,14 +10,26 @@ class PaletteItem(QtWidgets.QFrame):
 
     def __init__(self, logicComponentClass: Class, color: QtGui.QColor = None, parent=None):
         super().__init__(parent)
-        self.setFrameShape(QtWidgets.QFrame.NoFrame)
-        self.setFixedSize(70, 40)
+        self.setFrameShape(QtWidgets.QFrame.Box)
+        self.setFixedSize(90, 40)
 
         layout = QtWidgets.QHBoxLayout(self)
-        layout.setContentsMargins(0,0,0,0)
-        lbl = QtWidgets.QLabel(logicComponentClass.__name__)
-        lbl.setAlignment(QtCore.Qt.AlignCenter)
-        layout.addWidget(lbl)
+        layout.setContentsMargins(4, 2, 4, 2)
+
+        self.image_path = f"Gates/{logicComponentClass.__name__}.png"
+
+        img_label = QtWidgets.QLabel()
+        pixmap = QtGui.QPixmap(self.image_path)
+        if not pixmap.isNull():
+            img_label.setPixmap(
+                pixmap.scaled(28, 28, QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation)
+            )
+            img_label.setAlignment(QtCore.Qt.AlignCenter)
+        else:
+            img_label.setText(logicComponentClass.__name__)
+
+        img_label.setAlignment(QtCore.Qt.AlignCenter)
+        layout.addWidget(img_label)
 
         self.logicComponentClass = logicComponentClass
         self.color = color
@@ -44,4 +56,3 @@ class PaletteItem(QtWidgets.QFrame):
             drag.setPixmap(pix)
 
             drag.exec(QtCore.Qt.CopyAction)
-

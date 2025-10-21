@@ -16,8 +16,6 @@ import random
 from typing import List
 
 from src.view.InputGridItem import InputGridItem
-from src.view.OutputGridItem import OutputGridItem
-
 
 class GridWidget(QtWidgets.QWidget):
     """Main drop area with grid, items and connections."""
@@ -153,6 +151,7 @@ class GridWidget(QtWidgets.QWidget):
     def dropEvent(self, event):
         """This gets called when something is dropped onto the widget. If the cell is occupied, the drop is ignored."""
         self.useRandomOffset = True
+        payload = json.loads(event.mimeData().data(MIME_TYPE).data().decode("utf-8"))
         pos = event.position().toPoint()
         cell = self.cellAt(pos)
         if not cell:
@@ -184,8 +183,6 @@ class GridWidget(QtWidgets.QWidget):
                 component = self.logicController.addLogicComponent(cls)
                 if isinstance(component, Input):
                     new_item = InputGridItem(logicComponent=component)
-                elif isinstance(component, Output):
-                    new_item = OutputGridItem(logicComponent=component)
                 else:
                     new_item = GridItem(logicComponent=component)
                 self.addItem(cell, new_item)
@@ -252,7 +249,6 @@ class GridWidget(QtWidgets.QWidget):
             self.draggingLine = None
             self.update()
 
-
     def orthogonalRoute(self, path: QPainterPath, src: QPointF, dst: QPointF):
         """A helper method to draw an orthogonal route from src to dst.
         Args:
@@ -265,7 +261,7 @@ class GridWidget(QtWidgets.QWidget):
 
         # Use a random offset to avoid overlapping lines
         if self.useRandomOffset:
-            offset = random.randint(20,50)
+            offset = random.randint(20, 50)
         else:
             offset = 20
 

@@ -13,7 +13,7 @@ from tests.model.DummyInput import DummyInput,DummyOutput
 @pytest.fixture
 def lC(): 
     lC = LogicComponentController()
-    lC.setEvalSpeed(0)
+    lC.setTickLength(0)
     return lC
     
 

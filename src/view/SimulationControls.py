@@ -46,10 +46,10 @@ class SimulationControls(QtWidgets.QFrame):
             value (int): The current value of the speed slider.
         """
         if value == 10:
-            self.logicController.tickLength = 0
+            self.logicController.setTickLength(0)
             self.speedLabel.setText("Speed: Instant")
         else:
-            self.logicController.tickLength = 1 / value
+            self.logicController.setTickLength(1 / value)
             if value == 1:
                 self.speedLabel.setText("Speed: 1 step/sec")
             else:

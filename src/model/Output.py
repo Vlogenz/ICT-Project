@@ -6,7 +6,7 @@ class Output(LogicComponent):
     def __init__(self):
         super().__init__()
         self.inputs: typing.Dict = {"input": None} 
-        self.inputBitwidths: typing.Dict = {"input": 1} 
+        self.inputBitwidths: typing.Dict = {"input": 0} 
         # Output has exactly one input
         # (Tuples of component and output key of that component)
         self.state: dict = {"outValue": (0,1)}  # Initial state
@@ -31,3 +31,14 @@ class Output(LogicComponent):
             return True
         else:
             return False
+        
+    def addInput(self, input, key, internalKey):
+        success = super().addInput(input, key, internalKey)
+        if success:
+            self.inputBitwidths["input"] = input.getState()[key][1]
+        return success
+    
+    def removeInput(self, input, key, internalKey):
+        super().removeInput(input, key, internalKey)
+        self.inputBitwidths["input"] = 0
+        

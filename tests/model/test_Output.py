@@ -38,3 +38,21 @@ def test_Output_state_changes_multiple_times():
     changed = output.eval()
     assert changed is True, "Output.eval() should return True when state changes from (1,1) to (0,1)."
     assert output.state["outValue"] == (0,1), "Output.state['outValue'] should be updated to (0,1)."
+    
+
+def test_different_bitwidth_input():
+    getBus().setManual()
+    output = Output()
+    dummy = DummyInput(4, bitwidth=4)
+    output.addInput(dummy,"outValue","input")
+    output.eval()
+    assert output.inputBitwidths["input"] == 4, "Output.inputBitwidths['input'] should match DummyInput's bitwidth."
+    
+def test_remove_input_resets_bitwidth():
+    getBus().setManual()
+    output = Output()
+    dummy = DummyInput(4, bitwidth=4)
+    output.addInput(dummy,"outValue","input")
+    output.eval()
+    output.removeInput(dummy,"outValue","input")
+    assert output.inputBitwidths["input"] == 0, "Output.inputBitwidths['input'] should be reset to 0 after removing input."

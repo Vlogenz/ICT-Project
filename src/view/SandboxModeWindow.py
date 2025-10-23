@@ -36,7 +36,7 @@ class SandboxModeWindow(QtWidgets.QMainWindow):
         print(f"classes: {classes}")
         for i, class_ in enumerate(classes):
             # Use index for a two-column grid
-            palette.addWidget(PaletteItem(class_), i//2, i%2)
+            palette.addWidget(PaletteItem(class_), i//3, i%3)
 
         # Grid
         grid = GridWidget(logicController)
@@ -47,7 +47,6 @@ class SandboxModeWindow(QtWidgets.QMainWindow):
 
         palette_frame = QtWidgets.QFrame()
         palette_frame.setLayout(palette)
-        palette_frame.setFixedWidth(200)
 
         # Simulation controls
         simControls = SimulationControls(self.logicController)

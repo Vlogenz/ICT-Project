@@ -63,6 +63,9 @@ class GridItem(QtWidgets.QFrame):
         self.bus = getBus()
         self.bus.subscribe("view:components_updated", self.onComponentUpdated)
 
+        # Enable mouse tracking for tooltips
+        self.setMouseTracking(True)
+
     def paintEvent(self, event):
         """Draw the item and the ports. Overrides QWidget.paintEvent, which gets called automatically when update() is called."""
         super().paintEvent(event)
@@ -108,6 +111,32 @@ class GridItem(QtWidgets.QFrame):
             result = drag.exec(QtCore.Qt.MoveAction)
             if result == QtCore.Qt.IgnoreAction:
                 self.show()  # Show back if canceled
+
+    def mouseMoveEvent(self, event: QtGui.QMouseEvent):
+        """Update tooltip based on the port under the mouse."""
+        pos = event.position().toPoint()
+        port = self.portAt(pos)
+        if port[0] == "output":
+            key = port[1]
+            state = self.logicComponent.getState().get(key, "Unknown")
+            self.setToolTip(f"Output {key}:\n- Value: {state[0]}\n- Bitwidth: {state[1]}")
+        elif port[0] == "input":
+            key = port[1]
+            input_conn = self.logicComponent.getInputs().get(key)
+            if input_conn and input_conn[0] is not None:
+                comp, outkey = input_conn
+                state = comp.getState().get(outkey, "Unknown")
+                self.setToolTip(f"Input {key}:\n- Value: {state[0]}\n- Bitwidth: {state[1]}")
+            else:
+                self.setToolTip(f"Input {key}: Not connected")
+        else:
+            self.setToolTip("")
+
+        # If dragging a line, propagate the event to parent for updating the dragging line
+        if self.parentWidget() and hasattr(self.parentWidget(), 'draggingLine') and self.parentWidget().draggingLine:
+            global_pos = self.mapToParent(event.position().toPoint())
+            new_event = QtGui.QMouseEvent(QtGui.QMouseEvent.MouseMove, global_pos, event.button(), event.buttons(), event.modifiers())
+            self.parentWidget().mouseMoveEvent(new_event)
 
     def openContextMenu(self):
         """Open a context menu with options like deleting the item."""

@@ -15,8 +15,12 @@ class InputGridItem(GridItem):
         super().__init__(logicComponent)
         self.logicComponent = logicComponent
 
+        # Turn stateLabel into a button
+        self.layout.removeWidget(self.stateLabel)
+        self.stateLabel.deleteLater()
         self.stateLabel = QPushButton(f"{self.logicComponent.getState()['outValue'][0]}")
         self.stateLabel.clicked.connect(self.toggleState)
+        self.layout.addWidget(self.stateLabel)
 
     def toggleState(self):
         self.logicComponent.toggleState()

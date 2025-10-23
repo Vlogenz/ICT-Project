@@ -26,15 +26,16 @@ class GridItem(QtWidgets.QFrame):
         self.image_path = f"Gates/{self.logicComponent.__class__.__name__}.png"
         print(self.image_path)
 
-        imgLabel = QtWidgets.QLabel()
-        imgLabel.setScaledContents(True)
+        self.imgLabel = QtWidgets.QLabel()
+        self.imgLabel.setScaledContents(True)
+        self.imgLabel.setMinimumHeight(50)
         pixmap = QtGui.QPixmap(self.image_path)
         if not pixmap.isNull():
-            imgLabel.setPixmap(pixmap)
+            self.imgLabel.setPixmap(pixmap)
         else:
-            imgLabel.setText(self.logicComponent.__class__.__name__)
+            self.imgLabel.setText(self.logicComponent.__class__.__name__)
 
-        self.layout.addWidget(imgLabel)
+        self.layout.addWidget(self.imgLabel)
 
         # Apply stylesheet
         self.setStyleSheet(f"border: 1px solid lightgray; background-color: {color.name() if color else 'lightgray'};")
@@ -119,16 +120,16 @@ class GridItem(QtWidgets.QFrame):
         if port[0] == "output":
             key = port[1]
             state = self.logicComponent.getState().get(key, "Unknown")
-            self.setToolTip(f"Output {key}:\n- Value: {state[0]}\n- Bitwidth: {state[1]}")
+            self.setToolTip(f"Output '{key}':\n- Value: {state[0]}\n- Bitwidth: {state[1]}")
         elif port[0] == "input":
             key = port[1]
             input_conn = self.logicComponent.getInputs().get(key)
             if input_conn and input_conn[0] is not None:
                 comp, outkey = input_conn
                 state = comp.getState().get(outkey, "Unknown")
-                self.setToolTip(f"Input {key}:\n- Value: {state[0]}\n- Bitwidth: {state[1]}")
+                self.setToolTip(f"Input '{key}':\n- Value: {state[0]}\n- Bitwidth: {state[1]}")
             else:
-                self.setToolTip(f"Input {key}: Not connected")
+                self.setToolTip(f"Input '{key}': Not connected\n- Bitwidth: {self.logicComponent.inputBitwidths[key]}")
         else:
             self.setToolTip("")
 

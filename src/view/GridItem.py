@@ -54,9 +54,10 @@ class GridItem(QtWidgets.QFrame):
         self.customContextMenuRequested.connect(self.openContextMenu)
 
         # Add state label
-        self.stateLabel = QtWidgets.QLabel(f"{self.logicComponent.getState()['outValue'][0]}")
+        self.stateLabel = QtWidgets.QLabel()
         self.stateLabel.setAlignment(QtCore.Qt.AlignCenter)
         self.layout.addWidget(self.stateLabel)
+        self.updateLabel()
 
         # Subscribe to component update
         self.bus = getBus()
@@ -150,4 +151,6 @@ class GridItem(QtWidgets.QFrame):
             self.updateLabel()
 
     def updateLabel(self):
-        self.stateLabel.setText(f"{self.logicComponent.getState()['outValue'][0]}")
+        #TODO: When there are several outValues, we have to show all of them. Maybe display on output circle.
+        if 'outValue' in self.logicComponent.getState().keys():
+            self.stateLabel.setText(f"{self.logicComponent.getState()['outValue'][0]}")

@@ -1,6 +1,7 @@
 from PySide6 import QtCore, QtGui, QtWidgets
 from PySide6.QtCore import QPointF
 from PySide6.QtGui import QPainterPath
+from pyqttoast import Toast, ToastPreset, ToastPosition
 
 from src.control.LogicComponentController import LogicComponentController
 from src.constants import GRID_COLS, GRID_ROWS, CELL_SIZE, MIME_TYPE
@@ -40,6 +41,10 @@ class GridWidget(QtWidgets.QWidget):
         #Initialize event bus
         self.eventBus = getBus()
         self.eventBus.subscribe("view:components_updated", self.updateConnectionActivity)
+
+        # Static settings for Toast class
+        Toast.setPositionRelativeToWidget(self)
+        Toast.setPosition(ToastPosition.BOTTOM_MIDDLE)
 
     def paintEvent(self, event):
         """Redraws the entire grid, items and connections. It overrides QWidget.paintEvent, which gets called automatically when update() is called."""
@@ -179,7 +184,7 @@ class GridWidget(QtWidgets.QWidget):
             try:
                 package = __import__(package_name, fromlist=[class_name])
                 module = getattr(package, class_name)
-                cls = getattr(module, class_name)
+                cls = module
                 component = self.logicController.addLogicComponent(cls)
                 if isinstance(component, Input):
                     new_item = InputGridItem(logicComponent=component)
@@ -243,8 +248,11 @@ class GridWidget(QtWidgets.QWidget):
                     # Add the connection
                     outputKey = srcItem.portAt(srcItem.mapFromParent(start))[1]
                     inputKey = item.portAt(local)[1]
-                    self.logicController.addConnection(self.draggingLine.srcItem.logicComponent, outputKey, item.logicComponent, inputKey)
-                    self.connections.append(Connection(srcItem, srcKey, item, port[1]))
+                    if self.logicController.addConnection(self.draggingLine.srcItem.logicComponent, outputKey, item.logicComponent, inputKey):
+                        self.connections.append(Connection(srcItem, srcKey, item, port[1]))
+                    else:
+                        self.showToast("You cannot add this connection here!",
+                                       "Either the bitwidth is incompatible or the input is already occupied.")
                     break
             self.draggingLine = None
             self.update()
@@ -287,3 +295,11 @@ class GridWidget(QtWidgets.QWidget):
             else:
                 conn.isActive = False
         self.repaint()
+
+    def showToast(self, title: str, text: str):
+        toast = Toast(self.window())
+        toast.setDuration(3000)  # Hide after 3 seconds
+        toast.setTitle(title)
+        toast.setText(text)
+        toast.applyPreset(ToastPreset.ERROR)  # Apply style preset
+        toast.show()

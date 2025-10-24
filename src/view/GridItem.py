@@ -23,7 +23,7 @@ class GridItem(QtWidgets.QFrame):
         self.layout = QtWidgets.QVBoxLayout(self)
         self.layout.setContentsMargins(16,16,16,0)
 
-        self.image_path = f"Gates/{self.logicComponent.__class__.__name__}.png"
+        self.image_path = f"Gates/{self.logicComponent.__class__.__name__}.svg"
         print(self.image_path)
 
         imgLabel = QtWidgets.QLabel()

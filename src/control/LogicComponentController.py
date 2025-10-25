@@ -70,6 +70,9 @@ class LogicComponentController:
                 for comp in self.updateInTick[tick]:
                     comp.eval()
                 self.updateComponents(components =self.updateInTick[tick])
+                #TODO: We should use something else than sleep here because this just pauses the thread.
+                # This causes 'Application not responding' sometimes and likely also interferes with the GUI updates.
+                # Maybe use multithreading here.
                 sleep(self.tickLength)
             return True
         
@@ -97,6 +100,7 @@ class LogicComponentController:
             
             
             self.updateComponents(components=currentTick)
+            #TODO: Use something else than sleep here (see above)
             sleep(self.tickLength)
             currentTick = nextTick
             tick +=1

@@ -128,11 +128,12 @@ class GridWidget(QtWidgets.QWidget):
             deleteItem.setParent(None)
             deleteItem.deleteLater()
             self.connections = [conn for conn in self.connections if conn.srcItem != deleteItem and conn.dstItem != deleteItem]
+            self.update()
         except ValueError:
             return
 
     def removeItemByUID(self, uid):
-        filteredItems = [item for item in self.items]
+        filteredItems = [item for item in self.items if item.uid == uid]
         if len(filteredItems) == 1:
             self.removeItem(filteredItems[0])
 

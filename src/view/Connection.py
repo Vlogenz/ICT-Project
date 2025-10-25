@@ -1,6 +1,5 @@
 from src.view.GridItem import GridItem
 from PySide6.QtGui import QPainterPath
-from PySide6.QtCore import QPointF
 
 class Connection:
     """Represents an established connection between two items in the grid.

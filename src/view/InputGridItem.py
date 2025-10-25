@@ -1,5 +1,3 @@
-from typing import override
-
 from src.view.GridItem import GridItem
 from src.model.Input import Input
 from PySide6.QtWidgets import QPushButton
@@ -15,13 +13,11 @@ class InputGridItem(GridItem):
         super().__init__(logicComponent)
         self.logicComponent = logicComponent
 
-        # Turn stateLabel into a button
-        self.layout.removeWidget(self.stateLabel)
-        self.stateLabel.deleteLater()
-        self.stateLabel = QPushButton(f"{self.logicComponent.getState()['outValue'][0]}")
-        self.stateLabel.clicked.connect(self.toggleState)
-        self.layout.addWidget(self.stateLabel)
+        # Add a toggle button
+        self.toggleButton = QPushButton(f"Toggle")
+        self.toggleButton.clicked.connect(self.toggleState)
+        self.layout.addWidget(self.toggleButton)
 
     def toggleState(self):
         self.logicComponent.toggleState()
-        self.updateLabel()
+        self.updatePortLabels()

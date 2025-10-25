@@ -2,7 +2,7 @@ import uuid
 from PySide6 import QtWidgets, QtGui, QtCore
 import json
 
-from PySide6.QtGui import QAction, QCursor
+from PySide6.QtGui import QAction, QCursor, QBrush, QPalette
 from PySide6.QtWidgets import QMenu, QPushButton
 
 from src.model.LogicComponent import LogicComponent
@@ -21,24 +21,15 @@ class GridItem(QtWidgets.QFrame):
         self.setFixedSize(CELL_SIZE - 8, CELL_SIZE - 8)
 
         self.layout = QtWidgets.QVBoxLayout(self)
-        self.layout.setContentsMargins(16,16,16,0)
+        self.layout.setContentsMargins(0,0,0,0)
 
         self.image_path = f"Gates/{self.logicComponent.__class__.__name__}.png"
-        print(self.image_path)
 
-        self.imgLabel = QtWidgets.QLabel()
-        self.imgLabel.setScaledContents(True)
-        self.imgLabel.setMinimumHeight(50)
-        pixmap = QtGui.QPixmap(self.image_path)
-        if not pixmap.isNull():
-            self.imgLabel.setPixmap(pixmap)
-        else:
-            self.imgLabel.setText(self.logicComponent.__class__.__name__)
-
-        self.layout.addWidget(self.imgLabel)
-
-        # Apply stylesheet
-        self.setStyleSheet(f"border: 1px solid lightgray; background-color: {color.name() if color else 'lightgray'};")
+        self.pixmap = QtGui.QPixmap(self.image_path)
+        if self.pixmap.isNull():
+            nameLabel = QtWidgets.QLabel(self.logicComponent.__class__.__name__)
+            nameLabel.setAlignment(QtCore.Qt.AlignCenter)
+            self.layout.addWidget(nameLabel)
 
         # Define ports dynamically based on what the LogicComponent has
         self.outputs = {
@@ -50,15 +41,33 @@ class GridItem(QtWidgets.QFrame):
             for i, key in enumerate(self.logicComponent.getInputs())
         }
 
+        # Create output labels
+        self.outputLabels = {}
+        for key, rect in self.outputs.items():
+            label = QtWidgets.QLabel(str(self.logicComponent.getState()[key][0]))
+            label.setGeometry(rect.toRect())
+            label.setAlignment(QtCore.Qt.AlignCenter)
+            label.setStyleSheet("border-radius: 8px; background-color: blue; color: white; font-size: 8px;")
+            label.setAttribute(QtCore.Qt.WA_TransparentForMouseEvents)
+            label.setParent(self)
+            self.outputLabels[key] = label
+
+        # Create input labels
+        self.inputLabels = {}
+        for key, rect in self.inputs.items():
+            label = QtWidgets.QLabel("NC")
+            label.setGeometry(rect.toRect())
+            label.setAlignment(QtCore.Qt.AlignCenter)
+            label.setStyleSheet("border-radius: 8px; background-color: green; color: white; font-size: 8px;")
+            label.setAttribute(QtCore.Qt.WA_TransparentForMouseEvents)
+            label.setParent(self)
+            self.inputLabels[key] = label
+
+        self.updatePortLabels()
+
         # Set up right click menu
         self.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.customContextMenuRequested.connect(self.openContextMenu)
-
-        # Add state label
-        self.stateLabel = QtWidgets.QLabel()
-        self.stateLabel.setAlignment(QtCore.Qt.AlignCenter)
-        self.layout.addWidget(self.stateLabel)
-        self.updateLabel()
 
         # Subscribe to component update
         self.bus = getBus()
@@ -71,14 +80,8 @@ class GridItem(QtWidgets.QFrame):
         """Draw the item and the ports. Overrides QWidget.paintEvent, which gets called automatically when update() is called."""
         super().paintEvent(event)
         painter = QtGui.QPainter(self)
-        # Output-Port on the right (blue)
-        painter.setBrush(QtGui.QColor("blue"))
-        for output_port in self.outputs.values():
-            painter.drawEllipse(output_port)
-        # Input-Port on the left (green)
-        painter.setBrush(QtGui.QColor("green"))
-        for input_port in self.inputs.values():
-            painter.drawEllipse(input_port)
+        if not self.pixmap.isNull():
+            painter.drawPixmap(self.rect(), self.pixmap)
 
     def mousePressEvent(self, event: QtGui.QMouseEvent):
         """Handle dragging of the item or starting a connection from a port."""
@@ -178,9 +181,17 @@ class GridItem(QtWidgets.QFrame):
 
     def onComponentUpdated(self, compList):
         if self.logicComponent in compList:
-            self.updateLabel()
+            self.updatePortLabels()
 
-    def updateLabel(self):
-        #TODO: When there are several outValues, we have to show all of them. Maybe display on output circle.
-        if 'outValue' in self.logicComponent.getState().keys():
-            self.stateLabel.setText(f"{self.logicComponent.getState()['outValue'][0]}")
+    def updatePortLabels(self):
+        for key, label in self.outputLabels.items():
+            state = self.logicComponent.getState().get(key, [0, 0])
+            label.setText(str(state[0]))
+        for key, label in self.inputLabels.items():
+            input_conn = self.logicComponent.getInputs().get(key)
+            if input_conn and input_conn[0] is not None:
+                comp, outkey = input_conn
+                state = comp.getState().get(outkey, [0, 0])
+                label.setText(str(state[0]))
+            else:
+                label.setText("NC")

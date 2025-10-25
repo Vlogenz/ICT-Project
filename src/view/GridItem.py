@@ -13,7 +13,7 @@ from src.infrastructure.eventBus import getBus
 class GridItem(QtWidgets.QFrame):
     """An Element in the grid with inputs and outputs"""
 
-    def __init__(self, logicComponent: LogicComponent, color: QtGui.QColor = None, uid=None, parent=None):
+    def __init__(self, logicComponent: LogicComponent, uid=None, parent=None):
         super().__init__(parent)
         self.uid = uid or str(uuid.uuid4())
         self.logicComponent = logicComponent
@@ -180,10 +180,14 @@ class GridItem(QtWidgets.QFrame):
         return self.outputs.get(key)
 
     def onComponentUpdated(self, compList):
+        """Event handler for the view:components_updated event. Updated port labels."""
         if self.logicComponent in compList:
             self.updatePortLabels()
 
     def updatePortLabels(self):
+        """Updates all port labels of the GridItem according to the underlying values in the backend.
+        If an input port is not connected, it will show 'NC'.
+        """
         for key, label in self.outputLabels.items():
             state = self.logicComponent.getState().get(key, [0, 0])
             label.setText(str(state[0]))

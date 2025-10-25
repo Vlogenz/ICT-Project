@@ -33,10 +33,6 @@ class GridWidget(QtWidgets.QWidget):
         self.tempPos = None
         self.setMinimumSize(cols * CELL_SIZE, rows * CELL_SIZE)
 
-        # The random offset is used to avoid overlapping lines
-        # It should be set to False when dragging an item or a line so that is does not look weird
-        #self.useRandomOffset = True
-
         #Initialize event bus
         self.eventBus = getBus()
         self.eventBus.subscribe("view:components_updated", self.updateConnectionActivity)
@@ -147,7 +143,6 @@ class GridWidget(QtWidgets.QWidget):
 
     def dragMoveEvent(self, event):
         """This gets called when something is dragged over the widget."""
-        #self.useRandomOffset = False
         payload = json.loads(event.mimeData().data(MIME_TYPE).data().decode("utf-8"))
         if payload.get("action_type") == "move":
             if self.draggingItem is None:
@@ -163,7 +158,6 @@ class GridWidget(QtWidgets.QWidget):
 
     def dropEvent(self, event):
         """This gets called when something is dropped onto the widget. If the cell is occupied, the drop is ignored."""
-        #self.useRandomOffset = True
         payload = json.loads(event.mimeData().data(MIME_TYPE).data().decode("utf-8"))
         pos = event.position().toPoint()
         cell = self.cellAt(pos)
@@ -237,14 +231,12 @@ class GridWidget(QtWidgets.QWidget):
 
     def mouseMoveEvent(self, event):
         """This is called whenever the mouse moves within the widget. If a line is being dragged, it updates the line."""
-        #self.useRandomOffset = False
         if self.draggingLine:
             self.draggingLine.currentPos = event.pos()
             self.update()
 
     def mouseReleaseEvent(self, event):
         """This is called whenever the mouse button is released. If a line is being dragged, it checks if it ends on an input port."""
-        #self.useRandomOffset = True
         if self.draggingLine:
             srcItem =  self.draggingLine.srcItem
             srcKey = self.draggingLine.srcKey
@@ -261,7 +253,7 @@ class GridWidget(QtWidgets.QWidget):
                         self.connections.append(Connection(srcItem, srcKey, item, port[1]))
                         item.update()
                     else:
-                        self.showToast("You cannot add this connection here!",
+                        self.showErrorToast("You cannot add this connection here!",
                                        "Either the bitwidth is incompatible or the input is already occupied.")
                     break
             self.draggingLine = None
@@ -290,11 +282,13 @@ class GridWidget(QtWidgets.QWidget):
             path.lineTo(src.x() + startOffset, dst.y())
             path.lineTo(dst)
 
+    # TODO: Perspectively restructure this (and regular orthogonalRoute) to the connection class for better modularity. Low priority though.
     def intelligentOrthogonalRoute(self, pathToCreate: QPainterPath, src: QPoint, dst: QPoint,
                                    connectionsToAvoid: List[Connection]):
         connectionPaths = [conn.getPath() for conn in connectionsToAvoid]
 
         def wouldCauseOverlap(x,y) -> bool:
+            # Check if the given point lies on one of the connectionsToAvoid
             point = QPoint(x,y)
             causesOverlap = False
             i = 0
@@ -342,6 +336,7 @@ class GridWidget(QtWidgets.QWidget):
             pointC = dst
             pointsToDraw = [pointA, pointB, pointC]
 
+        # Add all the points to the pathToCreate
         for point in pointsToDraw:
             if isinstance(point, list):
                 pathToCreate.lineTo(QPoint(point[0], point[1]))
@@ -363,7 +358,13 @@ class GridWidget(QtWidgets.QWidget):
                 conn.isActive = False
         self.repaint()
 
-    def showToast(self, title: str, text: str):
+    def showErrorToast(self, title: str, text: str):
+        """Shows an error toast message with the given title and text
+
+        Args:
+            title (str): The title for the toast
+            text (str): The text for the toast
+        """
         toast = Toast(self.window())
         toast.setDuration(3000)  # Hide after 3 seconds
         toast.setTitle(title)

@@ -29,6 +29,10 @@ def test_addLogicComponent(lC):
     assert len(lC.getComponents()) == 2
     assert len(lC.getInputs()) == 1
     
+    lC.addLogicComponent(Output)
+    assert len(lC.getComponents()) == 3
+    assert len(lC.getOutputs()) == 1
+    
     
 def test_removeLogicComponent(lC):
     
@@ -36,18 +40,26 @@ def test_removeLogicComponent(lC):
     in2 = lC.addLogicComponent(Input)
     and1 = lC.addLogicComponent(And)
     lC.addLogicComponent(Or)
-    lC.addLogicComponent(Output)
+    out = lC.addLogicComponent(Output)
     
     assert len(lC.getComponents()) == 5
     assert len(lC.getInputs()) == 2
+    assert len(lC.getOutputs()) == 1
     
     lC.removeLogicComponent(and1)
     assert len(lC.getComponents()) == 4
     assert len(lC.getInputs()) == 2
+    assert len(lC.getOutputs()) == 1
     
     lC.removeLogicComponent(in1)
     assert len(lC.getComponents()) == 3
     assert len(lC.getInputs()) == 1
+    assert len(lC.getOutputs()) == 1
+    
+    lC.removeLogicComponent(out)
+    assert len(lC.getComponents()) == 2
+    assert len(lC.getInputs()) == 1
+    assert len(lC.getOutputs()) == 0
     
     with pytest.raises(ReferenceError):
         lC.removeLogicComponent(and1)
@@ -413,3 +425,18 @@ def test_updateRegisters_single_register():
     assert reg.getState()["outValue"][0] == 1
     assert out.state["state"][0] == 1
 
+def test_cleanup(lC):
+    in1 = lC.addLogicComponent(Input)
+    in2 = lC.addLogicComponent(Input)
+    and1 = lC.addLogicComponent(And)
+    
+    lC.addConnection(in1,"outValue",and1,"input1")
+    lC.addConnection(in2,"outValue",and1,"input2")
+    
+    assert len(lC.getComponents()) == 3
+    assert len(lC.getInputs()) == 2
+    
+    lC.clearComponents()
+    
+    assert len(lC.getComponents()) == 0
+    assert len(lC.getInputs()) == 0

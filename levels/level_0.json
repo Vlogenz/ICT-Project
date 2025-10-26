@@ -1,0 +1,42 @@
+{
+    "level_id": 0,
+    "name": "dummy Level and gate",
+    "description": "This is a dummy level for testing purposes.",
+    "difficulty": "Easy",
+    "objectives": [
+        "Objective 1: build and gate",
+        "Objective 2: Do something else"
+    ],
+    "components": [
+        {"type": "Input", "position": [4,1], "immovable": true},
+        {"type": "Input", "position": [4,3], "immovable": true},
+        {"type": "Output", "position": [8,2], "immovable": true}
+        
+    ],
+    "available_components": [
+        {"type": "AND"}
+    ],
+    "hints": [
+        "This is a hint for the dummy level.",
+        "Remember to connect the inputs to the output."
+    ],
+    "tests": [
+        {
+            "inputs": [[1,1], [1,1]],
+            "expected_output": [[1,1]]
+        },
+        {
+            "inputs": [[1,1], [0,1]],
+            "expected_output": [[0,1]]
+        },
+        {
+            "inputs": [[0,1], [1,1]],
+            "expected_output": [[0,1]]
+        },
+        {
+            "inputs": [[0,1], [0,1]],
+            "expected_output": [[0,1]]
+        }
+    ]
+
+}

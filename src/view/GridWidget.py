@@ -192,7 +192,8 @@ class GridWidget(QtWidgets.QWidget):
                     new_item = InputGridItem(logicComponent=component)
                 else:
                     new_item = GridItem(logicComponent=component)
-                self.addItem(cell, new_item)
+                if not self.isOccupied(cell):
+                    self.addItem(cell, new_item)
             except Exception as e:
                 print("Error creating GridItem:", e)
         elif action_type == "move":

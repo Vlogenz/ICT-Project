@@ -1,18 +1,17 @@
 from PySide6 import QtCore, QtGui, QtWidgets
-from PySide6.QtCore import QPointF
-from PySide6.QtGui import QPainterPath
+from PySide6.QtCore import QPoint
+from PySide6.QtGui import QPainterPath, QPainterPathStroker
+from pyqttoast import Toast, ToastPreset, ToastPosition
 
 from src.control.LogicComponentController import LogicComponentController
 from src.constants import GRID_COLS, GRID_ROWS, CELL_SIZE, MIME_TYPE
 from src.model.Input import Input
 from src.model.LogicComponent import LogicComponent
-from src.model.Output import Output
 from src.infrastructure.eventBus import getBus
 from src.view.DraggingLine import DraggingLine
 from src.view.GridItem import GridItem
 from src.view.Connection import Connection
 import json
-import random
 from typing import List
 
 from src.view.InputGridItem import InputGridItem
@@ -31,15 +30,16 @@ class GridWidget(QtWidgets.QWidget):
         self.connections: List[Connection] = []
         self.draggingLine: DraggingLine = None
         self.draggingItem: GridItem = None
+        self.tempPos = None
         self.setMinimumSize(cols * CELL_SIZE, rows * CELL_SIZE)
-
-        # The random offset is used to avoid overlapping lines
-        # It should be set to False when dragging an item or a line so that is does not look weird
-        self.useRandomOffset = True
 
         #Initialize event bus
         self.eventBus = getBus()
         self.eventBus.subscribe("view:components_updated", self.updateConnectionActivity)
+
+        # Static settings for Toast class
+        Toast.setPositionRelativeToWidget(self)
+        Toast.setPosition(ToastPosition.BOTTOM_MIDDLE)
 
     def paintEvent(self, event):
         """Redraws the entire grid, items and connections. It overrides QWidget.paintEvent, which gets called automatically when update() is called."""
@@ -59,22 +59,27 @@ class GridWidget(QtWidgets.QWidget):
         black_pen = QtGui.QPen(QtGui.QColor("black"), 2)
         red_pen = QtGui.QPen(QtGui.QColor("red"), 2)
         painter.setPen(black_pen)
-        for connection in self.connections:
+        for i,connection in enumerate(self.connections):
             # Currently dragged item position
-            if self.draggingItem == connection.srcItem:
-                src_pos = self.draggingItem.pos()
+            if self.draggingItem == connection.srcItem and self.tempPos:
+                item = self.draggingItem
+                rect_center = item.getOutputRect(connection.srcKey).center()
+                src_pos = QtCore.QPoint(self.tempPos[0] + rect_center.x(), self.tempPos[1] + rect_center.y())
             else:
                 item = connection.srcItem
                 src_pos = item.mapToParent(item.getOutputRect(connection.srcKey).center().toPoint())
-            if self.draggingItem == connection.dstItem:
-                dst_pos = self.draggingItem.pos()
+            if self.draggingItem == connection.dstItem and self.tempPos:
+                item = self.draggingItem
+                rect_center = item.getInputRect(connection.dstKey).center()
+                dst_pos = QtCore.QPoint(self.tempPos[0] + rect_center.x(), self.tempPos[1] + rect_center.y())
             else:
                 item = connection.dstItem
                 dst_pos = item.mapToParent(item.getInputRect(connection.dstKey).center().toPoint())
 
             path = QtGui.QPainterPath(src_pos)
             # Draw orthogonal route from src to dst
-            self.orthogonalRoute(path, src_pos, dst_pos)
+            self.intelligentOrthogonalRoute(path, src_pos, dst_pos, self.connections[:i])
+            connection.setPath(path)
             if connection.isActive:
                 painter.setPen(red_pen)
             else:
@@ -119,11 +124,12 @@ class GridWidget(QtWidgets.QWidget):
             deleteItem.setParent(None)
             deleteItem.deleteLater()
             self.connections = [conn for conn in self.connections if conn.srcItem != deleteItem and conn.dstItem != deleteItem]
+            self.update()
         except ValueError:
             return
 
     def removeItemByUID(self, uid):
-        filteredItems = [item for item in self.items]
+        filteredItems = [item for item in self.items if item.uid == uid]
         if len(filteredItems) == 1:
             self.removeItem(filteredItems[0])
 
@@ -137,7 +143,6 @@ class GridWidget(QtWidgets.QWidget):
 
     def dragMoveEvent(self, event):
         """This gets called when something is dragged over the widget."""
-        self.useRandomOffset = False
         payload = json.loads(event.mimeData().data(MIME_TYPE).data().decode("utf-8"))
         if payload.get("action_type") == "move":
             if self.draggingItem is None:
@@ -145,12 +150,14 @@ class GridWidget(QtWidgets.QWidget):
                 filteredItems = [item for item in self.items if item.uid == uid]
                 if len(filteredItems)!=0:
                     self.draggingItem = filteredItems[0]
+            cell = self.cellAt(event.pos())
+            if cell:
+                self.tempPos = (cell[0] * CELL_SIZE + 4, cell[1] * CELL_SIZE + 4)
             self.update()
         event.acceptProposedAction()
 
     def dropEvent(self, event):
         """This gets called when something is dropped onto the widget. If the cell is occupied, the drop is ignored."""
-        self.useRandomOffset = True
         payload = json.loads(event.mimeData().data(MIME_TYPE).data().decode("utf-8"))
         pos = event.position().toPoint()
         cell = self.cellAt(pos)
@@ -179,13 +186,14 @@ class GridWidget(QtWidgets.QWidget):
             try:
                 package = __import__(package_name, fromlist=[class_name])
                 module = getattr(package, class_name)
-                cls = getattr(module, class_name)
+                cls = module
                 component = self.logicController.addLogicComponent(cls)
                 if isinstance(component, Input):
                     new_item = InputGridItem(logicComponent=component)
                 else:
                     new_item = GridItem(logicComponent=component)
-                self.addItem(cell, new_item)
+                if not self.isOccupied(cell):
+                    self.addItem(cell, new_item)
             except Exception as e:
                 print("Error creating GridItem:", e)
         elif action_type == "move":
@@ -201,6 +209,7 @@ class GridWidget(QtWidgets.QWidget):
             item.move(cell[0] * CELL_SIZE + 4, cell[1] * CELL_SIZE + 4)
             item.show()
             self.draggingItem = None
+            self.tempPos = None
             self.update()
             event.acceptProposedAction()
         else:
@@ -223,14 +232,12 @@ class GridWidget(QtWidgets.QWidget):
 
     def mouseMoveEvent(self, event):
         """This is called whenever the mouse moves within the widget. If a line is being dragged, it updates the line."""
-        self.useRandomOffset = False
         if self.draggingLine:
             self.draggingLine.currentPos = event.pos()
             self.update()
 
     def mouseReleaseEvent(self, event):
         """This is called whenever the mouse button is released. If a line is being dragged, it checks if it ends on an input port."""
-        self.useRandomOffset = True
         if self.draggingLine:
             srcItem =  self.draggingLine.srcItem
             srcKey = self.draggingLine.srcKey
@@ -243,35 +250,99 @@ class GridWidget(QtWidgets.QWidget):
                     # Add the connection
                     outputKey = srcItem.portAt(srcItem.mapFromParent(start))[1]
                     inputKey = item.portAt(local)[1]
-                    self.logicController.addConnection(self.draggingLine.srcItem.logicComponent, outputKey, item.logicComponent, inputKey)
-                    self.connections.append(Connection(srcItem, srcKey, item, port[1]))
+                    if self.logicController.addConnection(self.draggingLine.srcItem.logicComponent, outputKey, item.logicComponent, inputKey):
+                        self.connections.append(Connection(srcItem, srcKey, item, port[1]))
+                        item.update()
+                    else:
+                        self.showErrorToast("You cannot add this connection here!",
+                                       "Either the bitwidth is incompatible or the input is already occupied.")
                     break
             self.draggingLine = None
             self.update()
 
-    def orthogonalRoute(self, path: QPainterPath, src: QPointF, dst: QPointF):
+    def orthogonalRoute(self, path: QPainterPath, src: QPoint, dst: QPoint):
         """A helper method to draw an orthogonal route from src to dst.
         Args:
             path (QPainterPath): The QPainterPath to draw into
-            src (QPointF): The start point
-            dst (QPointF): The end point
+            src (QPoint): The start point
+            dst (QPoint): The end point
         """
-        midx = (src.x() + dst.x()) / 2
-        midy = (src.y() + dst.y()) / 2
+        startOffset = 20
 
-        # Use a random offset to avoid overlapping lines
-        if self.useRandomOffset:
-            offset = random.randint(20, 50)
+        if dst.x() < src.x():
+            # Draw a 5-segment orthogonal line
+            midy = (src.y() + dst.y()) / 2
+            path.lineTo(src.x() + startOffset, src.y())
+            path.lineTo(src.x() + startOffset, midy)
+            path.lineTo(dst.x() - startOffset, midy)
+            path.lineTo(dst.x() - startOffset, dst.y())
+            path.lineTo(dst)
         else:
-            offset = 20
+            # Draw a 3-segment orthogonal line
+            path.lineTo(src.x() + startOffset, src.y())
+            path.lineTo(src.x() + startOffset, dst.y())
+            path.lineTo(dst)
 
-        # Draw a 6-segment orthogonal line
-        path.lineTo(src.x() + offset, src.y())
-        path.lineTo(src.x() + offset, midy)
-        path.lineTo(midx, midy)
-        path.lineTo(dst.x() - offset, midy)
-        path.lineTo(dst.x() - offset, dst.y())
-        path.lineTo(dst)
+    # TODO: Perspectively restructure this (and regular orthogonalRoute) to the connection class for better modularity. Low priority though.
+    def intelligentOrthogonalRoute(self, pathToCreate: QPainterPath, src: QPoint, dst: QPoint,
+                                   connectionsToAvoid: List[Connection]):
+        connectionPaths = [conn.getPath() for conn in connectionsToAvoid]
+
+        def wouldCauseOverlap(x,y) -> bool:
+            # Check if the given point lies on one of the connectionsToAvoid
+            point = QPoint(x,y)
+            causesOverlap = False
+            i = 0
+            stroker = QPainterPathStroker()
+            stroker.setWidth(2)
+            while not causesOverlap and i < len(connectionPaths):
+                stroked_path = stroker.createStroke(connectionPaths[i])
+                if stroked_path.contains(point):
+                    causesOverlap = True
+                i += 1
+            return causesOverlap
+
+        startOffset = 20
+        overlapOffset = 10
+
+        if dst.x() < src.x():
+            # Draw a 5-segment orthogonal line if dst is left of src
+            midy = (src.y() + dst.y()) / 2
+            pointA = [src.x() + startOffset, src.y()]
+            while wouldCauseOverlap(pointA[0], pointA[1]):
+                pointA[0] += overlapOffset
+            pointB = [pointA[0], midy]
+            while wouldCauseOverlap(pointB[0], pointB[1]):
+                pointA[0] += overlapOffset
+                pointB[0] += overlapOffset
+                pointB[1] += overlapOffset
+            pointC = [dst.x() - startOffset, pointB[1]]
+            while wouldCauseOverlap(pointC[0], pointC[1]):
+                pointC[0] -= overlapOffset
+            pointD = [pointC[0], dst.y()]
+            while wouldCauseOverlap(pointD[0], pointD[1]):
+                pointC[0] -= overlapOffset
+                pointD[0] -= overlapOffset
+            pointE = dst
+            pointsToDraw = [pointA, pointB, pointC, pointD, pointE]
+        else:
+            # Draw a 3-segment orthogonal line otherwise
+            pointA = [src.x() + startOffset, src.y()]
+            while wouldCauseOverlap(pointA[0], pointA[1]):
+                pointA[0] += overlapOffset
+            pointB = [pointA[0], dst.y()]
+            while wouldCauseOverlap(pointB[0], pointB[1]):
+                pointA[0] += overlapOffset
+                pointB[0] += overlapOffset
+            pointC = dst
+            pointsToDraw = [pointA, pointB, pointC]
+
+        # Add all the points to the pathToCreate
+        for point in pointsToDraw:
+            if isinstance(point, list):
+                pathToCreate.lineTo(QPoint(point[0], point[1]))
+            else:
+                pathToCreate.lineTo(point)
 
     def updateConnectionActivity(self, components: List[LogicComponent]):
         """Updates the isActive attribute of all the connections on the grid.
@@ -287,3 +358,17 @@ class GridWidget(QtWidgets.QWidget):
             else:
                 conn.isActive = False
         self.repaint()
+
+    def showErrorToast(self, title: str, text: str):
+        """Shows an error toast message with the given title and text
+
+        Args:
+            title (str): The title for the toast
+            text (str): The text for the toast
+        """
+        toast = Toast(self.window())
+        toast.setDuration(3000)  # Hide after 3 seconds
+        toast.setTitle(title)
+        toast.setText(text)
+        toast.applyPreset(ToastPreset.ERROR)  # Apply style preset
+        toast.show()

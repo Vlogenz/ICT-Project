@@ -4,6 +4,7 @@ from src.infrastructure.eventBus import getBus
 
 from src.control.LogicComponentController import LogicComponentController
 from src.view.SandboxModeWindow import SandboxModeWindow
+from src.view.LevelSelectionWindow import LevelSelectionWindow
 
 from src.control.LevelFileController import LevelFileController
 from src.control.LevelController import LevelController
@@ -18,7 +19,8 @@ class AppController:
         self.logicController = LogicComponentController()
         self.levelFileController = LevelFileController()
         self.levelController = LevelController(self.levelFileController)
-        self.startSandboxMode() # TODO remove this line when main screen is ready
+        #self.startSandboxMode() # TODO remove this line when main screen is ready
+        self.showLevelSelectionScreen()
         
 
     def run(self):
@@ -35,9 +37,8 @@ class AppController:
         self.window.show()
         
     def showLevelSelectionScreen(self):
-        self.window = None #TODO LevelSelectionScreenWindow() add level selection screen window
+        self.window = LevelSelectionWindow(self.logicController, self.levelFileController)
         self.window.show()
-        
         
     def onLevelSelected(self, levelNumber: int):
         """Handles level selection event from LevelSelectionScreen"""

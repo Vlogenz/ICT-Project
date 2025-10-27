@@ -32,6 +32,8 @@ class LevelController:
         """Sets the current level data"""
         self.levelData = levelData
     
+    #TODO: This does not update the components in the frontend yet.
+    # We could emit an event here for each component. The event handler in the frontend should add the item on the grid (GridWidget->addItem).
     def buildLevel(self):
         """Builds the level using level data"""
         self.currentLevel = self.levelData["level_id"]
@@ -67,3 +69,7 @@ class LevelController:
         """Cleans up the level when quitting"""
         self.logicComponentController.clearComponents()
         self.currentLevel = None
+        
+    def getComponentMap(self):
+        """Returns the connection map of the current level"""
+        return self.COMPONENT_MAP

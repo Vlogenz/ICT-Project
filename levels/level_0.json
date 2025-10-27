@@ -14,7 +14,7 @@
         
     ],
     "available_components": [
-        {"type": "AND"}
+        {"type": "And"}
     ],
     "hints": [
         "This is a hint for the dummy level.",

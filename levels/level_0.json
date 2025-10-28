@@ -4,8 +4,8 @@
     "description": "This is a dummy level for testing purposes.",
     "difficulty": "Easy",
     "objectives": [
-        "Objective 1: build and gate",
-        "Objective 2: Do something else"
+        "build and gate",
+        "Do something else"
     ],
     "components": [
         {"type": "Input", "position": [0,1], "immovable": true},

@@ -27,18 +27,25 @@ class LevelController:
         # Add further components here when necessary
     }
     
-    def __init__(self, logicComponentController: LogicComponentController, levelData = None):
+    def __init__(self, logicComponentController: LogicComponentController, levelData = None, grid: GridWidget = None):
         self.levelData = levelData
         self.logicComponentController = logicComponentController
         self.currentLevel = None
+        self.grid = grid
     
     def setLevel(self, levelData):
         """Sets the current level data"""
         self.levelData = levelData
-    
-    #TODO: This does not update the components in the frontend yet.
-    # We could emit an event here for each component. The event handler in the frontend should add the item on the grid (GridWidget->addItem).
-    def buildLevel(self, grid: GridWidget):
+
+    def getLevel(self):
+        """Returns the current level data"""
+        return self.levelData
+
+    def setGrid(self, grid: GridWidget):
+        """Sets the grid to build the level on"""
+        self.grid = grid
+
+    def buildLevel(self):
         """Builds the level using level data"""
         self.currentLevel = self.levelData["level_id"]
         components = self.levelData["components"]
@@ -53,7 +60,8 @@ class LevelController:
             component = self.logicComponentController.addLogicComponent(component_class)
 
             cell = componentData["position"]
-            grid.addComponent(tuple(cell), component)
+            if self.grid is not None:
+                self.grid.addComponent(tuple(cell), component)
             
     def checkSolution(self) -> bool:
         """Checks if the current configuration solves the level"""
@@ -65,6 +73,7 @@ class LevelController:
             for i in range(len(test["expected_output"])): # iterate through expected outputs in specific test
                 if self.logicComponentController.getOutputs()[i].getState()['outValue'] != tuple(test["expected_output"][i]):
                     return False
+        print("Solution is correct!")
         return True
     
     def resetLevel(self):

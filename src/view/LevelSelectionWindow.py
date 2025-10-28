@@ -8,10 +8,9 @@ class LevelSelectionWindow(QtWidgets.QMainWindow):
     Shows a grid with a cell for each level.
     """
 
-    def __init__(self, appController, levelFileController: LevelFileController):
+    def __init__(self, levelFileController: LevelFileController):
         super().__init__()
         self.setWindowTitle("Level selection")
-        self.appController = appController
         self.levelFileController = levelFileController
         self.bus = getBus()
 

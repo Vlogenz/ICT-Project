@@ -129,6 +129,7 @@ class GridWidget(QtWidgets.QWidget):
             index = self.items.index(item)
             self.logicController.removeLogicComponent(item.logicComponent)
             deleteItem = self.items.pop(index)
+            deleteItem.unsubscribe()
             deleteItem.setParent(None)
             deleteItem.deleteLater()
             self.connections = [conn for conn in self.connections if conn.srcItem != deleteItem and conn.dstItem != deleteItem]

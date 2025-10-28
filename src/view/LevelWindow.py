@@ -14,6 +14,9 @@ from pyqttoast import Toast, ToastPreset
 
 class LevelWindow(QtWidgets.QMainWindow):
     """Main window for a selected level"""
+    #TODO: Fix reset button
+    #TODO: Add separate Check button and have Start only for pre-testing before the check
+    #TODO: Make given components immovable
 
     def __init__(self, levelController: LevelController, logicController: LogicComponentController):
         super().__init__()

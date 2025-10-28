@@ -154,6 +154,7 @@ class GridItem(QtWidgets.QFrame):
         """Delete this item from the grid."""
         from src.view.GridWidget import GridWidget
         if isinstance(self.parent(), GridWidget):
+            print("Removing item")
             self.parent().removeItem(self)
 
     def portAt(self, pos: QtCore.QPoint):
@@ -199,3 +200,9 @@ class GridItem(QtWidgets.QFrame):
                 label.setText(str(state[0]))
             else:
                 label.setText("NC")
+
+    def unsubscribe(self):
+        """Removes the subscription to the view:components_updated event.
+        Should be called first whenever you delete a GridItem.
+        """
+        self.bus.unsubscribe("view:components_updated", self.onComponentUpdated)

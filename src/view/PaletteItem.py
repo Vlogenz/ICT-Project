@@ -2,7 +2,7 @@ import json
 from symtable import Class
 
 from PySide6 import QtWidgets, QtGui, QtCore
-from src.constants import MIME_TYPE
+from src.constants import MIME_TYPE, CELL_SIZE
 
 
 class PaletteItem(QtWidgets.QFrame):
@@ -11,20 +11,18 @@ class PaletteItem(QtWidgets.QFrame):
     def __init__(self, logicComponentClass: Class, color: QtGui.QColor = None, parent=None):
         super().__init__(parent)
         self.setFrameShape(QtWidgets.QFrame.Box)
-        self.setFixedSize(90, 40)
+        self.setFixedSize(CELL_SIZE - 8, CELL_SIZE - 8)
 
         layout = QtWidgets.QHBoxLayout(self)
-        layout.setContentsMargins(4, 2, 4, 2)
+        layout.setContentsMargins(0, 0, 0, 0)
 
-        self.image_path = f"Gates/{logicComponentClass.__name__}.png"
+        self.image_path = f"Gates/{logicComponentClass.__name__}.svg"
 
         img_label = QtWidgets.QLabel()
+        img_label.setScaledContents(True)
         pixmap = QtGui.QPixmap(self.image_path)
         if not pixmap.isNull():
-            img_label.setPixmap(
-                pixmap.scaled(28, 28, QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation)
-            )
-            img_label.setAlignment(QtCore.Qt.AlignCenter)
+            img_label.setPixmap(pixmap)
         else:
             img_label.setText(logicComponentClass.__name__)
 
@@ -54,5 +52,6 @@ class PaletteItem(QtWidgets.QFrame):
             pix = QtGui.QPixmap(self.size())
             self.render(pix)
             drag.setPixmap(pix)
+            drag.setHotSpot(event.position().toPoint())
 
             drag.exec(QtCore.Qt.CopyAction)

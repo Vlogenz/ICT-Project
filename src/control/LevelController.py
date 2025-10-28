@@ -1,4 +1,5 @@
 from src.control.LogicComponentController import LogicComponentController
+from src.model.LogicComponent import LogicComponent
 from src.model.Input import Input
 from src.model.Output import Output
 from src.model.And import And
@@ -8,6 +9,9 @@ from src.model.Nand import Nand
 from src.model.Nor import Nor
 from src.model.Xor import Xor
 from src.model.Xnor import Xnor
+from src.view.GridWidget import GridWidget
+
+from typing import List, TypeVar, Type
 
 class LevelController:
     COMPONENT_MAP = {
@@ -20,11 +24,11 @@ class LevelController:
         "Nor": Nor,
         "Xor": Xor,
         "Xnor": Xnor,
-        # Füge hier weitere Komponenten hinzu wenn nötig
+        # Add further components here when necessary
     }
     
-    def __init__(self, logicComponentController: LogicComponentController):
-        self.levelData = None
+    def __init__(self, logicComponentController: LogicComponentController, levelData = None):
+        self.levelData = levelData
         self.logicComponentController = logicComponentController
         self.currentLevel = None
     
@@ -34,19 +38,22 @@ class LevelController:
     
     #TODO: This does not update the components in the frontend yet.
     # We could emit an event here for each component. The event handler in the frontend should add the item on the grid (GridWidget->addItem).
-    def buildLevel(self):
+    def buildLevel(self, grid: GridWidget):
         """Builds the level using level data"""
         self.currentLevel = self.levelData["level_id"]
         components = self.levelData["components"]
         for componentData in components:
             component_type_str = componentData["type"]
             
-            # String in Klasse umwandeln
+            # Convert string to class
             if component_type_str not in self.COMPONENT_MAP:
                 raise ValueError(f"Unknown component type: {component_type_str}")
             
             component_class = self.COMPONENT_MAP[component_type_str]
-            self.logicComponentController.addLogicComponent(component_class)
+            component = self.logicComponentController.addLogicComponent(component_class)
+
+            cell = componentData["position"]
+            grid.addComponent(tuple(cell), component)
             
     def checkSolution(self) -> bool:
         """Checks if the current configuration solves the level"""
@@ -73,3 +80,17 @@ class LevelController:
     def getComponentMap(self):
         """Returns the connection map of the current level"""
         return self.COMPONENT_MAP
+
+    T = TypeVar("T", bound=LogicComponent)
+    def getAvailableComponentClasses(self) -> List[Type[T]]:
+        """Returns a list of available components for this level, given the levelData is valid."""
+        availableClasses = []
+        if self.levelData is not None:
+            try:
+                availableNames = [comp["type"] for comp in self.levelData["available_components"]]
+                for name, class_ in self.COMPONENT_MAP.items():
+                    if name in availableNames:
+                        availableClasses.append(class_)
+            except Exception as e:
+                print(f"Invalid levelData: {e}")
+        return availableClasses

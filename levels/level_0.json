@@ -8,9 +8,9 @@
         "Objective 2: Do something else"
     ],
     "components": [
-        {"type": "Input", "position": [4,1], "immovable": true},
-        {"type": "Input", "position": [4,3], "immovable": true},
-        {"type": "Output", "position": [8,2], "immovable": true}
+        {"type": "Input", "position": [0,1], "immovable": true},
+        {"type": "Input", "position": [0,3], "immovable": true},
+        {"type": "Output", "position": [4,2], "immovable": true}
         
     ],
     "available_components": [

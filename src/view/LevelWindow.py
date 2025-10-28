@@ -9,7 +9,6 @@ import src.model as model
 
 from PySide6 import QtGui, QtWidgets
 import inspect
-import pkgutil
 import importlib
 
 from src.view.SimulationControls import SimulationControls
@@ -20,14 +19,14 @@ class LevelWindow(QtWidgets.QMainWindow):
 
     def __init__(self, levelData, levelController: LevelController, logicController: LogicComponentController):
         super().__init__()
-        self.setWindowTitle("Level " + levelData["level_id"])
+        self.setWindowTitle(f"Level {levelData["level_id"]}")
 
         self.logicController = logicController
         self.levelController = levelController
         self.levelData = levelData
 
         central = QtWidgets.QWidget()
-        layout = QtWidgets.QGridLayout(central)
+        self.layout = QtWidgets.QGridLayout(central)
         self.setCentralWidget(central)
         pal = self.palette()
         pal.setColor(self.backgroundRole(), QtGui.QColor("white"))
@@ -35,17 +34,17 @@ class LevelWindow(QtWidgets.QMainWindow):
 
         # Palette
         palette = QtWidgets.QGridLayout()
-        classes = list(self.iterClassesInPackage(model))
+        classes = self.levelController.getAvailableComponentClasses()
         print(f"classes: {classes}")
         for i, class_ in enumerate(classes):
             # Use index for a two-column grid
             palette.addWidget(PaletteItem(class_), i//2, i%2)
 
         # Grid
-        grid = GridWidget(logicController)
+        self.grid = GridWidget(logicController)
 
         # Delete area
-        deleteArea = DeleteArea(grid)
+        deleteArea = DeleteArea(self.grid)
         palette.addWidget(deleteArea)
 
         palette_frame = QtWidgets.QFrame()
@@ -56,16 +55,9 @@ class LevelWindow(QtWidgets.QMainWindow):
         simControls = SimulationControls(self.logicController)
 
         # Build the level
-        levelController.buildLevel()
+        levelController.buildLevel(self.grid)
 
-    def iterClassesInPackage(self, package):
-        componentMap = self.levelController.getComponentMap()
-
-        for i in range(len(self.levelData["available_components"])):
-            component = self.levelData["available_components"][i]["type"]
-            moduleName = componentMap[component]
-            module = importlib.import_module(moduleName)
-
-            for name, cls in inspect.getmembers(module, inspect.isclass):
-                if cls.__module__ == module.__name__:
-                    yield cls
+        # Add the widgets to the layout
+        self.layout.addWidget(palette_frame, 0, 0, 2, 1)
+        self.layout.addWidget(simControls, 0, 1)
+        self.layout.addWidget(self.grid, 1, 1)

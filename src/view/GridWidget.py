@@ -110,6 +110,13 @@ class GridWidget(QtWidgets.QWidget):
         item.move(gx * CELL_SIZE + 4, gy * CELL_SIZE + 4)
         item.show()
 
+    def addComponent(self, cell, component: LogicComponent):
+        if isinstance(component, Input):
+            new_item = InputGridItem(logicComponent=component)
+        else:
+            new_item = GridItem(logicComponent=component)
+        self.addItem(cell, new_item)
+
     def removeItem(self, item: GridItem):
         """Removes the give item from the backend and from the grid."""
         try:
@@ -181,11 +188,7 @@ class GridWidget(QtWidgets.QWidget):
                 module = getattr(package, class_name)
                 cls = getattr(module, class_name)
                 component = self.logicController.addLogicComponent(cls)
-                if isinstance(component, Input):
-                    new_item = InputGridItem(logicComponent=component)
-                else:
-                    new_item = GridItem(logicComponent=component)
-                self.addItem(cell, new_item)
+                self.addComponent(cell, component)
             except Exception as e:
                 print("Error creating GridItem:", e)
         elif action_type == "move":

@@ -262,3 +262,4 @@ class LogicComponentController:
         self.inputs.clear()
         self.outputs.clear()
         self.updateInTick.clear()
+        self.bus.emit("view:components_cleared")

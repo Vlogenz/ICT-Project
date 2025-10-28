@@ -13,10 +13,11 @@ from src.infrastructure.eventBus import getBus
 class GridItem(QtWidgets.QFrame):
     """An Element in the grid with inputs and outputs"""
 
-    def __init__(self, logicComponent: LogicComponent, uid=None, parent=None):
+    def __init__(self, logicComponent: LogicComponent, uid=None, parent=None, immovable=False):
         super().__init__(parent)
         self.uid = uid or str(uuid.uuid4())
         self.logicComponent = logicComponent
+        self.immovable = immovable
 
         self.setFixedSize(CELL_SIZE - 8, CELL_SIZE - 8)
 
@@ -99,7 +100,7 @@ class GridItem(QtWidgets.QFrame):
             return
 
         # Normal Move-Drag
-        if event.button() == QtCore.Qt.LeftButton:
+        if event.button() == QtCore.Qt.LeftButton and not self.immovable:
             drag = QtGui.QDrag(self)
             mime = QtCore.QMimeData()
             payload = {"action_type": "move", "id": self.uid}
@@ -145,9 +146,10 @@ class GridItem(QtWidgets.QFrame):
     def openContextMenu(self):
         """Open a context menu with options like deleting the item."""
         menu = QMenu(self)  # Parent the menu to avoid leaks
-        deleteAction = QAction("Delete component", self)
-        deleteAction.triggered.connect(self.deleteItem)
-        menu.addAction(deleteAction)
+        if not self.immovable:
+            deleteAction = QAction("Delete component", self)
+            deleteAction.triggered.connect(self.deleteItem)
+            menu.addAction(deleteAction)
         menu.exec_(QCursor.pos())  # Display the menu at the cursor's current position
 
     def deleteItem(self):

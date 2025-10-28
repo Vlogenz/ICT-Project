@@ -9,8 +9,8 @@ class InputGridItem(GridItem):
     This is used to set the state of the underlying Input component and defaults to 0.
     """
 
-    def __init__(self, logicComponent: Input):
-        super().__init__(logicComponent)
+    def __init__(self, logicComponent: Input, immovable=False):
+        super().__init__(logicComponent, immovable=immovable)
         self.logicComponent = logicComponent
 
         # Add a toggle button

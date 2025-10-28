@@ -61,7 +61,7 @@ class LevelController:
 
             cell = componentData["position"]
             if self.grid is not None:
-                self.grid.addComponent(tuple(cell), component)
+                self.grid.addComponent(tuple(cell), component, immovable=componentData["immovable"])
             
     def checkSolution(self) -> bool:
         """Checks if the current configuration solves the level"""

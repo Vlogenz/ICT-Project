@@ -54,7 +54,6 @@ class SimulationControls(QtWidgets.QFrame):
                 self.speedLabel.setText("Speed: 1 step/sec")
             else:
                 self.speedLabel.setText(f"Speed: {value} steps/sec")
-        print(f"New tick length: {self.logicController.tickLength}")
 
     def configureStart(self, function):
         """Sets the functionality of the Start button. By default, this is the eval() method of the logicController."""

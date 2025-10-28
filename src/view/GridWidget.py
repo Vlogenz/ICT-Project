@@ -36,6 +36,7 @@ class GridWidget(QtWidgets.QWidget):
         #Initialize event bus
         self.eventBus = getBus()
         self.eventBus.subscribe("view:components_updated", self.updateConnectionActivity)
+        self.eventBus.subscribe("view:components_cleared", self._visuallyRemoveAllItems)
 
         # Static settings for Toast class
         Toast.setPositionRelativeToWidget(self)
@@ -116,11 +117,11 @@ class GridWidget(QtWidgets.QWidget):
             item.move(gx * CELL_SIZE + 4, gy * CELL_SIZE + 4)
             item.show()
 
-    def addComponent(self, cell, component: LogicComponent):
+    def addComponent(self, cell, component: LogicComponent, immovable=False):
         if isinstance(component, Input):
-            new_item = InputGridItem(logicComponent=component)
+            new_item = InputGridItem(logicComponent=component, immovable=immovable)
         else:
-            new_item = GridItem(logicComponent=component)
+            new_item = GridItem(logicComponent=component, immovable=immovable)
         self.addItem(cell, new_item)
 
     def removeItem(self, item: GridItem):
@@ -136,6 +137,15 @@ class GridWidget(QtWidgets.QWidget):
             self.update()
         except ValueError:
             return
+
+    def _visuallyRemoveAllItems(self):
+        for item in self.items:
+            item.unsubscribe()
+            item.setParent(None)
+            item.deleteLater()
+        self.items.clear()
+        self.connections.clear()
+        self.update()
 
     def removeItemByUID(self, uid):
         filteredItems = [item for item in self.items if item.uid == uid]

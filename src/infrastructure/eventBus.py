@@ -12,6 +12,11 @@ class EventBus:
         """Subscribe a handler to an event."""
         self._subs[event].append(handler)
         
+    def unsubscribe(self, event, handler):
+        """Unsubscribe a handler from an event."""
+        if handler in self._subs[event]:
+            self._subs[event].remove(handler)
+        
     
     def emit(self, event, *args, **kwargs):
         if not self.manual:

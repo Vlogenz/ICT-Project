@@ -29,6 +29,7 @@ class SimulationControls(QtWidgets.QFrame):
         self.speedSlider.setPageStep(1)
         self.speedSlider.setTickPosition(QSlider.TicksBelow)
         self.speedSlider.setTickInterval(1)
+        self.speedSlider.setValue(10) # Default to instant evaluation
         self.speedSlider.valueChanged.connect(self.updateSpeed)
 
         self.configureStart(self.logicController.eval)

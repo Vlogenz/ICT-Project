@@ -21,7 +21,7 @@ jobs:
       - name: Install system dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y libegl1-mesa libgl1-mesa-glx libglib2.0-0 libxkbcommon0 libxcomposite1 libxcursor1 libxi6 libxrandr2 libxss1 libxtst6
+          sudo apt-get install -y libegl1-mesa libgl1-mesa-dev libglib2.0-0 libxkbcommon0 libxcomposite1 libxcursor1 libxi6 libxrandr2 libxss1 libxtst6
 
       - name: Install dependencies
         run: |

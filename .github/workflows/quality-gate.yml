@@ -21,8 +21,12 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
+          python -m venv venv
+          source venv/bin/activate
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
           pip install pytest
 
       - name: Run tests
-        run: pytest --maxfail=1 --disable-warnings -q
+        run: |
+          source venv/bin/activate
+          pytest --maxfail=1 --disable-warnings -q

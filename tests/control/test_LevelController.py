@@ -1,8 +1,6 @@
 import pytest
 from src.control.LevelController import LevelController
 from src.control.LogicComponentController import LogicComponentController
-from src.model.Input import Input
-from src.model.Output import Output
 from src.model.And import And
 
 
@@ -46,6 +44,9 @@ def logic_controller():
     controller.setTickLength(0)
     return controller
 
+@pytest.fixture
+def mock_grid():
+    pass
 
 @pytest.fixture
 def level_controller(sample_level_data, logic_controller):

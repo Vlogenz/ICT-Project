@@ -18,10 +18,10 @@ jobs:
         with:
           python-version: "3.13"
 
-      - name: Install system dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libegl1-mesa libgl1-mesa-dev libglib2.0-0 libxkbcommon0 libxcomposite1 libxcursor1 libxi6 libxrandr2 libxss1 libxtst6
+#      - name: Install system dependencies
+#        run: |
+#          sudo apt-get update
+#          sudo apt-get install -y libegl1-mesa libgl1-mesa-dev libglib2.0-0 libxkbcommon0 libxcomposite1 libxcursor1 libxi6 libxrandr2 libxss1 libxtst6
 
       - name: Install dependencies
         run: |

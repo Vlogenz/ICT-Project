@@ -9,7 +9,6 @@ from src.model.Nand import Nand
 from src.model.Nor import Nor
 from src.model.Xor import Xor
 from src.model.Xnor import Xnor
-from src.view.GridWidget import GridWidget
 
 from typing import List, TypeVar, Type
 
@@ -27,7 +26,7 @@ class LevelController:
         # Add further components here when necessary
     }
     
-    def __init__(self, logicComponentController: LogicComponentController, levelData = None, grid: GridWidget = None):
+    def __init__(self, logicComponentController: LogicComponentController, levelData = None, grid = None):
         self.levelData = levelData
         self.logicComponentController = logicComponentController
         self.currentLevel = None
@@ -41,7 +40,7 @@ class LevelController:
         """Returns the current level data"""
         return self.levelData
 
-    def setGrid(self, grid: GridWidget):
+    def setGrid(self, grid):
         """Sets the grid to build the level on"""
         self.grid = grid
 

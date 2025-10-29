@@ -90,6 +90,10 @@ class LevelWindow(QtWidgets.QMainWindow):
         self.layout.addWidget(self.grid, 1, 1, 2, 1)
 
     def checkSolution(self):
+        """Calls the levelController to check the solution.
+        If the solution was right, a toast with a success message will be displayed.
+        Otherwise, the toast will show a negative message.
+        """
         solutionIsRight = self.levelController.checkSolution()
         toast = Toast(self)
         toast.setDuration(3000)  # Hide after 3 seconds

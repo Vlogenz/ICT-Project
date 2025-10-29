@@ -139,6 +139,9 @@ class GridWidget(QtWidgets.QWidget):
             return
 
     def _visuallyRemoveAllItems(self):
+        """Just removes all GridItems and Connections from the grid, not the underlying logic components.
+        Only call this method when the backend already removed stuff (i.e. cleared components).
+        """
         for item in self.items:
             item.unsubscribe()
             item.setParent(None)

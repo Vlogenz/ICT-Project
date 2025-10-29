@@ -30,7 +30,6 @@ class LevelSelectionWindow(QtWidgets.QMainWindow):
 
         # load levels
         levels = levelFileController.getAvailableLevels()
-        print(levels)
 
         # create a cell for each level and put it on the grid
         for i in levels:
@@ -41,4 +40,3 @@ class LevelSelectionWindow(QtWidgets.QMainWindow):
     def on_level_clicked(self, level_number: int):
         """User clicks on a level"""
         self.bus.emit("levelSelection:levelSelected", level_number)
-        print("opening level: {level_number}")

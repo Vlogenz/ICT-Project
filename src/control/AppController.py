@@ -35,8 +35,7 @@ class AppController:
         sys.exit(self.app.exec())
 
     def switchToWindow(self, window: Window):
-        #TODO: Do not use separate windows but set their content
-        print(f"switching to window: {window}")
+        #TODO: Do not use separate windows but set the central widget to the new content
         newWindow = self.window
         match window:
             case Window.SANDBOX:

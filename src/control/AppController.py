@@ -18,7 +18,7 @@ class Window(Enum):
     LEVEL_SELECTION = 2
     LEVEL = 3
 
-class AppController:
+class AppController():
     def __init__(self):
         self.app = QtWidgets.QApplication(sys.argv)
         self.app.aboutToQuit.connect(self._cleanup)  # Signal verbinden
@@ -28,6 +28,7 @@ class AppController:
         self.logicController = LogicComponentController()
         self.levelFileController = LevelFileController()
         self.levelController = LevelController(self.logicController)
+
         self.window: QtWidgets.QMainWindow = LevelSelectionWindow(self.levelFileController)  # TODO initialize main screen window
 
     def run(self):
@@ -35,7 +36,6 @@ class AppController:
         sys.exit(self.app.exec())
 
     def switchToWindow(self, window: Window):
-        #TODO: Do not use separate windows but set the central widget to the new content
         newWindow = self.window
         match window:
             case Window.SANDBOX:
@@ -47,11 +47,14 @@ class AppController:
             case _:
                 #TODO: go to main screen instead
                 newWindow = SandboxModeWindow(self.logicController)
+
         if newWindow is not self.window:
             oldWindow = self.window
-            self.window = newWindow
-            oldWindow.close()
-            self.window.show()
+
+            self.window.setCentralWidget(newWindow)
+            self.window.setWindowTitle(newWindow.windowTitle())
+
+            self.window.setFixedSize(newWindow.sizeHint())
         
     def onLevelSelected(self, levelNumber: int):
         """Handles level selection event from LevelSelectionScreen"""

@@ -19,10 +19,19 @@ class LevelFileController:
             raise FileNotFoundError(f"Level file {levelFile} not found.")
         
     def loadMetaFile(self):
-        """Loads the meta file"""
+        """Loads the meta file, if existing. Otherwise, it will create a new one."""
         metaFile = Path(self.path) / "meta.json"
-        with open(metaFile, 'r') as f:
-            return json.load(f)
+        if metaFile.exists():
+            with open(metaFile, 'r') as f:
+                return json.load(f)
+        else:
+            metaJson = {
+                "completed_levels": [],
+                "all_levels_unlocked": False,
+            }
+            with open(metaFile, 'w') as f:
+                json.dump(metaJson, f, indent=4)
+            return metaJson
         
     def getAvailableLevels(self):
         """Returns a list of numbers of available levels by scanning the levels directory"""

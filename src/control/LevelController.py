@@ -102,3 +102,9 @@ class LevelController:
             except Exception as e:
                 print(f"Invalid levelData: {e}")
         return availableClasses
+    
+    def getHints(self):
+        """Returns the hints for the current level"""
+        if self.levelData is not None and "hints" in self.levelData:
+            return self.levelData["hints"]
+        return []

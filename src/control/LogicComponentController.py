@@ -6,7 +6,7 @@ from src.model.Input import Input
 from src.constants import MAX_EVAL_CYCLES
 from src.infrastructure.eventBus import getBus
 from src.model.Register import Register
-from time import sleep
+from PySide6.QtCore import QTimer, QEventLoop
 
 class LogicComponentController:    
     
@@ -72,10 +72,8 @@ class LogicComponentController:
                 for comp in self.updateInTick[tick]:
                     comp.eval()
                 self.updateComponents(components =self.updateInTick[tick])
-                #TODO: We should use something else than sleep here because this just pauses the thread.
-                # This causes 'Application not responding' sometimes and likely also interferes with the GUI updates.
-                # Maybe use multithreading here.
-                sleep(self.tickLength)
+                if self.tickLength > 0:
+                    self._waitWithEventLoop(self.tickLength)
             return True
         
     
@@ -102,14 +100,20 @@ class LogicComponentController:
             
             
             self.updateComponents(components=currentTick)
-            #TODO: Use something else than sleep here (see above)
-            sleep(self.tickLength)
+            if self.tickLength > 0:
+                self._waitWithEventLoop(self.tickLength)
             currentTick = nextTick
             tick +=1
             # if too many ticks, there is probably a circular dependency which don't has a stable state
             if tick > MAX_EVAL_CYCLES*len(self.components):
                 return False
         return True
+    
+    def _waitWithEventLoop(self, seconds):
+        """Wait for specified seconds while processing Qt events to keep GUI responsive"""
+        loop = QEventLoop()
+        QTimer.singleShot(int(seconds * 1000), loop.quit)
+        loop.exec()
             
                         
     def eval(self):

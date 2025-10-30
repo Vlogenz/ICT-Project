@@ -185,3 +185,16 @@ def test_level_with_empty_components(logic_controller):
     
     assert len(logic_controller.getComponents()) == 0
     assert controller.currentLevel == 99
+    
+def test_getHints(level_controller):
+    """Test getting hints from level data"""
+    # Add hints to level data
+    level_controller.levelData["hints"] = [
+        "Remember to connect inputs to the AND gate.",
+        "The output should only be high when both inputs are high."
+    ]
+    
+    hints = level_controller.getHints()
+    assert len(hints) == 2
+    assert hints[0] == "Remember to connect inputs to the AND gate."
+    assert hints[1] == "The output should only be high when both inputs are high."

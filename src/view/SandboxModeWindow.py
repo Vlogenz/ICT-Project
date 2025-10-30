@@ -33,7 +33,6 @@ class SandboxModeWindow(QtWidgets.QMainWindow):
         # Palette
         palette = QtWidgets.QGridLayout()
         classes = list(self.iter_classes_in_package(model))
-        print(f"classes: {classes}")
         for i, class_ in enumerate(classes):
             # Use index for a two-column grid
             palette.addWidget(PaletteItem(class_), i//3, i%3)

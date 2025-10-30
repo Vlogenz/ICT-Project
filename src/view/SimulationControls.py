@@ -29,9 +29,10 @@ class SimulationControls(QtWidgets.QFrame):
         self.speedSlider.setPageStep(1)
         self.speedSlider.setTickPosition(QSlider.TicksBelow)
         self.speedSlider.setTickInterval(1)
+        self.speedSlider.setValue(10) # Default to instant evaluation
         self.speedSlider.valueChanged.connect(self.updateSpeed)
 
-        self.configureControlFunctionality()
+        self.configureStart(self.logicController.eval)
 
         layout.addWidget(self.startStopButton)
         layout.addWidget(self.resetButton)
@@ -54,10 +55,11 @@ class SimulationControls(QtWidgets.QFrame):
                 self.speedLabel.setText("Speed: 1 step/sec")
             else:
                 self.speedLabel.setText(f"Speed: {value} steps/sec")
-        print(f"New tick length: {self.logicController.tickLength}")
 
-    def configureControlFunctionality(self):
-        self.startStopButton.clicked.connect(self.startSimulation)
+    def configureStart(self, function):
+        """Sets the functionality of the Start button. By default, this is the eval() method of the logicController."""
+        self.startStopButton.clicked.connect(function)
 
-    def startSimulation(self):
-        self.logicController.eval()
+    def configureReset(self, function):
+        """Sets the functionality of the Reset button."""
+        self.resetButton.clicked.connect(function)

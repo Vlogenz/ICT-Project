@@ -6,3 +6,5 @@ GRID_COLS = 8
 GRID_ROWS = 8
 MIME_TYPE = "application/x-qt-grid-item"
 MAX_EVAL_CYCLES: int = 5
+
+

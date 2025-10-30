@@ -36,6 +36,7 @@ class GridWidget(QtWidgets.QWidget):
         #Initialize event bus
         self.eventBus = getBus()
         self.eventBus.subscribe("view:components_updated", self.updateConnectionActivity)
+        self.eventBus.subscribe("view:components_cleared", self._visuallyRemoveAllItems)
 
         # Static settings for Toast class
         Toast.setPositionRelativeToWidget(self)
@@ -109,11 +110,19 @@ class GridWidget(QtWidgets.QWidget):
     def addItem(self, cell, item: GridItem):
         """
         Also adds the item at the given cell (x, y). The cell must be free."""
-        gx, gy = cell
-        self.items.append(item)
-        item.setParent(self)
-        item.move(gx * CELL_SIZE + 4, gy * CELL_SIZE + 4)
-        item.show()
+        if not self.isOccupied(cell):
+            gx, gy = cell
+            self.items.append(item)
+            item.setParent(self)
+            item.move(gx * CELL_SIZE + 4, gy * CELL_SIZE + 4)
+            item.show()
+
+    def addComponent(self, cell, component: LogicComponent, immovable=False):
+        if isinstance(component, Input):
+            new_item = InputGridItem(logicComponent=component, immovable=immovable)
+        else:
+            new_item = GridItem(logicComponent=component, immovable=immovable)
+        self.addItem(cell, new_item)
 
     def removeItem(self, item: GridItem):
         """Removes the give item from the backend and from the grid."""
@@ -121,12 +130,25 @@ class GridWidget(QtWidgets.QWidget):
             index = self.items.index(item)
             self.logicController.removeLogicComponent(item.logicComponent)
             deleteItem = self.items.pop(index)
+            deleteItem.unsubscribe()
             deleteItem.setParent(None)
             deleteItem.deleteLater()
             self.connections = [conn for conn in self.connections if conn.srcItem != deleteItem and conn.dstItem != deleteItem]
             self.update()
         except ValueError:
             return
+
+    def _visuallyRemoveAllItems(self):
+        """Just removes all GridItems and Connections from the grid, not the underlying logic components.
+        Only call this method when the backend already removed stuff (i.e. cleared components).
+        """
+        for item in self.items:
+            item.unsubscribe()
+            item.setParent(None)
+            item.deleteLater()
+        self.items.clear()
+        self.connections.clear()
+        self.update()
 
     def removeItemByUID(self, uid):
         filteredItems = [item for item in self.items if item.uid == uid]
@@ -188,12 +210,7 @@ class GridWidget(QtWidgets.QWidget):
                 module = getattr(package, class_name)
                 cls = module
                 component = self.logicController.addLogicComponent(cls)
-                if isinstance(component, Input):
-                    new_item = InputGridItem(logicComponent=component)
-                else:
-                    new_item = GridItem(logicComponent=component)
-                if not self.isOccupied(cell):
-                    self.addItem(cell, new_item)
+                self.addComponent(cell, component)
             except Exception as e:
                 print("Error creating GridItem:", e)
         elif action_type == "move":

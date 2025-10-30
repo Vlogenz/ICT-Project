@@ -1,5 +1,6 @@
 import typing
 
+from src.model.Output import Output
 from src.model.LogicComponent import LogicComponent
 from src.model.Input import Input
 from src.constants import MAX_EVAL_CYCLES
@@ -12,6 +13,7 @@ class LogicComponentController:
     def __init__(self):
         self.components: typing.List["LogicComponent"] = []
         self.inputs: typing.List["Input"] = []
+        self.outputs: typing.List["LogicComponent"] = []
         self.updateInTick: typing.Dict = {}
         # tickLength defaults to 0, i.e. the evaluation happens instantly
         self.tickLength = 0
@@ -133,6 +135,9 @@ class LogicComponentController:
     def getInputs(self):
         return self.inputs
     
+    def getOutputs(self):
+        return self.outputs
+    
     T = typing.TypeVar("T",bound=LogicComponent)
     def addLogicComponent(self, component: typing.Type[T]):
         """creates a new component of given type
@@ -147,6 +152,8 @@ class LogicComponentController:
         self.components.append(comp)
         if type(comp) == Input:
             self.inputs.append(comp)
+        if type(comp) == Output:
+            self.outputs.append(comp)
         
         return comp
     
@@ -177,6 +184,8 @@ class LogicComponentController:
             self.components.remove(component)
             if type(component) == Input:
                 self.inputs.remove(component)
+            if type(component) == Output:
+                self.outputs.remove(component)
         else:
             raise ReferenceError("Can't remove non existent component from controller")
         
@@ -245,3 +254,12 @@ class LogicComponentController:
                 componentsToUpdate.extend([out[0] for out in comp.getOutputs()])
         componentsToUpdate = list(set(componentsToUpdate))
         self.eventDrivenEval(startingComponents=componentsToUpdate)
+        
+    def clearComponents(self):
+        """Removes all components from the controller
+        """
+        self.components.clear()
+        self.inputs.clear()
+        self.outputs.clear()
+        self.updateInTick.clear()
+        self.bus.emit("view:components_cleared")

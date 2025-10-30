@@ -124,6 +124,13 @@ class GridWidget(QtWidgets.QWidget):
             new_item = GridItem(logicComponent=component, immovable=immovable)
         self.addItem(cell, new_item)
 
+    def visuallyAddConnection(self, srcComp: LogicComponent, srcKey: str, dstComp: LogicComponent, dstKey: str):
+        srcItem = [item for item in self.items if item.logicComponent == srcComp][0]
+        dstItem = [item for item in self.items if item.logicComponent == dstComp][0]
+        self.connections.append(Connection(srcItem, srcKey, dstItem, dstKey))
+        dstItem.update()
+        self.update()
+
     def removeItem(self, item: GridItem):
         """Removes the give item from the backend and from the grid."""
         try:

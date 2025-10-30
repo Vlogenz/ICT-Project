@@ -10,9 +10,16 @@
     "components": [
         {"type": "Input", "position": [0,1], "immovable": true},
         {"type": "Input", "position": [0,3], "immovable": true},
-        {"type": "Output", "position": [4,2], "immovable": true}
+        {"type": "Output", "position": [4,2], "immovable": true},
+        {"type": "And", "position": [2,2], "immovable": false}
         
     ],
+    "connections": [
+        {"origin": 0, "originKey": "outValue", "destination": 3, "destinationKey": "input1"},
+        {"origin": 1, "originKey": "outValue", "destination": 3, "destinationKey": "input2"},
+        {"origin": 3, "originKey": "outValue", "destination": 2, "destinationKey": "input"}
+    ],
+
     "available_components": [
         {"type": "And"}
     ],

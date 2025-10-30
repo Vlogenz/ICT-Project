@@ -2,6 +2,7 @@ import pytest
 from src.control.LevelController import LevelController
 from src.control.LogicComponentController import LogicComponentController
 from src.model.And import And
+from src.model.Or import Or
 
 
 @pytest.fixture
@@ -198,3 +199,40 @@ def test_getHints(level_controller):
     assert len(hints) == 2
     assert hints[0] == "Remember to connect inputs to the AND gate."
     assert hints[1] == "The output should only be high when both inputs are high."
+
+def test_getAvailableComponentClasses(logic_controller):
+    """Test getting available component classes from level data"""
+    level_data = {
+        "available_components": [
+            {"type": "And"},
+            {"type": "Or"}
+        ]
+    }
+
+    controller = LevelController(logic_controller)
+    controller.setLevel(level_data)
+
+    available = controller.getAvailableComponentClasses()
+
+    assert len(available) == 2
+    assert And in available
+    assert Or in available
+
+def test_getAvailableComponentClasses_none_levelData(logic_controller):
+    """Test getAvailableComponentClasses with None levelData"""
+    controller = LevelController(logic_controller)
+
+    available = controller.getAvailableComponentClasses()
+
+    assert available == []
+
+def test_getAvailableComponentClasses_missing_key(logic_controller):
+    """Test getAvailableComponentClasses with missing available_components key"""
+    level_data = {}
+
+    controller = LevelController(logic_controller)
+    controller.setLevel(level_data)
+
+    available = controller.getAvailableComponentClasses()
+
+    assert available == []

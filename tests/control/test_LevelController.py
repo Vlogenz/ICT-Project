@@ -2,6 +2,7 @@ import pytest
 from src.control.LevelController import LevelController
 from src.control.LogicComponentController import LogicComponentController
 from src.model.And import And
+from src.model.Or import Or
 
 
 @pytest.fixture
@@ -36,7 +37,7 @@ def sample_level_data():
             }
         ]
     }
-    
+
 @pytest.fixture
 def sample_level_data_with_connections():
     """Returns sample level data for testing"""
@@ -244,15 +245,15 @@ def test_getHints(level_controller):
     assert len(hints) == 2
     assert hints[0] == "Remember to connect inputs to the AND gate."
     assert hints[1] == "The output should only be high when both inputs are high."
-    
+
 # def test_build_level_with_connections(level_controller_with_connections, logic_controller):
 #     """Test building a level that includes connections"""
 #     # Build level
 #     level_controller_with_connections.buildLevel()
-    
+
 #     # Check that components were added
 #     assert len(logic_controller.getComponents()) == 4  # 2 Inputs, 1 And, 1 Output
-    
+
 #     for comp in logic_controller.getInputs():
 #         assert len(comp.getOutputs()) == 1  # Inputs should have one output
 
@@ -263,3 +264,40 @@ def test_getHints(level_controller):
 #     and_gate = and_gates[0]
 #     assert len(and_gate.getInputs()) == 2  # And gate should have two inputs
 #     assert len(and_gate.getOutputs()) == 1  # And gate should have one output
+
+def test_getAvailableComponentClasses(logic_controller):
+    """Test getting available component classes from level data"""
+    level_data = {
+        "available_components": [
+            {"type": "And"},
+            {"type": "Or"}
+        ]
+    }
+
+    controller = LevelController(logic_controller)
+    controller.setLevel(level_data)
+
+    available = controller.getAvailableComponentClasses()
+
+    assert len(available) == 2
+    assert And in available
+    assert Or in available
+
+def test_getAvailableComponentClasses_none_levelData(logic_controller):
+    """Test getAvailableComponentClasses with None levelData"""
+    controller = LevelController(logic_controller)
+
+    available = controller.getAvailableComponentClasses()
+
+    assert available == []
+
+def test_getAvailableComponentClasses_missing_key(logic_controller):
+    """Test getAvailableComponentClasses with missing available_components key"""
+    level_data = {}
+
+    controller = LevelController(logic_controller)
+    controller.setLevel(level_data)
+
+    available = controller.getAvailableComponentClasses()
+
+    assert available == []

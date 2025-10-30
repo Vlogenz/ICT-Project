@@ -5,7 +5,6 @@ __pycache__/
 .vscode
 env
 
-
 # Tex files
 main.aux
 main.blg
@@ -16,3 +15,6 @@ main.pdf
 main.run.xml
 main.synctex.gz
 main.toc
+
+# Ignore meta file
+meta.json

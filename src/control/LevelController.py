@@ -68,14 +68,19 @@ class LevelController:
         connections = self.levelData["connections"]
         components = self.logicComponentController.getComponents()
         for connection in connections:
-            print(self.logicComponentController.getComponents())
-            print(f"Adding connection: {connection}")
             self.logicComponentController.addConnection(
                 components[connection["origin"]],
                 connection["originKey"],
                 components[connection["destination"]],
                 connection["destinationKey"]
             )
+            if self.grid is not None:
+                self.grid.visuallyAddConnection(
+                    components[connection["origin"]],
+                    connection["originKey"],
+                    components[connection["destination"]],
+                    connection["destinationKey"]
+                )
 
     def checkSolution(self) -> bool:
         """Checks if the current configuration solves the level"""

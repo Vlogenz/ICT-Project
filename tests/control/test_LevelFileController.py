@@ -186,3 +186,27 @@ def test_updateCompletedLevels(level_file_controller, temp_levels_dir, sample_me
     # Verify
     completed = level_file_controller.getCompletedLevels()
     assert completed == [0, 1, 2, 3]
+
+
+def test_loadMetaFile_creates_file_if_not_exists(level_file_controller, temp_levels_dir):
+    """Test that loadMetaFile creates meta.json if it doesn't exist"""
+    # Ensure meta.json doesn't exist
+    meta_file = temp_levels_dir / "meta.json"
+    assert not meta_file.exists()
+
+    # Call loadMetaFile
+    meta_data = level_file_controller.loadMetaFile()
+
+    # Verify file was created
+    assert meta_file.exists()
+
+    # Verify content
+    with open(meta_file, 'r') as f:
+        loaded_data = json.load(f)
+    expected = {
+        "completed_levels": [],
+        "all_levels_unlocked": False,
+    }
+    assert loaded_data == expected
+    assert meta_data == expected
+

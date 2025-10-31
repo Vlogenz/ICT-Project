@@ -1,4 +1,5 @@
 from src.control.LevelController import LevelController
+from src.control.LevelFileController import LevelFileController
 from src.control.LogicComponentController import LogicComponentController
 
 from src.infrastructure.eventBus import getBus
@@ -9,18 +10,18 @@ from src.view.DeleteArea import DeleteArea
 from src.view.SimulationControls import SimulationControls
 
 from PySide6 import QtGui, QtWidgets
-from pyqttoast import Toast, ToastPreset
 
 
 class LevelWindow(QtWidgets.QMainWindow):
     """Main window for a selected level"""
     #TODO: Add separate Check button and have Start only for pre-testing before the check
 
-    def __init__(self, levelController: LevelController, logicController: LogicComponentController):
+    def __init__(self, levelController: LevelController, logicController: LogicComponentController, levelFileController: LevelFileController):
         super().__init__()
 
         self.logicController = logicController
         self.levelController = levelController
+        self.levelFileController = levelFileController
         self.levelData = self.levelController.getLevel()
         self.eventBus = getBus()
 
@@ -35,7 +36,7 @@ class LevelWindow(QtWidgets.QMainWindow):
 
         # Back to level selection button
         self.backButton = QtWidgets.QPushButton("< Back to level selection")
-        self.backButton.clicked.connect(lambda: self.eventBus.emit("goToLevelSelection"))
+        self.backButton.clicked.connect(self.goToLevelSelection)
 
         # Palette
         palette = QtWidgets.QGridLayout()
@@ -91,19 +92,18 @@ class LevelWindow(QtWidgets.QMainWindow):
 
     def checkSolution(self):
         """Calls the levelController to check the solution.
-        If the solution was right, a toast with a success message will be displayed.
-        Otherwise, the toast will show a negative message.
+        If the solution was right, a message box with a success message will be displayed.
+        Otherwise, the message box will show a negative message.
         """
         solutionIsRight = self.levelController.checkSolution()
-        toast = Toast(self)
-        toast.setDuration(3000)  # Hide after 3 seconds
         if solutionIsRight:
-            toast.setTitle("You did it!")
-            toast.setText("All checks succeeded. You can proceed to the next level.")
-            toast.applyPreset(ToastPreset.SUCCESS)
+            self.levelFileController.updateCompletedLevels(self.levelController.currentLevel)
+            QtWidgets.QMessageBox.information(self, "You did it!", "All checks succeeded. You can proceed to the next level.")
         else:
-            toast.setTitle("Not quite!")
-            toast.setText("Some tests failed. Give it another try.")
-            toast.applyPreset(ToastPreset.ERROR)  # Apply style preset
-        toast.show()
+            QtWidgets.QMessageBox.critical(self, "Not quite!", "Some tests failed. Give it another try.")
 
+    def goToLevelSelection(self):
+        """Cleans up the logic components and the grid and then emits the event to switch to the level selection."""
+        self.logicController.clearComponents()
+        self.grid.unsubscribe()
+        self.eventBus.emit("goToLevelSelection")

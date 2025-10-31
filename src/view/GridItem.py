@@ -156,7 +156,6 @@ class GridItem(QtWidgets.QFrame):
         """Delete this item from the grid."""
         from src.view.GridWidget import GridWidget
         if isinstance(self.parent(), GridWidget):
-            print("Removing item")
             self.parent().removeItem(self)
 
     def portAt(self, pos: QtCore.QPoint):

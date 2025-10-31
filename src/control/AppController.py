@@ -49,13 +49,9 @@ class AppController():
                 newWindow = SandboxModeWindow(self.logicController)
 
         if newWindow is not self.window:
-            oldWindow = self.window
-
-            self.window.setCentralWidget(newWindow)
+            self.window.setCentralWidget(newWindow.centralWidget())
             self.window.setWindowTitle(newWindow.windowTitle())
 
-            self.window.setFixedSize(newWindow.sizeHint())
-        
     def onLevelSelected(self, levelNumber: int):
         """Handles level selection event from LevelSelectionScreen"""
         levelData = self.levelFileController.loadLevel(levelNumber)

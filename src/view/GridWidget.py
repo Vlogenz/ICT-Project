@@ -121,6 +121,7 @@ class GridWidget(QtWidgets.QWidget):
         self.addItem(cell, new_item)
 
     def _visuallyAddConnection(self, srcComp: LogicComponent, srcKey: str, dstComp: LogicComponent, dstKey: str):
+        """Adds a Connection object to the list of connections and updates the grid."""
         srcItem = [item for item in self.items if item.logicComponent == srcComp][0]
         dstItem = [item for item in self.items if item.logicComponent == dstComp][0]
         self.connections.append(Connection(srcItem, srcKey, dstItem, dstKey))
@@ -159,12 +160,15 @@ class GridWidget(QtWidgets.QWidget):
             self.removeItem(filteredItems[0])
 
     def rebuildCircuit(self, componentInfo: List[Tuple[int,int,bool]]):
+        """Rebuilds all visual elements for the circuit:
+        - A GridItem for each component that is currently in the logicController
+        - A connection for each of the logic component's connections
+        """
         self._visuallyRemoveAllItems()
         for i,comp in enumerate(self.logicController.components):
             self.addComponent((componentInfo[i][0], componentInfo[i][1]), comp, immovable=componentInfo[i][2])
         for item in self.items:
             for dstComp, dstKey in item.logicComponent.outputs:
-                print(f"inputs: {dstComp.inputs.items()}")
                 srcKey = dstComp.inputs[dstKey][1]
                 self._visuallyAddConnection(item.logicComponent, srcKey, dstComp, dstKey)
 

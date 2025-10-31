@@ -46,9 +46,13 @@ class LevelController:
         self.grid = grid
 
     def buildLevel(self):
-        """Builds the level using level data"""
+        """Builds the level using level data and emits an event so that the frontend updates as well."""
         self.currentLevel = self.levelData["level_id"]
         components = self.levelData["components"]
+
+        #Additional info for each component:
+        # - which cell to put it in: int, int
+        # - whether it is immovable or not: bool
         componentInfo: List[Tuple[int,int,bool]] = []
         for componentData in components:
             component_type_str = componentData["type"]
@@ -87,7 +91,6 @@ class LevelController:
             for i in range(len(test["expected_output"])): # iterate through expected outputs in specific test
                 if self.logicComponentController.getOutputs()[i].getState()['outValue'] != tuple(test["expected_output"][i]):
                     return False
-        print("Solution is correct!")
         return True
     
     def resetLevel(self):

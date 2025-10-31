@@ -36,6 +36,7 @@ class LevelWindow(QtWidgets.QWidget):
         # Back to level selection button
         self.backButton = QtWidgets.QPushButton("< Back to level selection")
         self.backButton.clicked.connect(lambda: self.eventBus.emit("goToLevelSelection"))
+        self.backButton.clicked.connect(lambda: self.levelController.quitLevel())
 
         # Palette
         palette = QtWidgets.QGridLayout()

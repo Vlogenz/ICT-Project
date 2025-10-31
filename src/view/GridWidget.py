@@ -395,3 +395,10 @@ class GridWidget(QtWidgets.QWidget):
         toast.setText(text)
         toast.applyPreset(ToastPreset.ERROR)  # Apply style preset
         toast.show()
+
+    def cleanGrid(self):
+        """ Clean up the grid on level exit
+        """
+
+        self.eventBus.unsubscribe("view:components_updated", self.updateConnectionActivity)
+        self.eventBus.unsubscribe("view:components_cleared", self._visuallyRemoveAllItems)

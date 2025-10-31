@@ -12,23 +12,23 @@ from PySide6 import QtGui, QtWidgets
 from pyqttoast import Toast, ToastPreset
 
 
-class LevelWindow(QtWidgets.QMainWindow):
+class LevelWindow(QtWidgets.QWidget):
     """Main window for a selected level"""
     #TODO: Add separate Check button and have Start only for pre-testing before the check
 
-    def __init__(self, levelController: LevelController, logicController: LogicComponentController):
+    def __init__(self, levelController: LevelController):
         super().__init__()
 
-        self.logicController = logicController
+        self.logicController = levelController.logicComponentController
         self.levelController = levelController
         self.levelData = self.levelController.getLevel()
         self.eventBus = getBus()
 
-        self.setWindowTitle(f"Level {self.levelData["level_id"]}")
+        self.central = QtWidgets.QWidget()
 
-        central = QtWidgets.QWidget()
-        self.layout = QtWidgets.QGridLayout(central)
-        self.setCentralWidget(central)
+        self.setWindowTitle(f"Level {self.levelData["level_id"]}")
+        self.layout = QtWidgets.QGridLayout(self)
+
         pal = self.palette()
         pal.setColor(self.backgroundRole(), QtGui.QColor("white"))
         self.setPalette(pal)
@@ -46,7 +46,7 @@ class LevelWindow(QtWidgets.QMainWindow):
             palette.addWidget(PaletteItem(class_), i//2, i%2)
 
         # Grid
-        self.grid = GridWidget(logicController)
+        self.grid = GridWidget(self.logicController)
 
         # Delete area
         deleteArea = DeleteArea(self.grid)

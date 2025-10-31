@@ -1,7 +1,6 @@
 from PySide6 import QtCore, QtGui, QtWidgets
 from PySide6.QtCore import QPoint
 from PySide6.QtGui import QPainterPath, QPainterPathStroker
-from pyqttoast import Toast, ToastPreset, ToastPosition
 
 from src.control.LogicComponentController import LogicComponentController
 from src.constants import GRID_COLS, GRID_ROWS, CELL_SIZE, MIME_TYPE
@@ -37,10 +36,6 @@ class GridWidget(QtWidgets.QWidget):
         self.eventBus = getBus()
         self.eventBus.subscribe("view:components_updated", self.updateConnectionActivity)
         self.eventBus.subscribe("view:components_cleared", self._visuallyRemoveAllItems)
-
-        # Static settings for Toast class
-        Toast.setPositionRelativeToWidget(self)
-        Toast.setPosition(ToastPosition.BOTTOM_MIDDLE)
 
     def paintEvent(self, event):
         """Redraws the entire grid, items and connections. It overrides QWidget.paintEvent, which gets called automatically when update() is called."""
@@ -384,15 +379,15 @@ class GridWidget(QtWidgets.QWidget):
         self.repaint()
 
     def showErrorToast(self, title: str, text: str):
-        """Shows an error toast message with the given title and text
+        """Shows an error message box with the given title and text
 
         Args:
-            title (str): The title for the toast
-            text (str): The text for the toast
+            title (str): The title for the message box
+            text (str): The text for the message box
         """
-        toast = Toast(self.window())
-        toast.setDuration(3000)  # Hide after 3 seconds
-        toast.setTitle(title)
-        toast.setText(text)
-        toast.applyPreset(ToastPreset.ERROR)  # Apply style preset
-        toast.show()
+        QtWidgets.QMessageBox.critical(self, title, text)
+
+    def unsubscribe(self):
+        """Unsubscribes the GridWidget from all subscriptions. This does not include the ones of the GridItems."""
+        self.eventBus.unsubscribe("view:components_updated", self.updateConnectionActivity)
+        self.eventBus.unsubscribe("view:components_cleared", self._visuallyRemoveAllItems)

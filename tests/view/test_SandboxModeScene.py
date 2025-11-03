@@ -32,10 +32,12 @@ class TestSandboxModeScene:
         assert layout.count() > 0
 
         # Find palette frame, sim controls, grid by position
-        palette_frame = layout.itemAtPosition(0, 0).widget()
+        backButton = layout.itemAtPosition(0, 0).widget()
+        palette_frame = layout.itemAtPosition(1, 0).widget()
         sim_controls = layout.itemAtPosition(0, 1).widget()
         grid = layout.itemAtPosition(1, 1).widget()
 
+        assert isinstance(backButton, QtWidgets.QPushButton)
         assert isinstance(palette_frame, QtWidgets.QFrame)
         assert isinstance(sim_controls, SimulationControls)
         assert isinstance(grid, GridWidget)

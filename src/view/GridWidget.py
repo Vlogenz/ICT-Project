@@ -276,14 +276,18 @@ class GridWidget(QtWidgets.QWidget):
             srcItem =  self.draggingLine.srcItem
             srcKey = self.draggingLine.srcKey
             start = self.draggingLine.startPos
+
             for item in self.items:
                 local = item.mapFromParent(event.pos())
                 port = item.portAt(local)
+
                 # Check if the line ends on an input port of another item and not on itself
                 if port[0] == "input" and srcItem.uid != item.uid:
+
                     # Add the connection
                     outputKey = srcItem.portAt(srcItem.mapFromParent(start))[1]
                     inputKey = item.portAt(local)[1]
+
                     if self.logicController.addConnection(self.draggingLine.srcItem.logicComponent, outputKey, item.logicComponent, inputKey):
                         self.connections.append(Connection(srcItem, srcKey, item, port[1]))
                         item.update()
@@ -291,6 +295,7 @@ class GridWidget(QtWidgets.QWidget):
                         self.showErrorToast("You cannot add this connection here!",
                                        "Either the bitwidth is incompatible or the input is already occupied.")
                     break
+
             self.draggingLine = None
             self.update()
 
@@ -391,7 +396,8 @@ class GridWidget(QtWidgets.QWidget):
                 conn.isActive = True
             else:
                 conn.isActive = False
-        self.repaint()
+
+        self.update()
 
     def showErrorToast(self, title: str, text: str):
         """Shows an error message box with the given title and text

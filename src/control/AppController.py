@@ -28,8 +28,9 @@ class AppController():
         self.logicController = LogicComponentController()
         self.levelFileController = LevelFileController()
         self.levelController = LevelController(self.logicController)
+        self.window: QtWidgets.QMainWindow = QtWidgets.QMainWindow()
 
-        self.window: QtWidgets.QMainWindow = LevelSelectionWindow(self.levelFileController)  # TODO initialize main screen window
+        self.window.setCentralWidget(LevelSelectionWindow(self.levelFileController))  # TODO initialize main screen window
 
     def run(self):
         self.window.show()
@@ -43,17 +44,23 @@ class AppController():
             case Window.LEVEL_SELECTION:
                 newWindow = LevelSelectionWindow(self.levelFileController)
             case Window.LEVEL:
-                newWindow = LevelWindow(self.levelController, self.logicController, self.levelFileController)
+                newWindow = LevelWindow(self.levelController)
             case _:
                 #TODO: go to main screen instead
                 newWindow = SandboxModeWindow(self.logicController)
 
         if newWindow is not self.window:
-            self.window.setCentralWidget(newWindow.centralWidget())
+
+            self.window.setCentralWidget(newWindow)
             self.window.setWindowTitle(newWindow.windowTitle())
+            self.window.setFixedSize(newWindow.sizeHint())
+
+            if window == Window.LEVEL:
+                print(self.window.centralWidget().logicController.components)
 
     def onLevelSelected(self, levelNumber: int):
         """Handles level selection event from LevelSelectionScreen"""
+
         levelData = self.levelFileController.loadLevel(levelNumber)
         self.levelController.setLevel(levelData)
         self.switchToWindow(Window.LEVEL)

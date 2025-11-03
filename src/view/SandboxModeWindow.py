@@ -14,7 +14,7 @@ import importlib
 from src.view.SimulationControls import SimulationControls
 
 
-class SandboxModeWindow(QtWidgets.QMainWindow):
+class SandboxModeWindow(QtWidgets.QWidget):
     """Main window for the sandbox mode."""
 
     def __init__(self, logicController: LogicComponentController):
@@ -23,9 +23,9 @@ class SandboxModeWindow(QtWidgets.QMainWindow):
 
         self.logicController = logicController
 
-        central = QtWidgets.QWidget()
-        layout = QtWidgets.QGridLayout(central)
-        self.setCentralWidget(central)
+        self.central = QtWidgets.QWidget()
+        layout = QtWidgets.QGridLayout(self)
+
         pal = self.palette()
         pal.setColor(self.backgroundRole(), QtGui.QColor("white"))
         self.setPalette(pal)

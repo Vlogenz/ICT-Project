@@ -1,5 +1,7 @@
 from src.control.LogicComponentController import LogicComponentController
 from src.model.LogicComponent import LogicComponent
+from src.view.GridWidget import GridWidget
+
 from src.model.Input import Input
 from src.model.Output import Output
 from src.model.And import And
@@ -101,6 +103,7 @@ class LevelController:
     def quitLevel(self):
         """Cleans up the level when quitting"""
         self.logicComponentController.clearComponents()
+        self.grid.cleanGrid()
         self.currentLevel = None
         
     def getComponentMap(self):

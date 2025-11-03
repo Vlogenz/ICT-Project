@@ -262,8 +262,8 @@ class LogicComponentController:
     def clearComponents(self):
         """Removes all components from the controller
         """
-        self.components = []
-        self.inputs = []
-        self.outputs = []
-        self.updateInTick = {}
+        self.components.clear()
+        self.inputs.clear()
+        self.outputs.clear()
+        self.updateInTick.clear()
         self.bus.emit("view:components_cleared")

@@ -15,9 +15,6 @@ class MainScene(QtWidgets.QMainWindow):
         layout = QtWidgets.QGridLayout(central)
         self.setCentralWidget(central)
 
-
-
-
         teachingBtn = QPushButton(text="Learning Mode", parent=self)
         teachingBtn.setFixedSize(200, 150)
         teachingBtn.clicked.connect(lambda: self.bus.emit("goToLevelSelection"))

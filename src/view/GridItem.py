@@ -45,6 +45,7 @@ class GridItem(QtWidgets.QFrame):
         # Create output labels
         self.outputLabels = {}
         for key, rect in self.outputs.items():
+            #TODO: Adjust width of the label to content
             label = QtWidgets.QLabel(str(self.logicComponent.getState()[key][0]))
             label.setGeometry(rect.toRect())
             label.setAlignment(QtCore.Qt.AlignCenter)

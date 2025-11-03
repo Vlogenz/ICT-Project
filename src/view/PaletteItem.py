@@ -8,7 +8,7 @@ from src.constants import MIME_TYPE, CELL_SIZE
 class PaletteItem(QtWidgets.QFrame):
     """Drag-Source in the palette on the side."""
 
-    def __init__(self, logicComponentClass: Class, color: QtGui.QColor = None, parent=None):
+    def __init__(self, logicComponentClass: Class, parent=None):
         super().__init__(parent)
         self.setFrameShape(QtWidgets.QFrame.Box)
         self.setFixedSize(CELL_SIZE - 8, CELL_SIZE - 8)
@@ -30,11 +30,10 @@ class PaletteItem(QtWidgets.QFrame):
         layout.addWidget(img_label)
 
         self.logicComponentClass = logicComponentClass
-        self.color = color
 
         # Apply stylesheet
         self.setStyleSheet(
-            f"border: 1px solid lightgray; background-color: {color.name() if color != None else 'lightgray'};")
+            f"border: 1px solid lightgray; background-color: lightgray;")
 
     def mousePressEvent(self, event: QtGui.QMouseEvent):
         """This gets called when the user starts dragging the item."""

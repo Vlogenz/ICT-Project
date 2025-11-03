@@ -9,6 +9,11 @@ from src.constants import MIME_TYPE, CELL_SIZE
 import json
 
 #TODO: edit after rebuild level stuff is merged
+# cases to add
+# - deletion via delete area
+# - clear components
+# - rebuild circuit
+# - connection line activation
 class TestGridWidget:
 
     def test_drag_item_from_palette_to_empty_cell(self, qtbot):

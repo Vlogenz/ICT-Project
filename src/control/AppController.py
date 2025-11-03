@@ -28,7 +28,7 @@ class AppController:
         self.logicController = LogicComponentController()
         self.levelFileController = LevelFileController()
         self.levelController = LevelController(self.logicController)
-        self.window: QtWidgets.QMainWindow = LevelSelectionWindow(self.levelFileController)  # TODO initialize main screen window
+        self.window: QtWidgets.QMainWindow = SandboxModeWindow(self.logicController)  # TODO initialize main screen window
 
     def run(self):
         self.window.show()

@@ -1,9 +1,9 @@
 from PySide6 import QtCore, QtWidgets
 from src.infrastructure.eventBus import getBus
 from src.control.LevelFileController import LevelFileController
-COLUMNS = 7
+COLUMNS = 5
 
-class LevelSelectionWindow(QtWidgets.QMainWindow):
+class LevelSelectionScene(QtWidgets.QWidget):
     """
     Shows a grid with a cell for each level.
     """
@@ -14,14 +14,14 @@ class LevelSelectionWindow(QtWidgets.QMainWindow):
         self.levelFileController = levelFileController
         self.bus = getBus()
 
-        central = QtWidgets.QWidget()
-        self.layout = QtWidgets.QVBoxLayout(central)
-        self.setCentralWidget(central)
+        self.central = QtWidgets.QWidget()
+        self.layout = QtWidgets.QVBoxLayout(self)
 
         headerLabel = QtWidgets.QLabel("Select a level")
         headerLabel.setAlignment(QtCore.Qt.AlignCenter)
         self.grid = QtWidgets.QGridLayout()
         self.toggleLevelLockButton = QtWidgets.QPushButton()
+        
         if self.levelFileController.getAllLevelsUnlocked():
             self.toggleLevelLockButton.setText("Lock levels")
         else:

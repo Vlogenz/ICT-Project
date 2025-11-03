@@ -2,8 +2,6 @@ from src.control.LevelController import LevelController
 from src.control.LevelFileController import LevelFileController
 from src.control.LogicComponentController import LogicComponentController
 
-from src.infrastructure.eventBus import getBus
-
 from src.view.PaletteItem import PaletteItem
 from src.view.GridWidget import GridWidget
 from src.view.DeleteArea import DeleteArea
@@ -12,24 +10,23 @@ from src.view.SimulationControls import SimulationControls
 from PySide6 import QtGui, QtWidgets
 
 
-class LevelWindow(QtWidgets.QMainWindow):
+class LevelScene(QtWidgets.QWidget):
     """Main window for a selected level"""
     #TODO: Add separate Check button and have Start only for pre-testing before the check
 
-    def __init__(self, levelController: LevelController, logicController: LogicComponentController, levelFileController: LevelFileController):
+    def __init__(self, levelController: LevelController, levelFileController: LevelFileController):
         super().__init__()
 
-        self.logicController = logicController
         self.levelController = levelController
+        self.logicController = self.levelController.logicComponentController
         self.levelFileController = levelFileController
         self.levelData = self.levelController.getLevel()
-        self.eventBus = getBus()
+
+        self.central = QtWidgets.QWidget()
 
         self.setWindowTitle(f"Level {self.levelData["level_id"]}")
+        self.layout = QtWidgets.QGridLayout(self)
 
-        central = QtWidgets.QWidget()
-        self.layout = QtWidgets.QGridLayout(central)
-        self.setCentralWidget(central)
         pal = self.palette()
         pal.setColor(self.backgroundRole(), QtGui.QColor("white"))
         self.setPalette(pal)
@@ -46,7 +43,7 @@ class LevelWindow(QtWidgets.QMainWindow):
             palette.addWidget(PaletteItem(class_), i//2, i%2)
 
         # Grid
-        self.grid = GridWidget(logicController)
+        self.grid = GridWidget(self.logicController)
 
         # Delete area
         deleteArea = DeleteArea(self.grid)
@@ -103,6 +100,5 @@ class LevelWindow(QtWidgets.QMainWindow):
 
     def goToLevelSelection(self):
         """Cleans up the logic components and the grid and then emits the event to switch to the level selection."""
-        self.logicController.clearComponents()
         self.grid.unsubscribe()
-        self.eventBus.emit("goToLevelSelection")
+        self.levelController.quitLevel()

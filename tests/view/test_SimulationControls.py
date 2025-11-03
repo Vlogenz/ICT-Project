@@ -79,7 +79,7 @@ class TestSimulationControls:
         controls = SimulationControls(logic_controller)
         qtbot.addWidget(controls)
 
-        layout = controls.layout()
+        layout = controls.layout
         assert isinstance(layout, QtWidgets.QHBoxLayout)
 
         # Check widgets in layout
@@ -95,3 +95,30 @@ class TestSimulationControls:
 
         assert controls.frameShape() == QtWidgets.QFrame.StyledPanel
         assert controls.maximumHeight() == 50  # fixed height
+
+    def test_add_button(self, qtbot, logic_controller):
+        controls = SimulationControls(logic_controller)
+        qtbot.addWidget(controls)
+
+        initial_count = controls.layout.count()
+        mock_function = Mock()
+        controls.addButton("Test Button", mock_function)
+
+        # Check that a new widget was added
+        assert controls.layout.count() == initial_count + 1
+
+        # Check that the first widget is the new button
+        first_widget = controls.layout.itemAt(0).widget()
+        assert isinstance(first_widget, QtWidgets.QPushButton)
+        assert first_widget.text() == "Test Button"
+
+        # Check that clicking the button calls the function
+        qtbot.mouseClick(first_widget, QtCore.Qt.LeftButton)
+        mock_function.assert_called_once()
+
+        # Check that original widgets are still present
+        widgets = [controls.layout.itemAt(i).widget() for i in range(controls.layout.count())]
+        assert controls.startStopButton in widgets
+        assert controls.resetButton in widgets
+        assert controls.speedLabel in widgets
+        assert controls.speedSlider in widgets

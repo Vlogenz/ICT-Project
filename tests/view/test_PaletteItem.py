@@ -4,7 +4,6 @@ from pytestqt import qtbot
 from unittest.mock import Mock, patch
 from src.view.PaletteItem import PaletteItem
 from src.model.And import And
-from src.model.Not import Not
 from src.constants import MIME_TYPE
 
 

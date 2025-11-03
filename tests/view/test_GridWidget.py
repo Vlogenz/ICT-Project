@@ -1,5 +1,4 @@
-import pytest
-from PySide6 import QtCore, QtGui, QtWidgets
+from PySide6 import QtCore, QtGui
 from pytestqt import qtbot
 from src.control.LogicComponentController import LogicComponentController
 from src.view.GridWidget import GridWidget
@@ -255,7 +254,7 @@ class TestGridWidget:
         not_gate = controller.addLogicComponent(Not)
         grid.addComponent((1, 0), not_gate)
         controller.addConnection(and_gate, "outValue", not_gate, "input")
-        grid._visuallyAddConnection(and_gate, "outValue", not_gate, "input1")
+        grid._visuallyAddConnection(and_gate, "outValue", not_gate, "input")
 
         assert len(grid.items) == 2
         assert len(grid.connections) == 1

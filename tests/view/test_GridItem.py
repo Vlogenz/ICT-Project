@@ -1,4 +1,3 @@
-import pytest
 from PySide6 import QtCore, QtGui, QtWidgets
 from pytestqt import qtbot
 from src.control.LogicComponentController import LogicComponentController

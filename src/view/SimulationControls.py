@@ -12,8 +12,8 @@ class SimulationControls(QtWidgets.QFrame):
         super().__init__()
         self.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.setFixedHeight(50)
-        layout = QtWidgets.QHBoxLayout(self)
-        layout.setContentsMargins(4, 2, 4, 2)
+        self.layout = QtWidgets.QHBoxLayout(self)
+        self.layout.setContentsMargins(4, 2, 4, 2)
 
         self.logicController = logicController
 
@@ -34,10 +34,10 @@ class SimulationControls(QtWidgets.QFrame):
 
         self.configureStart(self.logicController.eval)
 
-        layout.addWidget(self.startStopButton)
-        layout.addWidget(self.resetButton)
-        layout.addWidget(self.speedLabel)
-        layout.addWidget(self.speedSlider)
+        self.layout.addWidget(self.startStopButton)
+        self.layout.addWidget(self.resetButton)
+        self.layout.addWidget(self.speedLabel)
+        self.layout.addWidget(self.speedSlider)
 
         self.updateSpeed(self.speedSlider.value())
 
@@ -63,3 +63,13 @@ class SimulationControls(QtWidgets.QFrame):
     def configureReset(self, function):
         """Sets the functionality of the Reset button."""
         self.resetButton.clicked.connect(function)
+
+    def addButton(self, text: str, function):
+        """Adds a new button on the left of the start button and connects it to the given function.
+        Args:
+            text (str): The text that should be displayed by the new button
+            function: The function that should be called upon clicking the button
+        """
+        newButton = QPushButton(text)
+        newButton.clicked.connect(function)
+        self.layout.insertWidget(0, newButton)

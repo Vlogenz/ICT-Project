@@ -9,8 +9,9 @@ from src.model.Nand import Nand
 from src.model.Nor import Nor
 from src.model.Xor import Xor
 from src.model.Xnor import Xnor
+from src.infrastructure.eventBus import getBus
 
-from typing import List, TypeVar, Type
+from typing import List, TypeVar, Type, Tuple
 
 class LevelController:
     COMPONENT_MAP = {
@@ -30,7 +31,7 @@ class LevelController:
         self.levelData = levelData
         self.logicComponentController = logicComponentController
         self.currentLevel = None
-        self.grid = grid
+        self.eventBus = getBus()
     
     def setLevel(self, levelData):
         """Sets the current level data"""
@@ -45,9 +46,14 @@ class LevelController:
         self.grid = grid
 
     def buildLevel(self):
-        """Builds the level using level data"""
+        """Builds the level using level data and emits an event so that the frontend updates as well."""
         self.currentLevel = self.levelData["level_id"]
         components = self.levelData["components"]
+
+        #Additional info for each component:
+        # - which cell to put it in: int, int
+        # - whether it is immovable or not: bool
+        componentInfo: List[Tuple[int,int,bool]] = []
         for componentData in components:
             component_type_str = componentData["type"]
             
@@ -56,12 +62,25 @@ class LevelController:
                 raise ValueError(f"Unknown component type: {component_type_str}")
             
             component_class = self.COMPONENT_MAP[component_type_str]
-            component = self.logicComponentController.addLogicComponent(component_class)
+            self.logicComponentController.addLogicComponent(component_class)
 
-            cell = componentData["position"]
-            if self.grid is not None:
-                self.grid.addComponent(tuple(cell), component, immovable=componentData["immovable"])
+            pos = tuple(componentData["position"])
+            componentInfo.append((pos[0], pos[1], componentData["immovable"]))
             
+        # Set up connections if any
+        if self.levelData.get("connections") is None:
+            return
+        connections = self.levelData["connections"]
+        components = self.logicComponentController.getComponents()
+        for connection in connections:
+            self.logicComponentController.addConnection(
+                components[connection["origin"]],
+                connection["originKey"],
+                components[connection["destination"]],
+                connection["destinationKey"]
+            )
+        self.eventBus.emit("view:rebuild_circuit", componentInfo)
+
     def checkSolution(self) -> bool:
         """Checks if the current configuration solves the level"""
         for i in range(len(self.levelData["tests"])): # Iterate through tests
@@ -72,7 +91,6 @@ class LevelController:
             for i in range(len(test["expected_output"])): # iterate through expected outputs in specific test
                 if self.logicComponentController.getOutputs()[i].getState()['outValue'] != tuple(test["expected_output"][i]):
                     return False
-        print("Solution is correct!")
         return True
     
     def resetLevel(self):

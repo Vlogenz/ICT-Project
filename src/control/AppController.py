@@ -43,7 +43,7 @@ class AppController():
             case Window.LEVEL_SELECTION:
                 newWindow = LevelSelectionWindow(self.levelFileController)
             case Window.LEVEL:
-                newWindow = LevelWindow(self.levelController, self.logicController)
+                newWindow = LevelWindow(self.levelController, self.logicController, self.levelFileController)
             case _:
                 #TODO: go to main screen instead
                 newWindow = SandboxModeWindow(self.logicController)

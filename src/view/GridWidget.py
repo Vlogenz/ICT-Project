@@ -1,7 +1,6 @@
 from PySide6 import QtCore, QtGui, QtWidgets
 from PySide6.QtCore import QPoint
 from PySide6.QtGui import QPainterPath, QPainterPathStroker
-from pyqttoast import Toast, ToastPreset, ToastPosition
 
 from src.control.LogicComponentController import LogicComponentController
 from src.constants import GRID_COLS, GRID_ROWS, CELL_SIZE, MIME_TYPE
@@ -12,7 +11,7 @@ from src.view.DraggingLine import DraggingLine
 from src.view.GridItem import GridItem
 from src.view.Connection import Connection
 import json
-from typing import List
+from typing import List, Tuple
 
 from src.view.InputGridItem import InputGridItem
 
@@ -37,10 +36,7 @@ class GridWidget(QtWidgets.QWidget):
         self.eventBus = getBus()
         self.eventBus.subscribe("view:components_updated", self.updateConnectionActivity)
         self.eventBus.subscribe("view:components_cleared", self._visuallyRemoveAllItems)
-
-        # Static settings for Toast class
-        Toast.setPositionRelativeToWidget(self)
-        Toast.setPosition(ToastPosition.BOTTOM_MIDDLE)
+        self.eventBus.subscribe("view:rebuild_circuit", self.rebuildCircuit)
 
     def paintEvent(self, event):
         """Redraws the entire grid, items and connections. It overrides QWidget.paintEvent, which gets called automatically when update() is called."""
@@ -124,6 +120,14 @@ class GridWidget(QtWidgets.QWidget):
             new_item = GridItem(logicComponent=component, immovable=immovable)
         self.addItem(cell, new_item)
 
+    def _visuallyAddConnection(self, srcComp: LogicComponent, srcKey: str, dstComp: LogicComponent, dstKey: str):
+        """Adds a Connection object to the list of connections and updates the grid."""
+        srcItem = [item for item in self.items if item.logicComponent == srcComp][0]
+        dstItem = [item for item in self.items if item.logicComponent == dstComp][0]
+        self.connections.append(Connection(srcItem, srcKey, dstItem, dstKey))
+        dstItem.update()
+        self.update()
+
     def removeItem(self, item: GridItem):
         """Removes the give item from the backend and from the grid."""
         try:
@@ -154,6 +158,19 @@ class GridWidget(QtWidgets.QWidget):
         filteredItems = [item for item in self.items if item.uid == uid]
         if len(filteredItems) == 1:
             self.removeItem(filteredItems[0])
+
+    def rebuildCircuit(self, componentInfo: List[Tuple[int,int,bool]]):
+        """Rebuilds all visual elements for the circuit:
+        - A GridItem for each component that is currently in the logicController
+        - A connection for each of the logic component's connections
+        """
+        self._visuallyRemoveAllItems()
+        for i,comp in enumerate(self.logicController.components):
+            self.addComponent((componentInfo[i][0], componentInfo[i][1]), comp, immovable=componentInfo[i][2])
+        for item in self.items:
+            for dstComp, dstKey in item.logicComponent.outputs:
+                srcKey = dstComp.inputs[dstKey][1]
+                self._visuallyAddConnection(item.logicComponent, srcKey, dstComp, dstKey)
 
     # --- Drag & Drop ---
     def dragEnterEvent(self, event):
@@ -377,15 +394,16 @@ class GridWidget(QtWidgets.QWidget):
         self.repaint()
 
     def showErrorToast(self, title: str, text: str):
-        """Shows an error toast message with the given title and text
+        """Shows an error message box with the given title and text
 
         Args:
-            title (str): The title for the toast
-            text (str): The text for the toast
+            title (str): The title for the message box
+            text (str): The text for the message box
         """
-        toast = Toast(self.window())
-        toast.setDuration(3000)  # Hide after 3 seconds
-        toast.setTitle(title)
-        toast.setText(text)
-        toast.applyPreset(ToastPreset.ERROR)  # Apply style preset
-        toast.show()
+        QtWidgets.QMessageBox.critical(self, title, text)
+
+    def unsubscribe(self):
+        """Unsubscribes the GridWidget from all subscriptions. This does not include the ones of the GridItems."""
+        self.eventBus.unsubscribe("view:components_updated", self.updateConnectionActivity)
+        self.eventBus.unsubscribe("view:components_cleared", self._visuallyRemoveAllItems)
+        self.eventBus.unsubscribe("view:rebuild_circuit", self.rebuildCircuit)

@@ -16,7 +16,7 @@ class PaletteItem(QtWidgets.QFrame):
         layout = QtWidgets.QHBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
 
-        self.image_path = f"Gates/{logicComponentClass.__name__}.svg"
+        self.image_path = f"assets/gates/{logicComponentClass.__name__}.svg"
 
         img_label = QtWidgets.QLabel()
         img_label.setScaledContents(True)

@@ -26,7 +26,6 @@ class LevelScene(QtWidgets.QWidget):
 
         self.setWindowTitle(f"Level {self.levelData["level_id"]}")
         self.layout = QtWidgets.QGridLayout(self)
-
         pal = self.palette()
         pal.setColor(self.backgroundRole(), QtGui.QColor("white"))
         self.setPalette(pal)

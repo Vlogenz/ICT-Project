@@ -5,59 +5,61 @@ import sys
 from src.infrastructure.eventBus import getBus
 
 from src.control.LogicComponentController import LogicComponentController
-from src.view.SandboxModeWindow import SandboxModeWindow
-from src.view.LevelSelectionWindow import LevelSelectionWindow
-from src.view.LevelWindow import LevelWindow
+from src.view.SandboxModeScene import SandboxModeScene
+from src.view.LevelSelectionScene import LevelSelectionScene
+from src.view.LevelScene import LevelScene
 
 from src.control.LevelFileController import LevelFileController
 from src.control.LevelController import LevelController
 
-class Window(Enum):
+class Scene(Enum):
     MAIN = 0
     SANDBOX = 1
     LEVEL_SELECTION = 2
     LEVEL = 3
 
-class AppController:
+class AppController():
     def __init__(self):
         self.app = QtWidgets.QApplication(sys.argv)
-        self.app.aboutToQuit.connect(self._cleanup)  # Signal verbinden
+        self.app.aboutToQuit.connect(self._cleanup)  # connect signal
         self.bus = getBus()
         self.bus.subscribe("levelSelection:levelSelected", self.onLevelSelected)
-        self.bus.subscribe("goToLevelSelection", lambda: self.switchToWindow(Window.LEVEL_SELECTION))
+        self.bus.subscribe("goToLevelSelection", lambda: self.switchToScene(Scene.LEVEL_SELECTION))
         self.logicController = LogicComponentController()
         self.levelFileController = LevelFileController()
         self.levelController = LevelController(self.logicController)
-        self.window: QtWidgets.QMainWindow = SandboxModeWindow(self.logicController)  # TODO initialize main screen window
+        self.window: QtWidgets.QMainWindow = QtWidgets.QMainWindow()
+
+        self.window.setCentralWidget(LevelSelectionScene(self.levelFileController))  # TODO initialize main screen window
 
     def run(self):
-        self.window.show()
+        self.window.showMaximized()
         sys.exit(self.app.exec())
 
-    def switchToWindow(self, window: Window):
-        #TODO: Do not use separate windows but set the central widget to the new content
-        newWindow = self.window
-        match window:
-            case Window.SANDBOX:
-                newWindow = SandboxModeWindow(self.logicController)
-            case Window.LEVEL_SELECTION:
-                newWindow = LevelSelectionWindow(self.levelFileController)
-            case Window.LEVEL:
-                newWindow = LevelWindow(self.levelController, self.logicController, self.levelFileController)
+    def switchToScene(self, scene: Scene):
+        newScene = self.window.centralWidget()
+        match scene:
+            case Scene.SANDBOX:
+                newScene = SandboxModeScene(self.logicController)
+            case Scene.LEVEL_SELECTION:
+                newScene = LevelSelectionScene(self.levelFileController)
+            case Scene.LEVEL:
+                newScene = LevelScene(self.levelController, self.levelFileController)
             case _:
                 #TODO: go to main screen instead
-                newWindow = SandboxModeWindow(self.logicController)
-        if newWindow is not self.window:
-            oldWindow = self.window
-            self.window = newWindow
-            oldWindow.close()
-            self.window.show()
-        
+                newScene = SandboxModeScene(self.logicController)
+
+        if newScene is not self.window.centralWidget():
+
+            self.window.setCentralWidget(newScene)
+            self.window.setWindowTitle(newScene.windowTitle())
+
     def onLevelSelected(self, levelNumber: int):
         """Handles level selection event from LevelSelectionScreen"""
+
         levelData = self.levelFileController.loadLevel(levelNumber)
         self.levelController.setLevel(levelData)
-        self.switchToWindow(Window.LEVEL)
+        self.switchToScene(Scene.LEVEL)
 
     def stopApp(self):
         """cleanly stops the application"""

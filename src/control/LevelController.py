@@ -101,6 +101,7 @@ class LevelController:
         """Cleans up the level when quitting"""
         self.logicComponentController.clearComponents()
         self.currentLevel = None
+        self.eventBus.emit("goToLevelSelection")
         
     def getComponentMap(self):
         """Returns the connection map of the current level"""

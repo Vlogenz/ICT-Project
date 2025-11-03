@@ -11,7 +11,7 @@ from src.view.DraggingLine import DraggingLine
 from src.view.GridItem import GridItem
 from src.view.Connection import Connection
 import json
-from typing import List
+from typing import List, Tuple
 
 from src.view.InputGridItem import InputGridItem
 
@@ -36,6 +36,7 @@ class GridWidget(QtWidgets.QWidget):
         self.eventBus = getBus()
         self.eventBus.subscribe("view:components_updated", self.updateConnectionActivity)
         self.eventBus.subscribe("view:components_cleared", self._visuallyRemoveAllItems)
+        self.eventBus.subscribe("view:rebuild_circuit", self.rebuildCircuit)
 
     def paintEvent(self, event):
         """Redraws the entire grid, items and connections. It overrides QWidget.paintEvent, which gets called automatically when update() is called."""
@@ -119,7 +120,8 @@ class GridWidget(QtWidgets.QWidget):
             new_item = GridItem(logicComponent=component, immovable=immovable)
         self.addItem(cell, new_item)
 
-    def visuallyAddConnection(self, srcComp: LogicComponent, srcKey: str, dstComp: LogicComponent, dstKey: str):
+    def _visuallyAddConnection(self, srcComp: LogicComponent, srcKey: str, dstComp: LogicComponent, dstKey: str):
+        """Adds a Connection object to the list of connections and updates the grid."""
         srcItem = [item for item in self.items if item.logicComponent == srcComp][0]
         dstItem = [item for item in self.items if item.logicComponent == dstComp][0]
         self.connections.append(Connection(srcItem, srcKey, dstItem, dstKey))
@@ -156,6 +158,19 @@ class GridWidget(QtWidgets.QWidget):
         filteredItems = [item for item in self.items if item.uid == uid]
         if len(filteredItems) == 1:
             self.removeItem(filteredItems[0])
+
+    def rebuildCircuit(self, componentInfo: List[Tuple[int,int,bool]]):
+        """Rebuilds all visual elements for the circuit:
+        - A GridItem for each component that is currently in the logicController
+        - A connection for each of the logic component's connections
+        """
+        self._visuallyRemoveAllItems()
+        for i,comp in enumerate(self.logicController.components):
+            self.addComponent((componentInfo[i][0], componentInfo[i][1]), comp, immovable=componentInfo[i][2])
+        for item in self.items:
+            for dstComp, dstKey in item.logicComponent.outputs:
+                srcKey = dstComp.inputs[dstKey][1]
+                self._visuallyAddConnection(item.logicComponent, srcKey, dstComp, dstKey)
 
     # --- Drag & Drop ---
     def dragEnterEvent(self, event):
@@ -391,3 +406,4 @@ class GridWidget(QtWidgets.QWidget):
         """Unsubscribes the GridWidget from all subscriptions. This does not include the ones of the GridItems."""
         self.eventBus.unsubscribe("view:components_updated", self.updateConnectionActivity)
         self.eventBus.unsubscribe("view:components_cleared", self._visuallyRemoveAllItems)
+        self.eventBus.unsubscribe("view:rebuild_circuit", self.rebuildCircuit)

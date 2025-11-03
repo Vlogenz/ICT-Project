@@ -41,7 +41,6 @@ class LevelWindow(QtWidgets.QMainWindow):
         # Palette
         palette = QtWidgets.QGridLayout()
         classes = self.levelController.getAvailableComponentClasses()
-        print(f"classes: {classes}")
         for i, class_ in enumerate(classes):
             # Use index for a two-column grid
             palette.addWidget(PaletteItem(class_), i//2, i%2)

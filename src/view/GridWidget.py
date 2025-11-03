@@ -25,7 +25,6 @@ class GridWidget(QtWidgets.QWidget):
         self.rows = rows
         self.setAcceptDrops(True)
         self.items: List[GridItem] = []
-        # TODO: The connection lines are still quite messy. We have to rework them later.
         self.connections: List[Connection] = []
         self.draggingLine: DraggingLine = None
         self.draggingItem: GridItem = None
@@ -189,7 +188,7 @@ class GridWidget(QtWidgets.QWidget):
                 filteredItems = [item for item in self.items if item.uid == uid]
                 if len(filteredItems)!=0:
                     self.draggingItem = filteredItems[0]
-            cell = self.cellAt(event.pos())
+            cell = self.cellAt(event.position().toPoint())
             if cell:
                 self.tempPos = (cell[0] * CELL_SIZE + 4, cell[1] * CELL_SIZE + 4)
             self.update()
@@ -267,7 +266,7 @@ class GridWidget(QtWidgets.QWidget):
     def mouseMoveEvent(self, event):
         """This is called whenever the mouse moves within the widget. If a line is being dragged, it updates the line."""
         if self.draggingLine:
-            self.draggingLine.currentPos = event.pos()
+            self.draggingLine.currentPos = event.position()
             self.update()
 
     def mouseReleaseEvent(self, event):
@@ -278,7 +277,7 @@ class GridWidget(QtWidgets.QWidget):
             start = self.draggingLine.startPos
 
             for item in self.items:
-                local = item.mapFromParent(event.pos())
+                local = item.mapFromParent(event.position())
                 port = item.portAt(local)
 
                 # Check if the line ends on an input port of another item and not on itself

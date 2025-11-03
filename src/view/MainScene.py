@@ -1,4 +1,5 @@
-from PySide6 import QtWidgets
+
+from PySide6 import QtWidgets, QtCore
 from PySide6.QtWidgets import QPushButton
 from src.infrastructure.eventBus import getBus
 import pyfiglet
@@ -15,29 +16,32 @@ class MainScene(QtWidgets.QMainWindow):
         layout = QtWidgets.QGridLayout(central)
         self.setCentralWidget(central)
 
+        # ASCII Art Überschrift
+        fig = pyfiglet.Figlet(font='slant')  # oder 'banner', 'big', 'block', etc.
+        ascii_art = fig.renderText("Gated Neighbourhood")
+
+        titleLabel = QtWidgets.QLabel(ascii_art)
+        titleLabel.setStyleSheet("font-family: 'Courier'; font-size: 25px;")
+        titleLabel.setAlignment(QtCore.Qt.AlignCenter)
+        layout.addWidget(titleLabel, 0,0,1,2)
+
         teachingBtn = QPushButton(text="Learning Mode", parent=self)
-        teachingBtn.setFixedSize(200, 150)
+        teachingBtn.setMinimumSize(200, 150)
         teachingBtn.clicked.connect(lambda: self.bus.emit("goToLevelSelection"))
 
         sandboxBtn = QPushButton(text="Sandbox Mode", parent=self)
-        sandboxBtn.setFixedSize(200, 150)
+        sandboxBtn.setMinimumSize(200, 150)
         sandboxBtn.clicked.connect(lambda: self.bus.emit("goToSandboxMode"))
 
 
         exitBtn = QPushButton(text="Exit", parent=self)
-        exitBtn.setFixedSize(200, 100)
+        exitBtn.setMinimumSize(200, 100)
         exitBtn.clicked.connect(lambda: self.bus.emit("stopApp"))
 
 
-        layout.addWidget(teachingBtn)
-        layout.addWidget(sandboxBtn)
-        layout.addWidget(exitBtn)
-
-    # def openTeachingMode(self):
-    #     from src.view.TeachingModeWindow import TeachingModeWindow
-    #     self.teachingWindow = TeachingModeWindow(self.logicController)
-    #     self.teachingWindow.show()
-    #     self.close()
+        layout.addWidget(teachingBtn, 1,0)
+        layout.addWidget(sandboxBtn, 1,1)
+        layout.addWidget(exitBtn, 2,0,1,2)
 
     def closeApplication(self):
         self.close()

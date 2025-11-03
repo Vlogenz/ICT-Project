@@ -25,7 +25,6 @@ class GridWidget(QtWidgets.QWidget):
         self.rows = rows
         self.setAcceptDrops(True)
         self.items: List[GridItem] = []
-        # TODO: The connection lines are still quite messy. We have to rework them later.
         self.connections: List[Connection] = []
         self.draggingLine: DraggingLine = None
         self.draggingItem: GridItem = None

@@ -8,12 +8,6 @@ from src.model.Not import Not
 from src.constants import MIME_TYPE, CELL_SIZE
 import json
 
-#TODO: edit after rebuild level stuff is merged
-# cases to add
-# - deletion via delete area
-# - clear components
-# - rebuild circuit
-# - connection line activation
 class TestGridWidget:
 
     def test_drag_item_from_palette_to_empty_cell(self, qtbot):
@@ -219,7 +213,7 @@ class TestGridWidget:
 
         # Manually add connection for simplicity
         controller.addConnection(not_gate, "outValue", and_gate, "input1")
-        grid.visuallyAddConnection(not_gate, "outValue", and_gate, "input1")
+        grid._visuallyAddConnection(not_gate, "outValue", and_gate, "input1")
 
         assert len(grid.connections) == 1
 
@@ -240,7 +234,7 @@ class TestGridWidget:
         grid.addComponent((2, 0), and_gate)
 
         controller.addConnection(not_gate, "outValue", and_gate, "input1")
-        grid.visuallyAddConnection(not_gate, "outValue", and_gate, "input1")
+        grid._visuallyAddConnection(not_gate, "outValue", and_gate, "input1")
 
         assert len(grid.connections) == 1
 
@@ -249,3 +243,107 @@ class TestGridWidget:
 
         assert len(grid.items) == 1
         assert len(grid.connections) == 0
+
+    def test_visually_clear_components(self, qtbot):
+        controller = LogicComponentController()
+        grid = GridWidget(controller)
+        qtbot.addWidget(grid)
+
+        # Add items and connections
+        and_gate = controller.addLogicComponent(And)
+        grid.addComponent((0, 0), and_gate)
+        not_gate = controller.addLogicComponent(Not)
+        grid.addComponent((1, 0), not_gate)
+        controller.addConnection(and_gate, "outValue", not_gate, "input")
+        grid._visuallyAddConnection(and_gate, "outValue", not_gate, "input1")
+
+        assert len(grid.items) == 2
+        assert len(grid.connections) == 1
+
+        # Clear components visually
+        grid._visuallyRemoveAllItems()
+
+        assert len(grid.items) == 0
+        assert len(grid.connections) == 0
+
+    def test_connection_line_activation(self, qtbot):
+        controller = LogicComponentController()
+        grid = GridWidget(controller)
+        qtbot.addWidget(grid)
+
+        # Add items and connection
+        and_gate = controller.addLogicComponent(And)
+        grid.addComponent((0, 0), and_gate)
+        not_gate = controller.addLogicComponent(Not)
+        grid.addComponent((1, 0), not_gate)
+        controller.addConnection(and_gate, "outValue", not_gate, "input")
+        grid._visuallyAddConnection(and_gate, "outValue", not_gate, "input")
+
+        # Initially, connection is not active
+        assert not grid.connections[0].isActive
+
+        # Emit components updated event
+        grid.eventBus.emit("view:components_updated", [and_gate, not_gate])
+
+        # Check if activation is updated (depends on component states)
+        # Since And has no inputs, out is 0, so connection is not active
+        assert not grid.connections[0].isActive
+
+    def test_deletion_via_delete_area(self, qtbot):
+        from src.view.DeleteArea import DeleteArea
+        controller = LogicComponentController()
+        grid = GridWidget(controller)
+        qtbot.addWidget(grid)
+
+        # Add item
+        and_gate = controller.addLogicComponent(And)
+        grid.addComponent((0, 0), and_gate)
+        item = grid.items[0]
+
+        # Create delete area
+        delete_area = DeleteArea(grid)
+        qtbot.addWidget(delete_area)
+
+        # Create mime data for moving the item
+        mime_data = QtCore.QMimeData()
+        payload = {
+            "action_type": "move",
+            "id": item.uid
+        }
+        mime_data.setData(MIME_TYPE, json.dumps(payload).encode('utf-8'))
+
+        # Simulate drop on delete area
+        drop_event = QtGui.QDropEvent(
+            QtCore.QPointF(10, 10), QtCore.Qt.CopyAction, mime_data, QtCore.Qt.LeftButton, QtCore.Qt.NoModifier
+        )
+        delete_area.dropEvent(drop_event)
+
+        # Check item removed
+        assert len(grid.items) == 0
+
+    def test_visually_rebuild_circuit(self, qtbot):
+        controller = LogicComponentController()
+        grid = GridWidget(controller)
+        qtbot.addWidget(grid)
+
+        # Add components and connections to controller
+        and_gate = controller.addLogicComponent(And)
+        not_gate = controller.addLogicComponent(Not)
+        controller.addConnection(and_gate, "outValue", not_gate, "input")
+
+        # Component info: (x, y, immovable)
+        component_info = [(0, 0, False), (1, 0, False)]
+
+        # Call rebuild
+        grid.rebuildCircuit(component_info)
+
+        # Check items added
+        assert len(grid.items) == 2
+        assert grid.items[0].logicComponent == and_gate
+        assert grid.items[1].logicComponent == not_gate
+
+        # Check connections added
+        assert len(grid.connections) == 1
+        conn = grid.connections[0]
+        assert conn.srcItem.logicComponent == and_gate
+        assert conn.dstItem.logicComponent == not_gate

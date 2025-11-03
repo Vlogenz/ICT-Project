@@ -66,19 +66,18 @@ class LevelController:
 
             pos = tuple(componentData["position"])
             componentInfo.append((pos[0], pos[1], componentData["immovable"]))
-            
+
         # Set up connections if any
-        if self.levelData.get("connections") is None:
-            return
-        connections = self.levelData["connections"]
-        components = self.logicComponentController.getComponents()
-        for connection in connections:
-            self.logicComponentController.addConnection(
-                components[connection["origin"]],
-                connection["originKey"],
-                components[connection["destination"]],
-                connection["destinationKey"]
-            )
+        if self.levelData.get("connections") is not None:
+            connections = self.levelData["connections"]
+            components = self.logicComponentController.getComponents()
+            for connection in connections:
+                self.logicComponentController.addConnection(
+                    components[connection["origin"]],
+                    connection["originKey"],
+                    components[connection["destination"]],
+                    connection["destinationKey"]
+                )
         self.eventBus.emit("view:rebuild_circuit", componentInfo)
 
     def checkSolution(self) -> bool:

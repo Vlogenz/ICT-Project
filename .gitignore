@@ -1,8 +1,12 @@
 # Ignore Python bytecode files
 __pycache__/
 *.py[cod]
+
+# Ignore IDE-specifig files
 .idea
 .vscode
+
+# Ignore virtual environment
 env
 
 # Tex files
@@ -18,3 +22,6 @@ main.toc
 
 # Ignore meta file
 meta.json
+
+# Ignore coverage file
+.coverage

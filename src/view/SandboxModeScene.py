@@ -14,7 +14,7 @@ import importlib
 from src.view.SimulationControls import SimulationControls
 
 
-class SandboxModeWindow(QtWidgets.QWidget):
+class SandboxModeScene(QtWidgets.QWidget):
     """Main window for the sandbox mode."""
 
     def __init__(self, logicController: LogicComponentController):

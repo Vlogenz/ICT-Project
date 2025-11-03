@@ -1,9 +1,9 @@
 from PySide6 import QtCore, QtWidgets
 from src.infrastructure.eventBus import getBus
 from src.control.LevelFileController import LevelFileController
-COLUMNS = 7
+COLUMNS = 5
 
-class LevelSelectionWindow(QtWidgets.QWidget):
+class LevelSelectionScene(QtWidgets.QWidget):
     """
     Shows a grid with a cell for each level.
     """

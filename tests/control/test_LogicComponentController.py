@@ -208,7 +208,7 @@ def test_eventDrivenEvalCircularGoodDependency(lC,a,b,expected):
     # Zwei Inputs
     r = lC.addLogicComponent(Input)
     s = lC.addLogicComponent(Input)
-    # Zwei AND-Gates
+    # Zwei AND-gates
     nor1 = lC.addLogicComponent(Nor)
     nor2 = lC.addLogicComponent(Nor)
     # Zwei Outputs
@@ -301,7 +301,7 @@ def test_eval2(lC):
     # Zwei Inputs
     r = lC.addLogicComponent(Input)
     s = lC.addLogicComponent(Input)
-    # Zwei AND-Gates
+    # Zwei AND-gates
     nor1 = lC.addLogicComponent(Nor)
     nor2 = lC.addLogicComponent(Nor)
     # Zwei Outputs

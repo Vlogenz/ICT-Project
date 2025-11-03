@@ -1,4 +1,4 @@
-from enum import Enum
+
 
 from PySide6 import QtWidgets
 import sys
@@ -8,15 +8,12 @@ from src.control.LogicComponentController import LogicComponentController
 from src.view.SandboxModeScene import SandboxModeScene
 from src.view.LevelSelectionScene import LevelSelectionScene
 from src.view.LevelScene import LevelScene
-
+from src.view.MainScene import MainScene
+from src.constants import Scene
 from src.control.LevelFileController import LevelFileController
 from src.control.LevelController import LevelController
 
-class Scene(Enum):
-    MAIN = 0
-    SANDBOX = 1
-    LEVEL_SELECTION = 2
-    LEVEL = 3
+
 
 class AppController():
     def __init__(self):
@@ -25,12 +22,15 @@ class AppController():
         self.bus = getBus()
         self.bus.subscribe("levelSelection:levelSelected", self.onLevelSelected)
         self.bus.subscribe("goToLevelSelection", lambda: self.switchToScene(Scene.LEVEL_SELECTION))
+        self.bus.subscribe("goToSandboxMode", lambda: self.switchToScene(Scene.SANDBOX))
+        self.bus.subscribe("goToMain", lambda: self.switchToScene(Scene.MAIN))
+        self.bus.subscribe("stopApp", lambda: self.stopApp())
         self.logicController = LogicComponentController()
         self.levelFileController = LevelFileController()
         self.levelController = LevelController(self.logicController)
         self.window: QtWidgets.QMainWindow = QtWidgets.QMainWindow()
 
-        self.window.setCentralWidget(LevelSelectionScene(self.levelFileController))  # TODO initialize main screen window
+        self.window.setCentralWidget(MainScene())
 
     def run(self):
         self.window.showMaximized()
@@ -45,9 +45,8 @@ class AppController():
                 newScene = LevelSelectionScene(self.levelFileController)
             case Scene.LEVEL:
                 newScene = LevelScene(self.levelController, self.levelFileController)
-            case _:
-                #TODO: go to main screen instead
-                newScene = SandboxModeScene(self.logicController)
+            case Scene.MAIN:
+                newScene = MainScene()
 
         if newScene is not self.window.centralWidget():
 

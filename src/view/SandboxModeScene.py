@@ -5,6 +5,7 @@ from src.view.PaletteItem import PaletteItem
 from src.view.GridWidget import GridWidget
 from src.view.DeleteArea import DeleteArea
 import src.model as model
+from src.infrastructure.eventBus import getBus
 
 from PySide6 import QtGui, QtWidgets
 import inspect
@@ -21,6 +22,7 @@ class SandboxModeScene(QtWidgets.QWidget):
         super().__init__()
         self.setWindowTitle("Sandbox Mode")
 
+        self.bus = getBus()
         self.logicController = logicController
 
         self.central = QtWidgets.QWidget()
@@ -29,6 +31,11 @@ class SandboxModeScene(QtWidgets.QWidget):
         pal = self.palette()
         pal.setColor(self.backgroundRole(), QtGui.QColor("white"))
         self.setPalette(pal)
+
+        # Back to Main Screen button
+        backButton = QtWidgets.QPushButton("< Back to Main Screen")
+        backButton.clicked.connect(lambda: self.bus.emit("goToMain"))
+
 
         # Palette
         palette = QtWidgets.QGridLayout()
@@ -51,9 +58,10 @@ class SandboxModeScene(QtWidgets.QWidget):
         simControls = SimulationControls(self.logicController)
 
         # Add the items to the main grid layout
-        layout.addWidget(palette_frame, 0, 0, 2, 1)
+        layout.addWidget(palette_frame, 1, 0, 2, 1)
         layout.addWidget(simControls, 0, 1)
         layout.addWidget(grid, 1, 1)
+        layout.addWidget(backButton, 0, 0)
 
     def iter_classes_in_package(self, package):
         for _, module_name, is_pkg in pkgutil.walk_packages(package.__path__, package.__name__ + "."):

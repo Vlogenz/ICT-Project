@@ -1,6 +1,7 @@
 from src.control.LevelController import LevelController
 from src.control.LevelFileController import LevelFileController
 from src.control.LogicComponentController import LogicComponentController
+from src.view.Hint import Hint
 
 from src.view.PaletteItem import PaletteItem
 from src.view.GridWidget import GridWidget
@@ -46,7 +47,11 @@ class LevelScene(QtWidgets.QWidget):
 
         # Delete area
         deleteArea = DeleteArea(self.grid)
-        palette.addWidget(deleteArea)
+        palette.addWidget(deleteArea, (len(classes)+1)//2, 1)
+
+        # Hint button
+        hintButton = Hint(self.levelController)
+        palette.addWidget(hintButton, (len(classes)+1)//2, 0)
 
         palette_frame = QtWidgets.QFrame()
         palette_frame.setLayout(palette)

@@ -13,12 +13,12 @@ from src.infrastructure.eventBus import getBus
 class GridItem(QtWidgets.QFrame):
     """An Element in the grid with inputs and outputs"""
 
-    def __init__(self, logicComponent: LogicComponent, uid=None, parent=None, immovable=False):
+    def __init__(self, logicComponent: LogicComponent, uid=None, parent=None, immovable=False, scaleFactor = 1.0):
         super().__init__(parent)
         self.uid = uid or str(uuid.uuid4())
         self.logicComponent = logicComponent
         self.immovable = immovable
-        self.scale_factor = 1.0
+        self.scale_factor = scaleFactor
 
         base_width = CELL_SIZE - 8
         self.setFixedSize(int(base_width * self.scale_factor), int(base_width * self.scale_factor))
@@ -68,6 +68,7 @@ class GridItem(QtWidgets.QFrame):
             self.inputLabels[key] = label
 
         self.updatePortLabels()
+        self.updateRects()
 
         # Set up right click menu
         self.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)

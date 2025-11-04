@@ -33,7 +33,8 @@ class Hint(QtWidgets.QPushButton):
         msgBox.setWindowTitle("Hint")
         msgBox.setText(hint_text)
 
-        msgBox.setIconPixmap(QtGui.QPixmap("assets/sprites/LampOn.svg"))
+        pixmap = QtGui.QPixmap("assets/sprites/LampOn.svg")
+        msgBox.setIconPixmap(pixmap.scaled(70, 70, QtCore.Qt.AspectRatioMode.KeepAspectRatio))
 
         # Add buttons depending on hint index
         next_button = None

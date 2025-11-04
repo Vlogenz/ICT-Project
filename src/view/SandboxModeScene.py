@@ -69,7 +69,7 @@ class SandboxModeScene(QtWidgets.QWidget):
         layout.addWidget(backButton, 0, 0)
 
     def goToMain(self):
-        self.grid.visuallyRemoveAllItems()
+        self.logicController.clearComponents()
         self.grid.unsubscribe()
         self.bus.emit("goToMain")
 

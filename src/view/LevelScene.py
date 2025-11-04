@@ -83,12 +83,18 @@ class LevelScene(QtWidgets.QWidget):
             print(f"Error loading level information: {e}")
             levelInfoLabel.setText("Could not load level information")
 
+
         # Add the widgets to the layout
         self.layout.addWidget(self.backButton, 0, 0)
         self.layout.addWidget(levelInfoLabel, 1, 0)
         self.layout.addWidget(palette_frame, 2, 0)
         self.layout.addWidget(simControls, 0, 1)
-        self.layout.addWidget(self.grid, 1, 1, 2, 1)
+
+        # Wrap grid in scroll area
+        scroll_area = QtWidgets.QScrollArea()
+        scroll_area.setWidget(self.grid)
+        scroll_area.setWidgetResizable(True)
+        self.layout.addWidget(scroll_area, 1, 1, 2, 1)
 
     def checkSolution(self):
         """Calls the levelController to check the solution.

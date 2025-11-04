@@ -23,18 +23,19 @@ class GridWidget(QtWidgets.QWidget):
         self.logicController = logicController
         self.cols = cols
         self.rows = rows
+        self.scale_factor = 1.0  # Initial scale
         self.setAcceptDrops(True)
         self.items: List[GridItem] = []
         self.connections: List[Connection] = []
         self.draggingLine: DraggingLine = None
         self.draggingItem: GridItem = None
         self.tempPos = None
-        self.setMinimumSize(cols * CELL_SIZE, rows * CELL_SIZE)
+        #self.setMinimumSize(int(cols * CELL_SIZE * self.scale_factor), int(rows * CELL_SIZE * self.scale_factor))
 
         #Initialize event bus
         self.eventBus = getBus()
         self.eventBus.subscribe("view:components_updated", self.updateConnectionActivity)
-        self.eventBus.subscribe("view:components_cleared", self._visuallyRemoveAllItems)
+        self.eventBus.subscribe("view:components_cleared", self.visuallyRemoveAllItems)
         self.eventBus.subscribe("view:rebuild_circuit", self.rebuildCircuit)
 
     def paintEvent(self, event):
@@ -45,11 +46,11 @@ class GridWidget(QtWidgets.QWidget):
         pen = QtGui.QPen(QtGui.QColor(200, 200, 200))
         painter.setPen(pen)
         for c in range(self.cols + 1):
-            x = c * CELL_SIZE
-            painter.drawLine(x, 0, x, self.rows * CELL_SIZE)
+            x = c * CELL_SIZE * self.scale_factor
+            painter.drawLine(x, 0, x, self.rows * CELL_SIZE * self.scale_factor)
         for r in range(self.rows + 1):
-            y = r * CELL_SIZE
-            painter.drawLine(0, y, self.cols * CELL_SIZE, y)
+            y = r * CELL_SIZE * self.scale_factor
+            painter.drawLine(0, y, self.cols * CELL_SIZE * self.scale_factor, y)
 
         # painting connections
         black_pen = QtGui.QPen(QtGui.QColor("black"), 2)
@@ -92,10 +93,10 @@ class GridWidget(QtWidgets.QWidget):
 
     def cellAt(self, pos: QtCore.QPoint):
         """Returns the cell (x, y) at the given position or None if out of bounds."""
-        x = pos.x() // CELL_SIZE
-        y = pos.y() // CELL_SIZE
+        x = (pos.x() / self.scale_factor) // CELL_SIZE
+        y = (pos.y() / self.scale_factor) // CELL_SIZE
         if 0 <= x < self.cols and 0 <= y < self.rows:
-            return (x, y)
+            return (int(x), int(y))
         return None
 
     def isOccupied(self, cell):
@@ -110,6 +111,8 @@ class GridWidget(QtWidgets.QWidget):
             self.items.append(item)
             item.setParent(self)
             item.move(gx * CELL_SIZE + 4, gy * CELL_SIZE + 4)
+            item.cell_x = gx
+            item.cell_y = gy
             item.show()
 
     def addComponent(self, cell, component: LogicComponent, immovable=False):
@@ -141,7 +144,7 @@ class GridWidget(QtWidgets.QWidget):
         except ValueError:
             return
 
-    def _visuallyRemoveAllItems(self):
+    def visuallyRemoveAllItems(self):
         """Just removes all GridItems and Connections from the grid, not the underlying logic components.
         Only call this method when the backend already removed stuff (i.e. cleared components).
         """
@@ -163,7 +166,7 @@ class GridWidget(QtWidgets.QWidget):
         - A GridItem for each component that is currently in the logicController
         - A connection for each of the logic component's connections
         """
-        self._visuallyRemoveAllItems()
+        self.visuallyRemoveAllItems()
         for i,comp in enumerate(self.logicController.components):
             self.addComponent((componentInfo[i][0], componentInfo[i][1]), comp, immovable=componentInfo[i][2])
         for item in self.items:
@@ -190,7 +193,7 @@ class GridWidget(QtWidgets.QWidget):
                     self.draggingItem = filteredItems[0]
             cell = self.cellAt(event.position().toPoint())
             if cell:
-                self.tempPos = (cell[0] * CELL_SIZE + 4, cell[1] * CELL_SIZE + 4)
+                self.tempPos = ((cell[0] * CELL_SIZE + 4) * self.scale_factor, (cell[1] * CELL_SIZE + 4) * self.scale_factor)
             self.update()
         event.acceptProposedAction()
 
@@ -239,7 +242,9 @@ class GridWidget(QtWidgets.QWidget):
                 event.ignore()
                 item.show()
                 return
-            item.move(cell[0] * CELL_SIZE + 4, cell[1] * CELL_SIZE + 4)
+            item.move((cell[0] * CELL_SIZE + 4) * self.scale_factor, (cell[1] * CELL_SIZE + 4) * self.scale_factor)
+            item.cell_x = cell[0]
+            item.cell_y = cell[1]
             item.show()
             self.draggingItem = None
             self.tempPos = None
@@ -305,7 +310,7 @@ class GridWidget(QtWidgets.QWidget):
             src (QPoint): The start point
             dst (QPoint): The end point
         """
-        startOffset = 20
+        startOffset = 20 * self.scale_factor
 
         if dst.x() < src.x():
             # Draw a 5-segment orthogonal line
@@ -340,8 +345,8 @@ class GridWidget(QtWidgets.QWidget):
                 i += 1
             return causesOverlap
 
-        startOffset = 20
-        overlapOffset = 10
+        startOffset = 20 * self.scale_factor
+        overlapOffset = 10 * self.scale_factor
 
         if dst.x() < src.x():
             # Draw a 5-segment orthogonal line if dst is left of src
@@ -410,5 +415,25 @@ class GridWidget(QtWidgets.QWidget):
     def unsubscribe(self):
         """Unsubscribes the GridWidget from all subscriptions. This does not include the ones of the GridItems."""
         self.eventBus.unsubscribe("view:components_updated", self.updateConnectionActivity)
-        self.eventBus.unsubscribe("view:components_cleared", self._visuallyRemoveAllItems)
+        self.eventBus.unsubscribe("view:components_cleared", self.visuallyRemoveAllItems)
         self.eventBus.unsubscribe("view:rebuild_circuit", self.rebuildCircuit)
+
+    def wheelEvent(self, event):
+        """Handle mouse wheel for zooming."""
+        if event.modifiers() & QtCore.Qt.ControlModifier:
+            delta = event.angleDelta().y()
+            if delta > 0:
+                self.scale_factor *= 1.1  # Zoom in
+            else:
+                self.scale_factor /= 1.1  # Zoom out
+            self.scale_factor = max(0.1, min(5.0, self.scale_factor))  # Clamp scale
+            self.setMinimumSize(int(self.cols * CELL_SIZE * self.scale_factor), int(self.rows * CELL_SIZE * self.scale_factor))
+            for item in self.items:
+                item.scale_factor = self.scale_factor
+                item.setFixedSize(int((CELL_SIZE - 8) * self.scale_factor), int((CELL_SIZE - 8) * self.scale_factor))
+                item.move(int((item.cell_x * CELL_SIZE + 4) * self.scale_factor), int((item.cell_y * CELL_SIZE + 4) * self.scale_factor))
+                item.updateRects()
+            self.update()
+            event.accept()
+        else:
+            super().wheelEvent(event)

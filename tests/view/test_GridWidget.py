@@ -260,7 +260,7 @@ class TestGridWidget:
         assert len(grid.connections) == 1
 
         # Clear components visually
-        grid._visuallyRemoveAllItems()
+        grid.visuallyRemoveAllItems()
 
         assert len(grid.items) == 0
         assert len(grid.connections) == 0

@@ -49,8 +49,9 @@ class AppController():
                 newScene = MainScene()
 
         if newScene is not self.window.centralWidget():
-
+            oldScene = self.window.centralWidget()
             self.window.setCentralWidget(newScene)
+            oldScene.deleteLater()
             self.window.setWindowTitle(newScene.windowTitle())
 
     def onLevelSelected(self, levelNumber: int):

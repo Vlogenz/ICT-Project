@@ -18,8 +18,10 @@ class GridItem(QtWidgets.QFrame):
         self.uid = uid or str(uuid.uuid4())
         self.logicComponent = logicComponent
         self.immovable = immovable
+        self.scale_factor = 1.0
 
-        self.setFixedSize(CELL_SIZE - 8, CELL_SIZE - 8)
+        base_width = CELL_SIZE - 8
+        self.setFixedSize(int(base_width * self.scale_factor), int(base_width * self.scale_factor))
 
         self.layout = QtWidgets.QVBoxLayout(self)
         self.layout.setContentsMargins(0,0,0,0)
@@ -34,11 +36,11 @@ class GridItem(QtWidgets.QFrame):
 
         # Define ports dynamically based on what the LogicComponent has
         self.outputs = {
-            str(key): QtCore.QRectF(self.width() - 16, (i+1)*(self.height() / (len(self.logicComponent.getState())+1)) - 8, 16, 16)
+            str(key): QtCore.QRectF(base_width - 16, (i+1)*(base_width / (len(self.logicComponent.getState())+1)) - 8, 16, 16)
             for i, key in enumerate(self.logicComponent.getState().keys())
         }
         self.inputs = {
-            str(key): QtCore.QRectF(0, (i+1)*(self.height() / (len(self.logicComponent.getInputs())+1)) - 8, 16, 16)
+            str(key): QtCore.QRectF(0, (i+1)*(base_width / (len(self.logicComponent.getInputs())+1)) - 8, 16, 16)
             for i, key in enumerate(self.logicComponent.getInputs())
         }
 
@@ -167,20 +169,38 @@ class GridItem(QtWidgets.QFrame):
             str: The key of the port, as used in the backend
         """
         for outputKey, rect in self.outputs.items():
-            if rect.contains(pos):
+            scaled_rect = QtCore.QRectF(rect.x() * self.scale_factor, rect.y() * self.scale_factor, rect.width() * self.scale_factor, rect.height() * self.scale_factor)
+            if scaled_rect.contains(pos):
                 return "output", outputKey
         for inputKey, rect in self.inputs.items():
-            if rect.contains(pos):
+            scaled_rect = QtCore.QRectF(rect.x() * self.scale_factor, rect.y() * self.scale_factor, rect.width() * self.scale_factor, rect.height() * self.scale_factor)
+            if scaled_rect.contains(pos):
                 return "input", inputKey
         return None, None
 
     def getInputRect(self, key: str) -> QtCore.QRectF:
         """Get the QRectF of the input port with the given key."""
-        return self.inputs.get(key, None)
+        rect = self.inputs.get(key, None)
+        if rect:
+            return QtCore.QRectF(rect.x() * self.scale_factor, rect.y() * self.scale_factor, rect.width() * self.scale_factor, rect.height() * self.scale_factor)
+        return None
 
     def getOutputRect(self, key: str) -> QtCore.QRectF:
         """Get the QRectF of the output port with the given key."""
-        return self.outputs.get(key)
+        rect = self.outputs.get(key)
+        if rect:
+            return QtCore.QRectF(rect.x() * self.scale_factor, rect.y() * self.scale_factor, rect.width() * self.scale_factor, rect.height() * self.scale_factor)
+        return None
+
+    def updateRects(self):
+        """Update the geometry of labels based on scale_factor."""
+        scale = self.scale_factor
+        for key, rect in self.outputs.items():
+            scaled_rect = QtCore.QRectF(rect.x() * scale, rect.y() * scale, rect.width() * scale, rect.height() * scale)
+            self.outputLabels[key].setGeometry(scaled_rect.toRect())
+        for key, rect in self.inputs.items():
+            scaled_rect = QtCore.QRectF(rect.x() * scale, rect.y() * scale, rect.width() * scale, rect.height() * scale)
+            self.inputLabels[key].setGeometry(scaled_rect.toRect())
 
     def onComponentUpdated(self, compList):
         """Event handler for the view:components_updated event. Updated port labels."""

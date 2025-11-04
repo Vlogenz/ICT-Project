@@ -53,7 +53,12 @@ class SandboxModeScene(QtWidgets.QWidget):
         # Add the items to the main grid layout
         layout.addWidget(palette_frame, 0, 0, 2, 1)
         layout.addWidget(simControls, 0, 1)
-        layout.addWidget(grid, 1, 1)
+
+        # Wrap grid in scroll area
+        scroll_area = QtWidgets.QScrollArea()
+        scroll_area.setWidget(grid)
+        scroll_area.setWidgetResizable(True)
+        layout.addWidget(scroll_area, 1, 1)
 
     def iter_classes_in_package(self, package):
         for _, module_name, is_pkg in pkgutil.walk_packages(package.__path__, package.__name__ + "."):

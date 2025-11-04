@@ -1,4 +1,6 @@
 from PySide6 import QtCore, QtWidgets
+from PySide6.QtWidgets import QPushButton
+
 from src.infrastructure.eventBus import getBus
 from src.control.LevelFileController import LevelFileController
 COLUMNS = 5
@@ -28,12 +30,19 @@ class LevelSelectionScene(QtWidgets.QWidget):
             self.toggleLevelLockButton.setText("Unlock all levels")
         self.toggleLevelLockButton.clicked.connect(self.toggleLevelLock)
 
+        mainSceneBtn = QPushButton(text="< Back to Main Screen", parent=self)
+        mainSceneBtn.clicked.connect(lambda: self.bus.emit("goToMain"))
+
+        self.layout.addWidget(mainSceneBtn, alignment=QtCore.Qt.AlignLeft)
         self.layout.addWidget(headerLabel)
         self.layout.addLayout(self.grid)
         self.layout.addWidget(self.toggleLevelLockButton)
 
+
         self.levelButtons = []
         self.createLevelButtons()
+
+
 
     def createLevelButtons(self):
         """Initialize all level buttons. If a level is done, it gets the 'done' label.
@@ -79,3 +88,4 @@ class LevelSelectionScene(QtWidgets.QWidget):
             b.deleteLater()
         self.levelButtons.clear()
         self.createLevelButtons()
+

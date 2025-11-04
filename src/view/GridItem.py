@@ -26,7 +26,7 @@ class GridItem(QtWidgets.QFrame):
         self.layout = QtWidgets.QVBoxLayout(self)
         self.layout.setContentsMargins(0,0,0,0)
 
-        self.image_path = f"Gates/{self.logicComponent.__class__.__name__}.svg"
+        self.image_path = f"assets/gates/{self.logicComponent.__class__.__name__}.svg"
 
         self.pixmap = QtGui.QPixmap(self.image_path)
         if self.pixmap.isNull():

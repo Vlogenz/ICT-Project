@@ -34,7 +34,7 @@ class SandboxModeScene(QtWidgets.QWidget):
 
         # Back to Main Screen button
         backButton = QtWidgets.QPushButton("< Back to Main Screen")
-        backButton.clicked.connect(lambda: self.bus.emit("goToMain"))
+        backButton.clicked.connect(self.goToMain)
 
 
         # Palette
@@ -45,10 +45,10 @@ class SandboxModeScene(QtWidgets.QWidget):
             palette.addWidget(PaletteItem(class_), i//3, i%3)
 
         # Grid
-        grid = GridWidget(logicController)
+        self.grid = GridWidget(logicController)
 
         # Delete area
-        deleteArea = DeleteArea(grid)
+        deleteArea = DeleteArea(self.grid)
         palette.addWidget(deleteArea)
 
         palette_frame = QtWidgets.QFrame()
@@ -63,10 +63,15 @@ class SandboxModeScene(QtWidgets.QWidget):
 
         # Wrap grid in scroll area
         scroll_area = QtWidgets.QScrollArea()
-        scroll_area.setWidget(grid)
+        scroll_area.setWidget(self.grid)
         scroll_area.setWidgetResizable(True)
         layout.addWidget(scroll_area, 1, 1)
         layout.addWidget(backButton, 0, 0)
+
+    def goToMain(self):
+        self.grid.visuallyRemoveAllItems()
+        self.grid.unsubscribe()
+        self.bus.emit("goToMain")
 
     def iter_classes_in_package(self, package):
         for _, module_name, is_pkg in pkgutil.walk_packages(package.__path__, package.__name__ + "."):

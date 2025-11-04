@@ -30,12 +30,12 @@ class GridWidget(QtWidgets.QWidget):
         self.draggingLine: DraggingLine = None
         self.draggingItem: GridItem = None
         self.tempPos = None
-        self.setMinimumSize(int(cols * CELL_SIZE * self.scale_factor), int(rows * CELL_SIZE * self.scale_factor))
+        #self.setMinimumSize(int(cols * CELL_SIZE * self.scale_factor), int(rows * CELL_SIZE * self.scale_factor))
 
         #Initialize event bus
         self.eventBus = getBus()
         self.eventBus.subscribe("view:components_updated", self.updateConnectionActivity)
-        self.eventBus.subscribe("view:components_cleared", self._visuallyRemoveAllItems)
+        self.eventBus.subscribe("view:components_cleared", self.visuallyRemoveAllItems)
         self.eventBus.subscribe("view:rebuild_circuit", self.rebuildCircuit)
 
     def paintEvent(self, event):
@@ -144,7 +144,7 @@ class GridWidget(QtWidgets.QWidget):
         except ValueError:
             return
 
-    def _visuallyRemoveAllItems(self):
+    def visuallyRemoveAllItems(self):
         """Just removes all GridItems and Connections from the grid, not the underlying logic components.
         Only call this method when the backend already removed stuff (i.e. cleared components).
         """
@@ -166,7 +166,7 @@ class GridWidget(QtWidgets.QWidget):
         - A GridItem for each component that is currently in the logicController
         - A connection for each of the logic component's connections
         """
-        self._visuallyRemoveAllItems()
+        self.visuallyRemoveAllItems()
         for i,comp in enumerate(self.logicController.components):
             self.addComponent((componentInfo[i][0], componentInfo[i][1]), comp, immovable=componentInfo[i][2])
         for item in self.items:
@@ -415,7 +415,7 @@ class GridWidget(QtWidgets.QWidget):
     def unsubscribe(self):
         """Unsubscribes the GridWidget from all subscriptions. This does not include the ones of the GridItems."""
         self.eventBus.unsubscribe("view:components_updated", self.updateConnectionActivity)
-        self.eventBus.unsubscribe("view:components_cleared", self._visuallyRemoveAllItems)
+        self.eventBus.unsubscribe("view:components_cleared", self.visuallyRemoveAllItems)
         self.eventBus.unsubscribe("view:rebuild_circuit", self.rebuildCircuit)
 
     def wheelEvent(self, event):

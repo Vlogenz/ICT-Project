@@ -40,7 +40,7 @@ class TestSandboxModeScene:
         assert isinstance(backButton, QtWidgets.QPushButton)
         assert isinstance(palette_frame, QtWidgets.QFrame)
         assert isinstance(sim_controls, SimulationControls)
-        assert isinstance(grid, GridWidget)
+        assert isinstance(grid, QtWidgets.QScrollArea)
 
     def test_iter_classes_in_package(self, qtbot, logic_controller):
         scene = SandboxModeScene(logic_controller)

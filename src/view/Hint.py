@@ -10,7 +10,6 @@ class Hint(QtWidgets.QPushButton):
     def __init__(self, levelController: LevelController, parent=None):
         super().__init__(parent)
         self.levelController = levelController
-        #self.setFixedSize(80, 80)
         self.image_path = "assets/sprites/LampOff.svg"
         icon = QtGui.QIcon(self.image_path)
         self.setIcon(icon)

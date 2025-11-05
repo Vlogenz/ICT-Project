@@ -9,7 +9,6 @@ class DeleteArea(QtWidgets.QFrame):
         super().__init__(parent)
         self.gridWidget = gridWidget
         self.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        self.setFixedSize(70, 70)
         self.setStyleSheet("background-color: lightcoral; border: 2px dashed red;")
         self.setAcceptDrops(True)
         layout = QtWidgets.QHBoxLayout(self)

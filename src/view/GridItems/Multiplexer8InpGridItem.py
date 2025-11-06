@@ -2,8 +2,8 @@ from src.view.GridItems.GridItem import GridItem
 from src.model.Multiplexer import Multiplexer8Inp
 from src.constants import CELL_SIZE
 class Multiplexer8InpGridItem(GridItem):
-    def __init__(self, logicComponent: Multiplexer8Inp, immovable=False):
-        super().__init__(logicComponent, immovable)
+    def __init__(self, logicComponent: Multiplexer8Inp, **kwargs):
+        super().__init__(logicComponent, **kwargs)
         size = CELL_SIZE - 8
         self.inputs["input1"].moveTo(0, size / 9 - 8)
         self.inputs["input2"].moveTo(0, 2 * size / 9 - 8)

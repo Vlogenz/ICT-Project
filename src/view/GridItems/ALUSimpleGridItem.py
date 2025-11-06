@@ -3,8 +3,8 @@ from src.view.GridItems.GridItem import GridItem
 from src.model.ALUSimple import ALUSimple
 
 class ALUSimpleGridItem(GridItem):
-    def __init__(self, logicComponent: ALUSimple, immovable=False):
-        super().__init__(logicComponent, immovable)
+    def __init__(self, logicComponent: ALUSimple, **kwargs):
+        super().__init__(logicComponent, **kwargs)
         size = CELL_SIZE - 8
         self.inputs["input1"].moveTo(0, size / 3 - 8)
         self.inputs["input2"].moveTo(0, 2 * size / 3 - 8)

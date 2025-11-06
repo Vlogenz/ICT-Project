@@ -109,13 +109,13 @@ class GridWidget(QtWidgets.QWidget):
             gx, gy = cell
             self.items.append(item)
             item.setParent(self)
-            item.move(gx * CELL_SIZE + 4, gy * CELL_SIZE + 4)
             item.cell_x = gx
             item.cell_y = gy
+            item.move(gx * CELL_SIZE * self.scale_factor + 4, gy * CELL_SIZE * self.scale_factor + 4)
             item.show()
 
     def addComponent(self, cell: Tuple[int,int], component: LogicComponent, immovable=False):
-        newItem = GridItemFactory.createGridItem(component, immovable)
+        newItem = GridItemFactory.createGridItem(component, immovable=immovable, scaleFactor=self.scale_factor)
         self.addItem(cell, newItem)
 
     def _visuallyAddConnection(self, srcComp: LogicComponent, srcKey: str, dstComp: LogicComponent, dstKey: str):
@@ -424,7 +424,7 @@ class GridWidget(QtWidgets.QWidget):
                 self.scale_factor *= 1.1  # Zoom in
             else:
                 self.scale_factor /= 1.1  # Zoom out
-            self.scale_factor = max(0.1, min(5.0, self.scale_factor))  # Clamp scale
+            self.scale_factor = max(0.2, min(5.0, self.scale_factor))  # Clamp scale
             self.setMinimumSize(int(self.cols * CELL_SIZE * self.scale_factor), int(self.rows * CELL_SIZE * self.scale_factor))
             for item in self.items:
                 item.scale_factor = self.scale_factor

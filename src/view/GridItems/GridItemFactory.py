@@ -11,21 +11,21 @@ from .ALUAdvancedGridItem import ALUAdvancedGridItem
 
 class GridItemFactory:
     @staticmethod
-    def createGridItem(component: LogicComponent, immovable: bool = False) -> GridItem:
+    def createGridItem(component: LogicComponent, **kwargs) -> GridItem:
         if isinstance(component, Input):
-            return InputGridItem(component, immovable=immovable)
+            return InputGridItem(component, **kwargs)
         if isinstance(component, HalfAdder):
-            return HalfAdderGridItem(component, immovable=immovable)
+            return HalfAdderGridItem(component, **kwargs)
         if isinstance(component, FullAdder):
-            return FullAdderGridItem(component, immovable=immovable)
+            return FullAdderGridItem(component, **kwargs)
         if isinstance(component, Multiplexer2Inp):
-            return Multiplexer2InpGridItem(component, immovable=immovable)
+            return Multiplexer2InpGridItem(component, **kwargs)
         if isinstance(component, Multiplexer4Inp):
-            return Multiplexer4InpGridItem(component, immovable=immovable)
+            return Multiplexer4InpGridItem(component, **kwargs)
         if isinstance(component, Multiplexer8Inp):
-            return Multiplexer8InpGridItem(component, immovable=immovable)
+            return Multiplexer8InpGridItem(component, **kwargs)
         if isinstance(component, ALUSimple):
-            return ALUSimpleGridItem(component, immovable=immovable)
+            return ALUSimpleGridItem(component, **kwargs)
         if isinstance(component, ALUAdvanced):
-            return ALUAdvancedGridItem(component, immovable=immovable)
-        return GridItem(component, immovable=immovable)
+            return ALUAdvancedGridItem(component, **kwargs)
+        return GridItem(component, **kwargs)

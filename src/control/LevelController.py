@@ -50,10 +50,11 @@ class LevelController:
         self.currentLevel = self.levelData["level_id"]
         components = self.levelData["components"]
 
-        #Additional info for each component:
-        # - which cell to put it in: int, int
-        # - whether it is immovable or not: bool
-        componentInfo: List[Tuple[int,int,bool]] = []
+        #Info for each component:
+        # - comp: the component itself
+        # - pos: A Tuple[int,int] representing the cell for the component
+        # - immovable: Whether it is immovable or not
+        componentInfo: List = []
         for componentData in components:
             component_type_str = componentData["type"]
             
@@ -62,22 +63,29 @@ class LevelController:
                 raise ValueError(f"Unknown component type: {component_type_str}")
             
             component_class = self.COMPONENT_MAP[component_type_str]
-            self.logicComponentController.addLogicComponent(component_class)
+            comp = self.logicComponentController.addLogicComponent(component_class)
 
             pos = tuple(componentData["position"])
-            componentInfo.append((pos[0], pos[1], componentData["immovable"]))
+            componentInfo.append({
+                "comp": comp,
+                "pos": pos,
+                "immovable": componentData["immovable"]
+            })
 
         # Set up connections if any
         if self.levelData.get("connections") is not None:
             connections = self.levelData["connections"]
             components = self.logicComponentController.getComponents()
             for connection in connections:
-                self.logicComponentController.addConnection(
-                    components[connection["origin"]],
-                    connection["originKey"],
-                    components[connection["destination"]],
-                    connection["destinationKey"]
-                )
+                try:
+                    self.logicComponentController.addConnection(
+                        components[connection["origin"]],
+                        connection["originKey"],
+                        components[connection["destination"]],
+                        connection["destinationKey"]
+                    )
+                except KeyError as e:
+                    print(f"Error adding connection: {e}")
         self.eventBus.emit("view:rebuild_circuit", componentInfo)
 
     def checkSolution(self) -> bool:

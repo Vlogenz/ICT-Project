@@ -1,4 +1,4 @@
-from src.view.GridItem import GridItem
+from src.view.GridItems.GridItem import GridItem
 from src.model.Input import Input
 from PySide6.QtWidgets import QPushButton
 
@@ -15,6 +15,7 @@ class InputGridItem(GridItem):
 
         # Add a toggle button
         self.toggleButton = QPushButton(f"Toggle")
+        self.toggleButton.setStyleSheet("color: black;")
         self.toggleButton.clicked.connect(self.toggleState)
         self.layout.addWidget(self.toggleButton)
 

@@ -218,8 +218,11 @@ class GridWidget(QtWidgets.QWidget):
         class_name = payload.get("class_name")
         package_name = "src.model"
 
-        if action_type == "create" and not self.isOccupied(cell):
+        if action_type == "create":
             # Dynamically import and create a GridItem of this class
+            if self.isOccupied(cell):
+                event.ignore()
+                return
             try:
                 package = importlib.import_module(package_name)
                 cls = getattr(package, class_name)

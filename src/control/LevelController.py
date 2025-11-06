@@ -53,7 +53,7 @@ class LevelController:
         #Additional info for each component:
         # - which cell to put it in: int, int
         # - whether it is immovable or not: bool
-        componentInfo: List[Tuple[int,int,bool]] = []
+        componentInfo: List = []
         for componentData in components:
             component_type_str = componentData["type"]
             
@@ -62,10 +62,14 @@ class LevelController:
                 raise ValueError(f"Unknown component type: {component_type_str}")
             
             component_class = self.COMPONENT_MAP[component_type_str]
-            self.logicComponentController.addLogicComponent(component_class)
+            comp = self.logicComponentController.addLogicComponent(component_class)
 
             pos = tuple(componentData["position"])
-            componentInfo.append((pos[0], pos[1], componentData["immovable"]))
+            componentInfo.append({
+                "comp": comp,
+                "pos": pos,
+                "immovable": componentData["immovable"]
+            })
 
         # Set up connections if any
         if self.levelData.get("connections") is not None:

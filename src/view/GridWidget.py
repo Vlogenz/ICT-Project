@@ -114,7 +114,7 @@ class GridWidget(QtWidgets.QWidget):
             item.cell_y = gy
             item.show()
 
-    def addComponent(self, cell, component: LogicComponent, immovable=False):
+    def addComponent(self, cell: Tuple[int,int], component: LogicComponent, immovable=False):
         newItem = GridItemFactory.createGridItem(component, immovable)
         self.addItem(cell, newItem)
 
@@ -157,14 +157,14 @@ class GridWidget(QtWidgets.QWidget):
         if len(filteredItems) == 1:
             self.removeItem(filteredItems[0])
 
-    def rebuildCircuit(self, componentInfo: List[Tuple[int,int,bool]]):
+    def rebuildCircuit(self, componentInfo: List):
         """Rebuilds all visual elements for the circuit:
         - A GridItem for each component that is currently in the logicController
         - A connection for each of the logic component's connections
         """
         self.visuallyRemoveAllItems()
-        for i,comp in enumerate(self.logicController.components):
-            self.addComponent((componentInfo[i][0], componentInfo[i][1]), comp, immovable=componentInfo[i][2])
+        for element in componentInfo:
+            self.addComponent(element["pos"], element["comp"], immovable=element["immovable"])
         for item in self.items:
             for dstComp, dstKey in item.logicComponent.outputs:
                 srcKey = dstComp.inputs[dstKey][1]

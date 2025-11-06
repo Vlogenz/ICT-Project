@@ -15,6 +15,7 @@ class InputGridItem(GridItem):
 
         # Add a toggle button
         self.toggleButton = QPushButton(f"Toggle")
+        self.toggleButton.setStyleSheet("color: black;")
         self.toggleButton.clicked.connect(self.toggleState)
         self.layout.addWidget(self.toggleButton)
 

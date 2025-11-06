@@ -1,6 +1,6 @@
 from src.constants import CELL_SIZE
 from src.view.GridItems.GridItem import GridItem
-from src.model.Multiplexer import Multiplexer4Inp
+from src.model.Multiplexer4Input import Multiplexer4Inp
 
 class Multiplexer4InpGridItem(GridItem):
     def __init__(self, logicComponent: Multiplexer4Inp, **kwargs):

@@ -1,6 +1,6 @@
 from src.constants import CELL_SIZE
 from src.view.GridItems.GridItem import GridItem
-from src.model.FullAdder import FullAdder
+from src.model import FullAdder
 
 class FullAdderGridItem(GridItem):
     def __init__(self, logicComponent: FullAdder, immovable=False):

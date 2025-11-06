@@ -4,24 +4,15 @@ from PySide6.QtGui import QPainterPath, QPainterPathStroker
 
 from src.control.LogicComponentController import LogicComponentController
 from src.constants import GRID_COLS, GRID_ROWS, CELL_SIZE, MIME_TYPE
-from src.model import ALUAdvanced, ALUSimple, FullAdder, HalfAdder, Multiplexer2Inp, Multiplexer4Inp, Multiplexer8Inp
-from src.model.Input import Input
 from src.model.LogicComponent import LogicComponent
 from src.infrastructure.eventBus import getBus
-from src.view.GridItems.ALUSimpleGridItem import ALUSimpleGridItem
-from src.view.GridItems.ALUAdvancedGridItem import ALUAdvancedGridItem
+from src.view.GridItems import GridItemFactory
 from src.view.DraggingLine import DraggingLine
-from src.view.GridItems.FullAdderGridItem import FullAdderGridItem
-from src.view.GridItems.GridItem import GridItem
+from src.view.GridItems import GridItem
 from src.view.Connection import Connection
 import json
+import importlib
 from typing import List, Tuple
-
-from src.view.GridItems.HalfAdderGridItem import HalfAdderGridItem
-from src.view.GridItems.InputGridItem import InputGridItem
-from src.view.GridItems.Multiplexer2InpGridItem import Multiplexer2InpGridItem
-from src.view.GridItems.Multiplexer4InpGridItem import Multiplexer4InpGridItem
-from src.view.GridItems.Multiplexer8InpGridItem import Multiplexer8InpGridItem
 
 class GridWidget(QtWidgets.QWidget):
     """Main drop area with grid, items and connections."""
@@ -124,25 +115,8 @@ class GridWidget(QtWidgets.QWidget):
             item.show()
 
     def addComponent(self, cell, component: LogicComponent, immovable=False):
-        if isinstance(component, Input):
-            new_item = InputGridItem(component, immovable=immovable)
-        elif isinstance(component, HalfAdder):
-            new_item = HalfAdderGridItem(component, immovable=immovable)
-        elif isinstance(component, FullAdder):
-            new_item = FullAdderGridItem(component, immovable=immovable)
-        elif isinstance(component, Multiplexer2Inp):
-            new_item = Multiplexer2InpGridItem(component, immovable=immovable)
-        elif isinstance(component, Multiplexer4Inp):
-            new_item = Multiplexer4InpGridItem(component, immovable=immovable)
-        elif isinstance(component, Multiplexer8Inp):
-            new_item = Multiplexer8InpGridItem(component, immovable=immovable)
-        elif isinstance(component, ALUSimple):
-            new_item = ALUSimpleGridItem(component, immovable=immovable)
-        elif isinstance(component, ALUAdvanced):
-            new_item = ALUAdvancedGridItem(component, immovable=immovable)
-        else:
-            new_item = GridItem(component, immovable=immovable)
-        self.addItem(cell, new_item)
+        newItem = GridItemFactory.createGridItem(component, immovable)
+        self.addItem(cell, newItem)
 
     def _visuallyAddConnection(self, srcComp: LogicComponent, srcKey: str, dstComp: LogicComponent, dstKey: str):
         """Adds a Connection object to the list of connections and updates the grid."""
@@ -244,12 +218,11 @@ class GridWidget(QtWidgets.QWidget):
         class_name = payload.get("class_name")
         package_name = "src.model"
 
-        if action_type == "create":
+        if action_type == "create" and not self.isOccupied(cell):
             # Dynamically import and create a GridItem of this class
             try:
-                package = __import__(package_name, fromlist=[class_name])
-                module = getattr(package, class_name)
-                cls = module
+                package = importlib.import_module(package_name)
+                cls = getattr(package, class_name)
                 component = self.logicController.addLogicComponent(cls)
                 self.addComponent(cell, component)
             except Exception as e:

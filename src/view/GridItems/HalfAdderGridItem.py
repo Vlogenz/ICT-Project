@@ -1,6 +1,6 @@
 from src.constants import CELL_SIZE
 from src.view.GridItems.GridItem import GridItem
-from src.model.HalfAdder import HalfAdder
+from src.model import HalfAdder
 
 class HalfAdderGridItem(GridItem):
     def __init__(self, logicComponent: HalfAdder, immovable=False):

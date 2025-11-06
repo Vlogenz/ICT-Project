@@ -224,6 +224,8 @@ class LogicComponentController:
         Returns:
             bool: True if the connection was added successfully, False otherwise.  
             """
+        if targetKey not in target.inputBitwidths:
+            return False
         if target.getBitwidth(targetKey) == 0 or origin.getState()[originKey][1] == target.getBitwidth(targetKey):
             #check if bitlengths of inputs and output are thesame or if input has bitlength 0 (means bitlength hasnt been set yet)
             if target.addInput(origin, originKey, targetKey):

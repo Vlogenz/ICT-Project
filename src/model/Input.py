@@ -4,6 +4,7 @@ from .LogicComponent import LogicComponent
 class Input(LogicComponent):
 
     def __init__(self):
+        super().__init__()
         self.state: bool = False
         #Inputs are always empty for Input component
         self.inputs = {} # Input has no inputs

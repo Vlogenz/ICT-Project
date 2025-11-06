@@ -1,4 +1,4 @@
-from src.view.GridItem import GridItem
+from src.view.GridItems.GridItem import GridItem
 from src.model.Input import Input
 from PySide6.QtGui import QIntValidator
 from PySide6.QtWidgets import QPushButton, QLineEdit
@@ -10,8 +10,8 @@ class InputGridItem(GridItem):
     This is used to set the state of the underlying Input component and defaults to 0.
     """
 
-    def __init__(self, logicComponent: Input, immovable=False):
-        super().__init__(logicComponent, immovable=immovable)
+    def __init__(self, logicComponent: Input, **kwargs):
+        super().__init__(logicComponent, **kwargs)
         self.logicComponent = logicComponent
 
         # Create the button to rotate through bitwidths
@@ -21,6 +21,7 @@ class InputGridItem(GridItem):
 
         # Add the toggle for 1 bit
         self.toggleButton = QPushButton(f"Toggle")
+        self.toggleButton.setStyleSheet("color: black;")
         self.toggleButton.clicked.connect(self.toggleState)
         self.layout.addWidget(self.toggleButton)
 

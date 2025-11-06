@@ -331,7 +331,18 @@ class TestGridWidget:
         controller.addConnection(and_gate, "outValue", not_gate, "input")
 
         # Component info: (x, y, immovable)
-        component_info = [(0, 0, False), (1, 0, False)]
+        component_info = [
+            {
+                "comp": and_gate,
+                "pos": (0,0),
+                "immovable": False
+            },
+            {
+                "comp": not_gate,
+                "pos": (1, 0),
+                "immovable": False
+            }
+        ]
 
         # Call rebuild
         grid.rebuildCircuit(component_info)

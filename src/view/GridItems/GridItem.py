@@ -32,6 +32,7 @@ class GridItem(QtWidgets.QFrame):
         if self.pixmap.isNull():
             nameLabel = QtWidgets.QLabel(self.logicComponent.__class__.__name__)
             nameLabel.setAlignment(QtCore.Qt.AlignCenter)
+            nameLabel.setStyleSheet("color: black;")
             self.layout.addWidget(nameLabel)
 
         # Define ports dynamically based on what the LogicComponent has

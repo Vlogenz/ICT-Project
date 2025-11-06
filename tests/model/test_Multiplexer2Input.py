@@ -11,13 +11,33 @@ def test_2i1b_multiplexer_raises_error_on_too_many_inputs():
     two_input_multiplexer.addInput(DummyInput(False, 1),"outValue","input2")
     assert two_input_multiplexer.addInput(DummyInput(True, 1),"outValue","input1") == False
 
-def test_2i1b_multiplexer_raises_error_on_too_few_inputs():
+def test_2i1b_multiplexer_raises_error_on_no_inputs():
     two_input_multiplexer = Multiplexer2Inp()
-    two_input_multiplexer.addInput(DummyInput(True), "outValue", "selection")
-    two_input_multiplexer.addInput(DummyInput(False), "outValue", "input1")
-
+    
     assert two_input_multiplexer.eval() == False
     assert two_input_multiplexer.state["outputValue"] == (0, 0)
+
+def test_2i1b_multiplexer_raises_error_with_no_bitwidth():
+    two_input_multiplexer = Multiplexer2Inp()
+    two_input_multiplexer.addInput(DummyInput(True, 1), "outValue", "selection")
+    
+    assert two_input_multiplexer.eval() == False
+    assert two_input_multiplexer.state["outputValue"] == (0, 0)
+
+def test_2i1b_multiplexer_evals_with_missing_selection():
+    two_input_multiplexer = Multiplexer2Inp()
+    two_input_multiplexer.addInput(DummyInput(True, 1), "outValue", "input1")
+    two_input_multiplexer.addInput(DummyInput(False, 1), "outValue", "input2")
+    
+    assert two_input_multiplexer.eval() == True
+    assert two_input_multiplexer.state["outputValue"] == (1, 1)
+
+def test_2i1b_multiplexer_evals_no_inputs_with_output():
+    two_input_multiplexer = Multiplexer2Inp()
+    two_input_multiplexer.addOutput(DummyOutput(1), "input")
+    
+    assert two_input_multiplexer.eval() == True
+    assert two_input_multiplexer.state["outputValue"] == (0, 1)
 
 def test_2i1b_multiplexer_allows_multiple_outputs():
     two_input_multiplexer = Multiplexer2Inp()

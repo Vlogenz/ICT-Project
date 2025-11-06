@@ -157,23 +157,27 @@ class Multiplexer2Inp(LogicComponent):
             bool: True if the output state has changed, False otherwise, or if not enough inputs were included.
         """
         
-        oldState: bool = self.state.copy()
-        for input in self.inputs:
-            if self.inputs[input] is None:
-                self.state =  {"outputValue": (0,0)}
-                return False
-        
-        inputId = int(self.inputs["selection"][0].getState()[self.inputs["selection"][1]][0]) + 1
-        outputKey: str = "input" + str(inputId)
-        # gets the component out of the first tuple in self.inputs and then 
-        #   uses the key from that tuple to access the right output from the 
-        #   components state
+        if self.inputBitwidths["input1"] == 0: return False
 
-        self.state = {"outputValue": (self.inputs[outputKey][0].getState()[self.inputs[outputKey][1]][0], self.inputs[outputKey][0].getState()[self.inputs[outputKey][1]][1])}
-        # gets the component out of the tuple determined by the selection input, then 
-        #   uses the key from that tuple to access the right output from the 
-        #   components state
-        #   Does the same for getting the bit width
+        oldState: bool = self.state.copy()
+        
+        # If no selection exist, default to input1
+        if self.inputs["selection"] == None: outputKey = "input1"
+        else:
+            inputId = int(self.inputs["selection"][0].getState()[self.inputs["selection"][1]][0]) + 1
+            outputKey: str = "input" + str(inputId)
+            # gets the component out of the first tuple in self.inputs and then 
+            #   uses the key from that tuple to access the right output from the 
+            #   components state
+
+        # If no input exist, return 0 at the set bitwidth
+        if self.inputs[outputKey] == None: self.state = {"outputValue": (0, self.inputBitwidths["input1"])}
+        else:
+            self.state = {"outputValue": (self.inputs[outputKey][0].getState()[self.inputs[outputKey][1]][0], self.inputs[outputKey][0].getState()[self.inputs[outputKey][1]][1])}
+            # gets the component out of the tuple determined by the selection input, then 
+            #   uses the key from that tuple to access the right output from the 
+            #   components state
+            #   Does the same for getting the bit width
 
         #   Check to see if data has changed
         if (self.state["outputValue"] == oldState):

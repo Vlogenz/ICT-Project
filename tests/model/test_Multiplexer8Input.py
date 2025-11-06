@@ -15,15 +15,39 @@ def test_8i1b_multiplexer_raises_error_on_too_many_inputs():
     eight_input_multiplexer.addInput(DummyInput(False, 1),"outValue","input8")
     assert eight_input_multiplexer.addInput(DummyInput(True, 1),"outValue","input1") == False
 
-def test_8i1b_multiplexer_raises_error_on_too_few_inputs():
+def test_8i1b_multiplexer_raises_error_on_no_inputs():
     eight_input_multiplexer = Multiplexer8Inp()
-    eight_input_multiplexer.addInput(DummyInput(True, 8), "outValue","selection")
-    eight_input_multiplexer.addInput(DummyInput(False, 1), "outValue","input1")
-    eight_input_multiplexer.addInput(DummyInput(True, 1),"outValue","input2")
-    eight_input_multiplexer.addInput(DummyInput(False, 1),"outValue","input3")
 
     assert eight_input_multiplexer.eval() == False
     assert eight_input_multiplexer.state["outputValue"] == (0, 0)
+
+def test_8i1b_multiplexer_raises_error_with_no_bitwidth():
+    eight_input_multiplexer = Multiplexer8Inp()
+    eight_input_multiplexer.addInput(DummyInput(True, 1), "outValue", "selection")
+    
+    assert eight_input_multiplexer.eval() == False
+    assert eight_input_multiplexer.state["outputValue"] == (0, 0)
+
+def test_8i1b_multiplexer_evals_with_missing_selection():
+    eight_input_multiplexer = Multiplexer8Inp()
+    eight_input_multiplexer.addInput(DummyInput(True, 1),"outValue","input1")
+    eight_input_multiplexer.addInput(DummyInput(False, 1),"outValue","input2")
+    eight_input_multiplexer.addInput(DummyInput(True, 1),"outValue","input3")
+    eight_input_multiplexer.addInput(DummyInput(False, 1),"outValue","input4")
+    eight_input_multiplexer.addInput(DummyInput(True, 1),"outValue","input5")
+    eight_input_multiplexer.addInput(DummyInput(False, 1),"outValue","input6")
+    eight_input_multiplexer.addInput(DummyInput(True, 1),"outValue","input7")
+    eight_input_multiplexer.addInput(DummyInput(False, 1),"outValue","input8")
+    
+    assert eight_input_multiplexer.eval() == True
+    assert eight_input_multiplexer.state["outputValue"] == (1, 1)
+
+def test_8i1b_multiplexer_evals_no_inputs_with_output():
+    eight_input_multiplexer = Multiplexer8Inp()
+    eight_input_multiplexer.addOutput(DummyOutput(1), "input")
+    
+    assert eight_input_multiplexer.eval() == True
+    assert eight_input_multiplexer.state["outputValue"] == (0, 1)
 
 def test_8i1b_multiplexer_allows_multiple_outputs():
     eight_input_multiplexer = Multiplexer8Inp()

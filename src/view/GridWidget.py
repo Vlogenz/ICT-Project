@@ -4,9 +4,11 @@ from PySide6.QtGui import QPainterPath, QPainterPathStroker
 
 from src.control.LogicComponentController import LogicComponentController
 from src.constants import GRID_COLS, GRID_ROWS, CELL_SIZE, MIME_TYPE
+from src.model import ALUAdvanced, ALUSimple
 from src.model.Input import Input
 from src.model.LogicComponent import LogicComponent
 from src.infrastructure.eventBus import getBus
+from src.view.ALUGridItem import ALUGridItem
 from src.view.DraggingLine import DraggingLine
 from src.view.GridItem import GridItem
 from src.view.Connection import Connection
@@ -118,6 +120,8 @@ class GridWidget(QtWidgets.QWidget):
     def addComponent(self, cell, component: LogicComponent, immovable=False):
         if isinstance(component, Input):
             new_item = InputGridItem(logicComponent=component, immovable=immovable)
+        elif isinstance(component, ALUSimple) or isinstance(component, ALUAdvanced):
+            new_item = ALUGridItem(logicComponent=component, immovable=immovable)
         else:
             new_item = GridItem(logicComponent=component, immovable=immovable)
         self.addItem(cell, new_item)

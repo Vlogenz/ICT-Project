@@ -1,0 +1,4 @@
+ALU (basic and advanced): 2 inputs at top, OP input at bottom
+Full adder: 1 input at top, 1 output at bottom
+half adder: 1 output at bottom
+Multiplexers: selection input at bottom

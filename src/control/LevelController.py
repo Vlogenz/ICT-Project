@@ -50,9 +50,10 @@ class LevelController:
         self.currentLevel = self.levelData["level_id"]
         components = self.levelData["components"]
 
-        #Additional info for each component:
-        # - which cell to put it in: int, int
-        # - whether it is immovable or not: bool
+        #Info for each component:
+        # - comp: the component itself
+        # - pos: A Tuple[int,int] representing the cell for the component
+        # - immovable: Whether it is immovable or not
         componentInfo: List = []
         for componentData in components:
             component_type_str = componentData["type"]

@@ -2,6 +2,7 @@ from src.control.LevelController import LevelController
 from src.control.LevelFileController import LevelFileController
 from src.control.LogicComponentController import LogicComponentController
 from src.view.Hint import Hint
+from src.view.LogicComponentPalette import LogicComponentPalette
 
 from src.view.PaletteItem import PaletteItem
 from src.view.GridWidget import GridWidget
@@ -35,26 +36,24 @@ class LevelScene(QtWidgets.QWidget):
         self.backButton = QtWidgets.QPushButton("< Back to level selection")
         self.backButton.clicked.connect(self.goToLevelSelection)
 
+        sidebarFrame = QtWidgets.QGridLayout()
+
         # Palette
-        palette = QtWidgets.QGridLayout()
         classes = self.levelController.getAvailableComponentClasses()
-        for i, class_ in enumerate(classes):
-            # Use index for a two-column grid
-            palette.addWidget(PaletteItem(class_), i//2, i%2)
+        palette = LogicComponentPalette(classes)
+        sidebarFrame.addWidget(palette, 0, 0, 1, 2)
 
         # Grid
         self.grid = GridWidget(self.logicController)
 
         # Delete area
         deleteArea = DeleteArea(self.grid)
-        palette.addWidget(deleteArea, (len(classes)+1)//2, 1)
+        sidebarFrame.addWidget(deleteArea, 1, 1)
 
         # Hint button
         hintButton = Hint(self.levelController)
-        palette.addWidget(hintButton, (len(classes)+1)//2, 0)
+        sidebarFrame.addWidget(hintButton, 1, 0)
 
-        palette_frame = QtWidgets.QFrame()
-        palette_frame.setLayout(palette)
 
         # Simulation controls
         simControls = SimulationControls(self.logicController)
@@ -87,14 +86,14 @@ class LevelScene(QtWidgets.QWidget):
         # Add the widgets to the layout
         self.layout.addWidget(self.backButton, 0, 0)
         self.layout.addWidget(levelInfoLabel, 1, 0)
-        self.layout.addWidget(palette_frame, 2, 0)
+        self.layout.addLayout(sidebarFrame, 2, 0)
         self.layout.addWidget(simControls, 0, 1)
 
         # Wrap grid in scroll area
-        scroll_area = QtWidgets.QScrollArea()
-        scroll_area.setWidget(self.grid)
-        scroll_area.setWidgetResizable(True)
-        self.layout.addWidget(scroll_area, 1, 1, 2, 1)
+        gridScrollArea = QtWidgets.QScrollArea()
+        gridScrollArea.setWidget(self.grid)
+        gridScrollArea.setWidgetResizable(True)
+        self.layout.addWidget(gridScrollArea, 1, 1, 2, 1)
 
     def checkSolution(self):
         """Calls the levelController to check the solution.

@@ -25,6 +25,7 @@ class PaletteItem(QtWidgets.QFrame):
             img_label.setPixmap(pixmap)
         else:
             img_label.setText(logicComponentClass.__name__)
+            img_label.setStyleSheet("color: black;")
 
         img_label.setAlignment(QtCore.Qt.AlignCenter)
         layout.addWidget(img_label)

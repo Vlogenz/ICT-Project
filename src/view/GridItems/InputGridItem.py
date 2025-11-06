@@ -1,4 +1,4 @@
-from src.view.GridItem import GridItem
+from src.view.GridItems.GridItem import GridItem
 from src.model.Input import Input
 from PySide6.QtWidgets import QPushButton
 

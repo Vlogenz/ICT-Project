@@ -4,18 +4,24 @@ from PySide6.QtGui import QPainterPath, QPainterPathStroker
 
 from src.control.LogicComponentController import LogicComponentController
 from src.constants import GRID_COLS, GRID_ROWS, CELL_SIZE, MIME_TYPE
-from src.model import ALUAdvanced, ALUSimple
+from src.model import ALUAdvanced, ALUSimple, FullAdder, HalfAdder, Multiplexer2Inp, Multiplexer4Inp, Multiplexer8Inp
 from src.model.Input import Input
 from src.model.LogicComponent import LogicComponent
 from src.infrastructure.eventBus import getBus
-from src.view.ALUGridItem import ALUGridItem
+from src.view.GridItems.ALUSimpleGridItem import ALUSimpleGridItem
+from src.view.GridItems.ALUAdvancedGridItem import ALUAdvancedGridItem
 from src.view.DraggingLine import DraggingLine
-from src.view.GridItem import GridItem
+from src.view.GridItems.FullAdderGridItem import FullAdderGridItem
+from src.view.GridItems.GridItem import GridItem
 from src.view.Connection import Connection
 import json
 from typing import List, Tuple
 
-from src.view.InputGridItem import InputGridItem
+from src.view.GridItems.HalfAdderGridItem import HalfAdderGridItem
+from src.view.GridItems.InputGridItem import InputGridItem
+from src.view.GridItems.Multiplexer2InpGridItem import Multiplexer2InpGridItem
+from src.view.GridItems.Multiplexer4InpGridItem import Multiplexer4InpGridItem
+from src.view.GridItems.Multiplexer8InpGridItem import Multiplexer8InpGridItem
 
 class GridWidget(QtWidgets.QWidget):
     """Main drop area with grid, items and connections."""
@@ -119,11 +125,23 @@ class GridWidget(QtWidgets.QWidget):
 
     def addComponent(self, cell, component: LogicComponent, immovable=False):
         if isinstance(component, Input):
-            new_item = InputGridItem(logicComponent=component, immovable=immovable)
-        elif isinstance(component, ALUSimple) or isinstance(component, ALUAdvanced):
-            new_item = ALUGridItem(logicComponent=component, immovable=immovable)
+            new_item = InputGridItem(component, immovable=immovable)
+        elif isinstance(component, HalfAdder):
+            new_item = HalfAdderGridItem(component, immovable=immovable)
+        elif isinstance(component, FullAdder):
+            new_item = FullAdderGridItem(component, immovable=immovable)
+        elif isinstance(component, Multiplexer2Inp):
+            new_item = Multiplexer2InpGridItem(component, immovable=immovable)
+        elif isinstance(component, Multiplexer4Inp):
+            new_item = Multiplexer4InpGridItem(component, immovable=immovable)
+        elif isinstance(component, Multiplexer8Inp):
+            new_item = Multiplexer8InpGridItem(component, immovable=immovable)
+        elif isinstance(component, ALUSimple):
+            new_item = ALUSimpleGridItem(component, immovable=immovable)
+        elif isinstance(component, ALUAdvanced):
+            new_item = ALUAdvancedGridItem(component, immovable=immovable)
         else:
-            new_item = GridItem(logicComponent=component, immovable=immovable)
+            new_item = GridItem(component, immovable=immovable)
         self.addItem(cell, new_item)
 
     def _visuallyAddConnection(self, srcComp: LogicComponent, srcKey: str, dstComp: LogicComponent, dstKey: str):

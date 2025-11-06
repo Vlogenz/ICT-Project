@@ -1,7 +1,7 @@
 from PySide6 import QtCore, QtGui, QtWidgets
 from pytestqt import qtbot
 from src.control.LogicComponentController import LogicComponentController
-from src.view.GridItem import GridItem
+from src.view.GridItems.GridItem import GridItem
 from src.model.And import And
 from src.model.Not import Not
 from src.infrastructure.eventBus import getBus

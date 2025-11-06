@@ -2,7 +2,7 @@ import pytest
 from PySide6 import QtWidgets, QtCore
 from pytestqt import qtbot
 from unittest.mock import Mock
-from src.view.InputGridItem import InputGridItem
+from src.view.GridItems.InputGridItem import InputGridItem
 from src.model.Input import Input
 
 
@@ -14,7 +14,7 @@ class TestInputGridItem:
         qtbot.addWidget(item)
 
         # Check it's a GridItem
-        from src.view.GridItem import GridItem
+        from src.view.GridItems.GridItem import GridItem
         assert isinstance(item, GridItem)
 
         # Check toggle button is added

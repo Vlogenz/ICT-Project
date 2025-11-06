@@ -1,4 +1,4 @@
-from src.view.GridItem import GridItem
+from src.view.GridItems.GridItem import GridItem
 from PySide6.QtGui import QPainterPath
 
 class Connection:

@@ -4,16 +4,15 @@ from PySide6.QtGui import QPainterPath, QPainterPathStroker
 
 from src.control.LogicComponentController import LogicComponentController
 from src.constants import GRID_COLS, GRID_ROWS, CELL_SIZE, MIME_TYPE
-from src.model.Input import Input
 from src.model.LogicComponent import LogicComponent
 from src.infrastructure.eventBus import getBus
+from src.view.GridItems import GridItemFactory
 from src.view.DraggingLine import DraggingLine
-from src.view.GridItem import GridItem
+from src.view.GridItems import GridItem
 from src.view.Connection import Connection
 import json
+import importlib
 from typing import List, Tuple
-
-from src.view.InputGridItem import InputGridItem
 
 class GridWidget(QtWidgets.QWidget):
     """Main drop area with grid, items and connections."""
@@ -115,12 +114,9 @@ class GridWidget(QtWidgets.QWidget):
             item.cell_y = gy
             item.show()
 
-    def addComponent(self, cell, component: LogicComponent, immovable=False):
-        if isinstance(component, Input):
-            new_item = InputGridItem(logicComponent=component, immovable=immovable)
-        else:
-            new_item = GridItem(logicComponent=component, immovable=immovable)
-        self.addItem(cell, new_item)
+    def addComponent(self, cell: Tuple[int,int], component: LogicComponent, immovable=False):
+        newItem = GridItemFactory.createGridItem(component, immovable)
+        self.addItem(cell, newItem)
 
     def _visuallyAddConnection(self, srcComp: LogicComponent, srcKey: str, dstComp: LogicComponent, dstKey: str):
         """Adds a Connection object to the list of connections and updates the grid."""
@@ -161,14 +157,14 @@ class GridWidget(QtWidgets.QWidget):
         if len(filteredItems) == 1:
             self.removeItem(filteredItems[0])
 
-    def rebuildCircuit(self, componentInfo: List[Tuple[int,int,bool]]):
+    def rebuildCircuit(self, componentInfo: List):
         """Rebuilds all visual elements for the circuit:
         - A GridItem for each component that is currently in the logicController
         - A connection for each of the logic component's connections
         """
         self.visuallyRemoveAllItems()
-        for i,comp in enumerate(self.logicController.components):
-            self.addComponent((componentInfo[i][0], componentInfo[i][1]), comp, immovable=componentInfo[i][2])
+        for element in componentInfo:
+            self.addComponent(element["pos"], element["comp"], immovable=element["immovable"])
         for item in self.items:
             for dstComp, dstKey in item.logicComponent.outputs:
                 srcKey = dstComp.inputs[dstKey][1]
@@ -224,10 +220,12 @@ class GridWidget(QtWidgets.QWidget):
 
         if action_type == "create":
             # Dynamically import and create a GridItem of this class
+            if self.isOccupied(cell):
+                event.ignore()
+                return
             try:
-                package = __import__(package_name, fromlist=[class_name])
-                module = getattr(package, class_name)
-                cls = module
+                package = importlib.import_module(package_name)
+                cls = getattr(package, class_name)
                 component = self.logicController.addLogicComponent(cls)
                 self.addComponent(cell, component)
             except Exception as e:

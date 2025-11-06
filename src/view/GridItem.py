@@ -19,13 +19,13 @@ class GridItem(QtWidgets.QFrame):
         self.logicComponent = logicComponent
         self.immovable = immovable
         self.scale_factor = 1.0
-
+        
         base_width = CELL_SIZE - 8
         self.setFixedSize(int(base_width * self.scale_factor), int(base_width * self.scale_factor))
 
         self.layout = QtWidgets.QVBoxLayout(self)
         self.layout.setContentsMargins(0,0,0,0)
-
+        
         self.image_path = f"assets/gates/{self.logicComponent.__class__.__name__}.svg"
 
         self.pixmap = QtGui.QPixmap(self.image_path)

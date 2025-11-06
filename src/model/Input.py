@@ -17,11 +17,28 @@ class Input(LogicComponent):
     def eval(self) -> bool:
         return True
 
+    def cycleBitwidth(self):
+        switch={
+            1: 8,
+            8: 32,
+            32: 1
+        }
+
+        # Resetting the value is handled in InputGridItem
+        self.state["outValue"] = [0, switch.get(self.state["outValue"][1])]
+
     def toggleState(self):
         if self.state["outValue"] == (0,1):
             self.state["outValue"] = (1,1)
         else:
             self.state["outValue"] = (0,1)
+
+    def enteredState(self, inputInt: int):
+        if self.state["outValue"][1] == 8 and inputInt > 255:
+            inputInt = 255
+
+        outWidth = self.state["outValue"][1]
+        self.setState((inputInt, outWidth))
 
     def setState(self, state: tuple):
         self.state["outValue"] = state

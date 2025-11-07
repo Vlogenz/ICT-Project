@@ -1,3 +1,4 @@
+from src.constants import CELL_SIZE
 from src.view.GridItems.GridItem import GridItem
 from src.model.Input import Input
 from PySide6.QtGui import QIntValidator
@@ -13,6 +14,8 @@ class InputGridItem(GridItem):
     def __init__(self, logicComponent: Input, **kwargs):
         super().__init__(logicComponent, **kwargs)
         self.logicComponent = logicComponent
+        self.outputs["outValue"].moveTo(CELL_SIZE - 24, 8)
+        self.updateRects()
 
         # Create the button to rotate through bitwidths
         self.bitwidthButton = QPushButton(f"Bitwidth: {self.logicComponent.state["outValue"][1]}")
@@ -67,7 +70,6 @@ class InputGridItem(GridItem):
         enteredInt = int(self.numberInput.text())
         if self.logicComponent.state["outValue"][1] == 8 and enteredInt > 255:
             self.numberInput.setText("255")
-            inputInt = 255
 
         self.logicComponent.enteredState(enteredInt)
         self.updatePortLabels()

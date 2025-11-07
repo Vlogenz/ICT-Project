@@ -1,38 +1,18 @@
 from src.control.LogicComponentController import LogicComponentController
 from src.model.LogicComponent import LogicComponent
-from src.model.Input import Input
-from src.model.Output import Output
-from src.model.And import And
-from src.model.Or import Or
-from src.model.Not import Not
-from src.model.Nand import Nand
-from src.model.Nor import Nor
-from src.model.Xor import Xor
-from src.model.Xnor import Xnor
 from src.infrastructure.eventBus import getBus
+from src.constants import COMPONENT_MAP
 
 from typing import List, TypeVar, Type, Tuple
 
 class LevelController:
-    COMPONENT_MAP = {
-        "Input": Input,
-        "Output": Output,
-        "And": And,
-        "Or": Or,
-        "Not": Not,
-        "Nand": Nand,
-        "Nor": Nor,
-        "Xor": Xor,
-        "Xnor": Xnor,
-        # Add further components here when necessary
-    }
-    
+
     def __init__(self, logicComponentController: LogicComponentController, levelData = None, grid = None):
         self.levelData = levelData
         self.logicComponentController = logicComponentController
         self.currentLevel = None
         self.eventBus = getBus()
-    
+
     def setLevel(self, levelData):
         """Sets the current level data"""
         self.levelData = levelData
@@ -59,10 +39,10 @@ class LevelController:
             component_type_str = componentData["type"]
             
             # Convert string to class
-            if component_type_str not in self.COMPONENT_MAP:
+            if component_type_str not in COMPONENT_MAP:
                 raise ValueError(f"Unknown component type: {component_type_str}")
             
-            component_class = self.COMPONENT_MAP[component_type_str]
+            component_class = COMPONENT_MAP[component_type_str]
             comp = self.logicComponentController.addLogicComponent(component_class)
 
             pos = tuple(componentData["position"])
@@ -113,7 +93,7 @@ class LevelController:
         
     def getComponentMap(self):
         """Returns the connection map of the current level"""
-        return self.COMPONENT_MAP
+        return COMPONENT_MAP
 
     T = TypeVar("T", bound=LogicComponent)
     def getAvailableComponentClasses(self) -> List[Type[T]]:
@@ -122,7 +102,7 @@ class LevelController:
         if self.levelData is not None:
             try:
                 availableNames = [comp["type"] for comp in self.levelData["available_components"]]
-                for name, class_ in self.COMPONENT_MAP.items():
+                for name, class_ in COMPONENT_MAP.items():
                     if name in availableNames:
                         availableClasses.append(class_)
             except Exception as e:

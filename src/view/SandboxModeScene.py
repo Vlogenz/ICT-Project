@@ -35,8 +35,7 @@ class SandboxModeScene(QtWidgets.QWidget):
         backButton.clicked.connect(self.goToMain)
 
         # Palette
-        classes = list(self.iter_classes_in_package(model))
-        palette = LogicComponentPalette(classes)
+        palette = LogicComponentPalette()
 
         # Grid
         self.grid = GridWidget(logicController)
@@ -66,10 +65,3 @@ class SandboxModeScene(QtWidgets.QWidget):
         self.logicController.clearComponents()
         self.grid.unsubscribe()
         self.bus.emit("goToMain")
-
-    def iter_classes_in_package(self, package):
-        for _, module_name, is_pkg in pkgutil.walk_packages(package.__path__, package.__name__ + "."):
-            module = importlib.import_module(module_name)
-            for name, cls in inspect.getmembers(module, inspect.isclass):
-                if cls.__module__ == module.__name__:
-                    yield cls

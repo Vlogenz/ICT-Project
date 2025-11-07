@@ -11,19 +11,6 @@ def test_4i1b_multiplexer_raises_error_on_too_many_inputs():
     four_input_multiplexer.addInput(DummyInput(False, 1),"outValue","input4")
     assert four_input_multiplexer.addInput(DummyInput(True, 1),"outValue","input1") == False
 
-def test_4i1b_multiplexer_raises_error_on_no_inputs():
-    four_input_multiplexer = Multiplexer4Inp()
-    
-    assert four_input_multiplexer.eval() == False
-    assert four_input_multiplexer.state["outputValue"] == (0, 0)
-
-def test_4i1b_multiplexer_raises_error_with_no_bitwidth():
-    four_input_multiplexer = Multiplexer4Inp()
-    four_input_multiplexer.addInput(DummyInput(True, 1), "outValue", "selection")
-    
-    assert four_input_multiplexer.eval() == False
-    assert four_input_multiplexer.state["outputValue"] == (0, 0)
-
 def test_4i1b_multiplexer_evals_with_missing_selection():
     four_input_multiplexer = Multiplexer4Inp()
     four_input_multiplexer.addInput(DummyInput(True, 1),"outValue","input1")

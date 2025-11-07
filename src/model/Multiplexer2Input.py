@@ -156,28 +156,24 @@ class Multiplexer2Inp(LogicComponent):
         Returns:
             bool: True if the output state has changed, False otherwise, or if not enough inputs were included.
         """
-        
-        if self.inputBitwidths["input1"] == 0: return False
 
         oldState: bool = self.state.copy()
+
+        inputVals: list = []
+        for input in self.inputs:
+            if input == "selection": continue
+
+            if self.inputs[input] == None: inputVals.append(0)
+            else: inputVals.append(self.inputs[input][0].getState()[self.inputs[input][1]][0])
         
-        # If no selection exist, default to input1
-        if self.inputs["selection"] == None: outputKey = "input1"
+        if self.inputs["selection"] == None: s = 0
         else:
-            inputId = int(self.inputs["selection"][0].getState()[self.inputs["selection"][1]][0]) + 1
-            outputKey: str = "input" + str(inputId)
+            s = int(self.inputs["selection"][0].getState()[self.inputs["selection"][1]][0])
             # gets the component out of the first tuple in self.inputs and then 
             #   uses the key from that tuple to access the right output from the 
             #   components state
 
-        # If no input exist, return 0 at the set bitwidth
-        if self.inputs[outputKey] == None: self.state = {"outputValue": (0, self.inputBitwidths["input1"])}
-        else:
-            self.state = {"outputValue": (self.inputs[outputKey][0].getState()[self.inputs[outputKey][1]][0], self.inputs[outputKey][0].getState()[self.inputs[outputKey][1]][1])}
-            # gets the component out of the tuple determined by the selection input, then 
-            #   uses the key from that tuple to access the right output from the 
-            #   components state
-            #   Does the same for getting the bit width
+        self.state = {"outputValue": (inputVals[s], self.inputBitwidths[("input" + str(s+1))])}
 
         #   Check to see if data has changed
         if (self.state["outputValue"] == oldState):

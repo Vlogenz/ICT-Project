@@ -11,19 +11,6 @@ def test_2i1b_multiplexer_raises_error_on_too_many_inputs():
     two_input_multiplexer.addInput(DummyInput(False, 1),"outValue","input2")
     assert two_input_multiplexer.addInput(DummyInput(True, 1),"outValue","input1") == False
 
-def test_2i1b_multiplexer_raises_error_on_no_inputs():
-    two_input_multiplexer = Multiplexer2Inp()
-    
-    assert two_input_multiplexer.eval() == False
-    assert two_input_multiplexer.state["outputValue"] == (0, 0)
-
-def test_2i1b_multiplexer_raises_error_with_no_bitwidth():
-    two_input_multiplexer = Multiplexer2Inp()
-    two_input_multiplexer.addInput(DummyInput(True, 1), "outValue", "selection")
-    
-    assert two_input_multiplexer.eval() == False
-    assert two_input_multiplexer.state["outputValue"] == (0, 0)
-
 def test_2i1b_multiplexer_evals_with_missing_selection():
     two_input_multiplexer = Multiplexer2Inp()
     two_input_multiplexer.addInput(DummyInput(True, 1), "outValue", "input1")

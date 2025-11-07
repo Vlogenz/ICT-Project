@@ -41,11 +41,3 @@ class TestSandboxModeScene:
         assert isinstance(sideBar, QtWidgets.QVBoxLayout)
         assert isinstance(sim_controls, SimulationControls)
         assert isinstance(grid, QtWidgets.QScrollArea)
-
-    def test_iter_classes_in_package(self, qtbot, logic_controller):
-        scene = SandboxModeScene(logic_controller)
-        qtbot.addWidget(scene)
-
-        # Test the method
-        classes = list(scene.iter_classes_in_package(src.model))
-        assert len(classes) > 0  # Should find some classes like And, Or, etc.

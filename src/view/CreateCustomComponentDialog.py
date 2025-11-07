@@ -1,7 +1,10 @@
+from typing import override
+
 from PySide6.QtWidgets import QWidget, QDialog, QLabel, QVBoxLayout, QLineEdit, QGridLayout, QDialogButtonBox, QPushButton, QFileDialog
 from PySide6.QtGui import QPixmap
 from PySide6.QtCore import Qt
 
+from src.control.CustomComponentController import CustomComponentController
 from src.control.LogicComponentController import LogicComponentController
 from src.model import Input, Output
 
@@ -10,15 +13,15 @@ class CreateCustomComponentDialog(QDialog):
     def __init__(self, logicController: LogicComponentController):
         super().__init__()
         self.setWindowTitle("Create Custom Component")
-
         layout = QVBoxLayout()
+        self.logicController = logicController
 
         self.inputNameLabels = []
         self.outputNameLabels = []
 
         # Component Name
         nameLabel = QLabel("Component Name:")
-        self.nameEdit = QLineEdit()
+        self.nameEdit: QLineEdit = QLineEdit()
         layout.addWidget(nameLabel)
         layout.addWidget(self.nameEdit)
 
@@ -48,7 +51,7 @@ class CreateCustomComponentDialog(QDialog):
 
         # Sprite Selection
         spriteButton = QPushButton("Select Sprite")
-        spriteButton.clicked.connect(self.select_sprite)
+        spriteButton.clicked.connect(self.selectSprite)
         self.spriteLabel = QLabel("No sprite selected")
         self.spriteLabel.setAlignment(Qt.AlignCenter)
         self.spritePath = None
@@ -57,6 +60,7 @@ class CreateCustomComponentDialog(QDialog):
 
         # Buttons
         buttonBox = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        buttonBox.accepted.connect(self.submitForm)
         buttonBox.accepted.connect(self.accept)
         buttonBox.rejected.connect(self.reject)
         layout.addWidget(buttonBox)
@@ -64,10 +68,21 @@ class CreateCustomComponentDialog(QDialog):
         self.setLayout(layout)
         print("Initialized create custom component dialog")
 
-    def select_sprite(self):
+    def selectSprite(self):
         file_path, _ = QFileDialog.getOpenFileName(self, "Select Sprite Image", "", "Image Files (*.png *.jpg *.jpeg *.svg)")
         if file_path:
             self.spritePath = file_path
             pixmap = QPixmap(file_path)
             self.spriteLabel.setPixmap(pixmap.scaled(256, 256, Qt.KeepAspectRatio))
             self.spriteLabel.setText("")
+
+    def submitForm(self):
+        newComponent = {
+            "name": self.nameEdit.text(),
+            "inputKeys": [label.text() for label in self.inputNameLabels],
+            "outputKeys": [label.text() for label in self.outputNameLabels],
+            "spritePath": self.spritePath,
+            "components": self.logicController.getComponents()
+        }
+        print(f"Creating component: {newComponent}")
+        CustomComponentController.saveComponentData(newComponent)

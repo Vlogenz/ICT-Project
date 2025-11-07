@@ -1,15 +1,17 @@
 import json
 import shutil
 from pathlib import Path
+from typing import List
 
 from src.constants import APP_NAME
+from src.model.CustomLogicComponent import CustomLogicComponent
 
 COMPONENT_DIRECTORY = Path.home() / APP_NAME / "custom_components"
 
 class CustomComponentController:
 
     @staticmethod
-    def saveComponentData(data: dict) -> bool:
+    def createCustomComponent(data: dict) -> bool:
         """Accepts the data as a dict and returns whether the saving process was successful or not."""
         # Validate data
         try:
@@ -63,3 +65,7 @@ class CustomComponentController:
             return False
         # Return True otherwise
         return True
+
+    def loadCustomComponents(self) -> List[CustomLogicComponent]:
+        """Loads all custom components and returns them as a list of CustomLogicComponent"""
+        pass

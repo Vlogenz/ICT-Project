@@ -85,4 +85,4 @@ class CreateCustomComponentDialog(QDialog):
             "components": self.logicController.getComponents()
         }
         print(f"Creating component: {newComponent}")
-        CustomComponentController.saveComponentData(newComponent)
+        CustomComponentController.createCustomComponent(newComponent)

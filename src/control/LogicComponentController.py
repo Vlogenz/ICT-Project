@@ -20,6 +20,7 @@ class LogicComponentController:
         self.bus = getBus()
         # Registrierung: ab jetzt wird der Handler automatisch aufgerufen
         self.bus.subscribe("model:input_changed", self.onModelInputUpdate)
+        self.bus.subscribe("newCycle", self.updateRegisters)
     
     
     def updateComponents(self, **tickList):

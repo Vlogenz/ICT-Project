@@ -37,58 +37,63 @@ class GridWidget(QtWidgets.QWidget):
         self.eventBus.subscribe("view:components_cleared", self._visuallyRemoveAllItems)
         self.eventBus.subscribe("view:rebuild_circuit", self.rebuildCircuit)
 
+    # def paintEvent(self, event):
+    #     """Redraws the entire grid, items and connections. It overrides QWidget.paintEvent, which gets called automatically when update() is called."""
+    #     painter = QtGui.QPainter(self)
+
+    #     # Grid
+    #     pen = QtGui.QPen(QtGui.QColor(200, 200, 200))
+    #     painter.setPen(pen)
+    #     for c in range(self.cols + 1):
+    #         x = c * CELL_SIZE
+    #         painter.drawLine(x, 0, x, self.rows * CELL_SIZE)
+    #     for r in range(self.rows + 1):
+    #         y = r * CELL_SIZE
+    #         painter.drawLine(0, y, self.cols * CELL_SIZE, y)
+
+    #     # painting connections
+    #     black_pen = QtGui.QPen(QtGui.QColor("black"), 2)
+    #     red_pen = QtGui.QPen(QtGui.QColor("red"), 2)
+    #     painter.setPen(black_pen)
+    #     for i,connection in enumerate(self.connections):
+    #         # Currently dragged item position
+    #         if self.draggingItem == connection.srcItem and self.tempPos:
+    #             item = self.draggingItem
+    #             rect_center = item.getOutputRect(connection.srcKey).center()
+    #             src_pos = QtCore.QPoint(self.tempPos[0] + rect_center.x(), self.tempPos[1] + rect_center.y())
+    #         else:
+    #             item = connection.srcItem
+    #             src_pos = item.mapToParent(item.getOutputRect(connection.srcKey).center().toPoint())
+    #         if self.draggingItem == connection.dstItem and self.tempPos:
+    #             item = self.draggingItem
+    #             rect_center = item.getInputRect(connection.dstKey).center()
+    #             dst_pos = QtCore.QPoint(self.tempPos[0] + rect_center.x(), self.tempPos[1] + rect_center.y())
+    #         else:
+    #             item = connection.dstItem
+    #             dst_pos = item.mapToParent(item.getInputRect(connection.dstKey).center().toPoint())
+
+    #         path = QtGui.QPainterPath(src_pos)
+    #         # Draw orthogonal route from src to dst
+    #         self.intelligentOrthogonalRoute(path, src_pos, dst_pos, self.connections[:i])
+    #         connection.setPath(path)
+    #         if connection.isActive:
+    #             painter.setPen(red_pen)
+    #         else:
+    #             painter.setPen(black_pen)
+    #         painter.drawPath(path)
+
+    #     # temporary connections
+    #     if self.draggingLine:
+    #         start = self.draggingLine.startPos
+    #         cur = self.draggingLine.currentPos
+    #         path = QtGui.QPainterPath(start)
+    #         self.orthogonalRoute(path, start, cur)
+    #         painter.drawPath(path)
     def paintEvent(self, event):
-        """Redraws the entire grid, items and connections. It overrides QWidget.paintEvent, which gets called automatically when update() is called."""
         painter = QtGui.QPainter(self)
-
-        # Grid
-        pen = QtGui.QPen(QtGui.QColor(200, 200, 200))
-        painter.setPen(pen)
-        for c in range(self.cols + 1):
-            x = c * CELL_SIZE
-            painter.drawLine(x, 0, x, self.rows * CELL_SIZE)
-        for r in range(self.rows + 1):
-            y = r * CELL_SIZE
-            painter.drawLine(0, y, self.cols * CELL_SIZE, y)
-
-        # painting connections
-        black_pen = QtGui.QPen(QtGui.QColor("black"), 2)
-        red_pen = QtGui.QPen(QtGui.QColor("red"), 2)
-        painter.setPen(black_pen)
-        for i,connection in enumerate(self.connections):
-            # Currently dragged item position
-            if self.draggingItem == connection.srcItem and self.tempPos:
-                item = self.draggingItem
-                rect_center = item.getOutputRect(connection.srcKey).center()
-                src_pos = QtCore.QPoint(self.tempPos[0] + rect_center.x(), self.tempPos[1] + rect_center.y())
-            else:
-                item = connection.srcItem
-                src_pos = item.mapToParent(item.getOutputRect(connection.srcKey).center().toPoint())
-            if self.draggingItem == connection.dstItem and self.tempPos:
-                item = self.draggingItem
-                rect_center = item.getInputRect(connection.dstKey).center()
-                dst_pos = QtCore.QPoint(self.tempPos[0] + rect_center.x(), self.tempPos[1] + rect_center.y())
-            else:
-                item = connection.dstItem
-                dst_pos = item.mapToParent(item.getInputRect(connection.dstKey).center().toPoint())
-
-            path = QtGui.QPainterPath(src_pos)
-            # Draw orthogonal route from src to dst
-            self.intelligentOrthogonalRoute(path, src_pos, dst_pos, self.connections[:i])
-            connection.setPath(path)
-            if connection.isActive:
-                painter.setPen(red_pen)
-            else:
-                painter.setPen(black_pen)
-            painter.drawPath(path)
-
-        # temporary connections
-        if self.draggingLine:
-            start = self.draggingLine.startPos
-            cur = self.draggingLine.currentPos
-            path = QtGui.QPainterPath(start)
-            self.orthogonalRoute(path, start, cur)
-            painter.drawPath(path)
+        painter.fillRect(self.rect(), QtGui.QColor('white'))
+        painter.setPen(QtGui.QPen(QtGui.QColor('black')))
+        painter.drawText(20, 40, "Paint Event OK")
 
     def cellAt(self, pos: QtCore.QPoint):
         """Returns the cell (x, y) at the given position or None if out of bounds."""

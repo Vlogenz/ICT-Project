@@ -1,0 +1,2 @@
+[console_scripts]
+logicgates = main.py:main_function

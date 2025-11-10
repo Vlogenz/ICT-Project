@@ -1,5 +1,6 @@
 import json
 import shutil
+from json import JSONDecodeError
 from pathlib import Path
 from typing import List
 
@@ -66,6 +67,33 @@ class CustomComponentController:
         # Return True otherwise
         return True
 
-    def loadCustomComponents(self) -> List[CustomLogicComponent]:
+    @staticmethod
+    def loadCustomComponents() -> List[CustomLogicComponent]:
         """Loads all custom components and returns them as a list of CustomLogicComponent"""
-        pass
+        # Create empty list to for custom components
+        customComponentList: List[CustomLogicComponent] = []
+
+        # Iterate subfolders of components directory
+        for entry in COMPONENT_DIRECTORY.iterdir():
+            if entry.is_dir():
+                # Try loading the JSON file
+                try:
+                    filePath = entry / f"{entry.name}.json"
+                    with open(filePath, "r") as f:
+                        componentJson = json.load(f)
+                        newComponent = CustomLogicComponent(
+                            componentJson["name"],
+                            componentJson["inputKeys"],
+                            componentJson["outputKeys"],
+                            componentJson["components"]
+                        )
+                        customComponentList.append(newComponent)
+
+                # Catch possible exceptions
+                except JSONDecodeError as e:
+                    print(f"Error decoding JSON files: {e}")
+                except KeyError as e:
+                    print(f"Key error reading custom component data: {e}")
+                except Exception as e:
+                    print(f"Uncaught error loading custom components: {e}")
+        return customComponentList

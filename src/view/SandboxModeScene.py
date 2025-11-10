@@ -1,3 +1,4 @@
+from src.control.CustomComponentController import CustomComponentController
 from src.control.LogicComponentController import LogicComponentController
 from src.view.CreateCustomComponentDialog import CreateCustomComponentDialog
 from src.view.LogicComponentPalette import LogicComponentPalette
@@ -36,7 +37,7 @@ class SandboxModeScene(QtWidgets.QWidget):
         backButton.clicked.connect(self.goToMain)
 
         # Palette
-        palette = LogicComponentPalette()
+        palette = LogicComponentPalette(customComponents=CustomComponentController.loadCustomComponents())
 
         # Grid
         self.grid = GridWidget(logicController)

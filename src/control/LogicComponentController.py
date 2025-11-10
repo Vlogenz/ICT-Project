@@ -1,5 +1,6 @@
 import typing
 
+from src.model.CustomLogicComponent import CustomLogicComponent
 from src.model.Output import Output
 from src.model.LogicComponent import LogicComponent
 from src.model.Input import Input
@@ -160,6 +161,14 @@ class LogicComponentController:
             self.outputs.append(comp)
         
         return comp
+
+    def addCustomLogicComponent(self, component: CustomLogicComponent) -> bool:
+        """Adds a custom logic component by adding all native subcomponents.
+
+        Returns:
+            bool: True if and only if the custom logic component was added successfully.
+        """
+        return True
     
     
     def removeLogicComponent(self, component:LogicComponent):

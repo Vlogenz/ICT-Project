@@ -58,6 +58,17 @@ class CreateCustomComponentDialog(QDialog):
         layout.addWidget(spriteButton)
         layout.addWidget(self.spriteLabel)
 
+        # Help section
+        self.helpLabel = QLabel(
+            "The order of the inputs and outputs is based on the order you dragged them onto the grid.\n"
+            "If you do not remember, drag them on the grid again in the order you would prefer."
+        )
+        self.helpLabel.hide()
+        self.toggleHelpButton = QPushButton("Help")
+        self.toggleHelpButton.clicked.connect(self.toggleHelp)
+        layout.addWidget(self.toggleHelpButton)
+        layout.addWidget(self.helpLabel)
+
         # Buttons
         buttonBox = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
         buttonBox.accepted.connect(self.submitForm)
@@ -75,6 +86,14 @@ class CreateCustomComponentDialog(QDialog):
             pixmap = QPixmap(file_path)
             self.spriteLabel.setPixmap(pixmap.scaled(256, 256, Qt.KeepAspectRatio))
             self.spriteLabel.setText("")
+
+    def toggleHelp(self):
+        if self.helpLabel.isVisible():
+            self.helpLabel.hide()
+            self.toggleHelpButton.setText("Help")
+        else:
+            self.helpLabel.show()
+            self.toggleHelpButton.setText("Hide help")
 
     def submitForm(self):
         newComponent = {

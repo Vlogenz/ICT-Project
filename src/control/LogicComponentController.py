@@ -6,6 +6,7 @@ from src.model.Input import Input
 from src.constants import MAX_EVAL_CYCLES
 from src.infrastructure.eventBus import getBus
 from src.model.Register import Register
+from src.model.RegisterBlock import RegisterBlock
 from PySide6.QtCore import QTimer, QEventLoop
 
 class LogicComponentController:    
@@ -20,6 +21,7 @@ class LogicComponentController:
         self.bus = getBus()
         # Registrierung: ab jetzt wird der Handler automatisch aufgerufen
         self.bus.subscribe("model:input_changed", self.onModelInputUpdate)
+        self.bus.subscribe("newCycle", self.updateRegisters)
     
     
     def updateComponents(self, **tickList):
@@ -256,6 +258,10 @@ class LogicComponentController:
                 comp.updateState()
                 # collect all components which are connected to the output of the register
                 componentsToUpdate.extend([out[0] for out in comp.getOutputs()])
+            if type(comp) == RegisterBlock:
+                comp.updateRegisterValues()
+                
+                
         componentsToUpdate = list(set(componentsToUpdate))
         self.eventDrivenEval(startingComponents=componentsToUpdate)
         

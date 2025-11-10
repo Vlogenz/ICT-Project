@@ -43,7 +43,9 @@ class Algorithms:
             for tick in updateInTick:
                 for comp in updateInTick[tick]:
                     comp.eval()
-                updateFunction(components=updateInTick[tick])
+                    print(f"new state of {comp}: {comp.getState()}")
+                if updateFunction is not None:
+                    updateFunction(components=updateInTick[tick])
                 if waitFunction is not None:
                     waitFunction()
             return True
@@ -69,8 +71,8 @@ class Algorithms:
                     gOut = [tuple[0] for tuple in g.getOutputs()]
                     for out in gOut:
                         nextTick.append(out)
-
-            updateFunction(components=currentTick)
+            if updateFunction is not None:
+                updateFunction(components=currentTick)
             if waitFunction is not None:
                 waitFunction()
             currentTick = nextTick

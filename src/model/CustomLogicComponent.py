@@ -1,6 +1,7 @@
 from src.Algorithms import Algorithms
 from src.model import LogicComponent
 from src.model.CustomLogicComponentData import CustomLogicComponentData
+from src.model.Input import Input
 from src.constants import COMPONENT_MAP
 
 class CustomLogicComponent(LogicComponent):
@@ -27,9 +28,18 @@ class CustomLogicComponent(LogicComponent):
         Returns:
           Bool: True if evaluation was successful, false if not.
         """
-        if Algorithms.khanFrontierEval(self.inputs, self.childComponents):
+        # Filter child components to get only Input components
+        inputComponents = [comp for comp in self.childComponents if isinstance(comp, Input)]
+        for i, externalInput in enumerate(self.inputs.values()):
+            inputComponents[i].setState(externalInput[0].getState()["outValue"])
+        #print(f"external inputs: {self.inputs}")
+
+        if Algorithms.khanFrontierEval(inputComponents, self.childComponents, updateFunction=self.printUpdate):
             return True
-        elif Algorithms.eventDrivenEval(self.inputs, self.childComponents):
+        elif Algorithms.eventDrivenEval(inputComponents, self.childComponents, updateFunction=self.printUpdate):
             return True
         else:
             return False
+
+    def printUpdate(self, components):
+        print(f"updating within custom component: {components}")

@@ -3,9 +3,10 @@ import shutil
 from json import JSONDecodeError
 from pathlib import Path
 from typing import List
+from dataclasses import asdict
 
 from src.constants import APP_NAME
-from src.model.CustomLogicComponent import CustomLogicComponent
+from src.model.CustomLogicComponentData import CustomLogicComponentData
 
 COMPONENT_DIRECTORY = Path.home() / APP_NAME / "custom_components"
 
@@ -29,7 +30,7 @@ class CustomComponentController:
             filePath.parent.mkdir(exist_ok=True, parents=True)
 
             # Process components and connections
-            components = [{"class": comp.__class__.__name__} for comp in data["components"]]
+            components = [comp.__class__.__name__ for comp in data["components"]]
             connections = []
             for i, comp in enumerate(data["components"]):
                 for input_key, connection in comp.inputs.items():
@@ -40,12 +41,18 @@ class CustomComponentController:
                             "from": {"component": j, "output": output_key},
                             "to": {"component": i, "input": input_key}
                         })
-            data["components"] = components
-            data["connections"] = connections
+
+            newComponentData = CustomLogicComponentData(
+                name = data["name"],
+                inputMap = data["inputMap"],
+                outputMap=data["outputMap"],
+                components=components,
+                connections=connections
+            )
 
             # Write to the file
             with open(filePath, "w") as f:
-                json.dump(data, f, indent=4)
+                json.dump(asdict(newComponentData), f, indent=4)
 
             # Copy the sprite image if provided
             if "spritePath" in data and data["spritePath"]:
@@ -53,25 +60,20 @@ class CustomComponentController:
                 if spritePath.exists():
                     dest = filePath.parent / f"{name}{spritePath.suffix}"
                     shutil.copy(spritePath, dest)
-                    # Optionally, update the data to point to the copied file
-                    data["spritePath"] = str(dest)
-                    # Re-save the JSON with updated path
-                    with open(filePath, "w") as f:
-                        json.dump(data, f, indent=4)
                 else:
                     print(f"Sprite file does not exist: {spritePath}")
         except Exception as e:
             # Return False if JSON saving failed
             print(f"Error saving JSON file: {e}")
             return False
-        # Return True otherwise
+        #Return True otherwise
         return True
 
     @staticmethod
-    def loadCustomComponents() -> List[CustomLogicComponent]:
+    def loadCustomComponents() -> List[CustomLogicComponentData]:
         """Loads all custom components and returns them as a list of CustomLogicComponent"""
         # Create empty list to for custom components
-        customComponentList: List[CustomLogicComponent] = []
+        customComponentList: List[CustomLogicComponentData] = []
 
         # Iterate subfolders of components directory
         for entry in COMPONENT_DIRECTORY.iterdir():
@@ -81,11 +83,12 @@ class CustomComponentController:
                     filePath = entry / f"{entry.name}.json"
                     with open(filePath, "r") as f:
                         componentJson = json.load(f)
-                        newComponent = CustomLogicComponent(
+                        newComponent = CustomLogicComponentData(
                             componentJson["name"],
-                            componentJson["inputKeys"],
-                            componentJson["outputKeys"],
-                            componentJson["components"]
+                            componentJson["inputMap"],
+                            componentJson["outputMap"],
+                            componentJson["components"],
+                            componentJson["connections"]
                         )
                         customComponentList.append(newComponent)
 

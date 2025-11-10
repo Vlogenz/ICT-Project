@@ -1,13 +1,14 @@
 from typing import override
 from pathlib import Path
 
-from src.model.CustomLogicComponent import CustomLogicComponent
+from src.model.CustomLogicComponentData import CustomLogicComponentData
 from src.view.PaletteItem import PaletteItem
 from src.constants import APP_NAME
+from dataclasses import asdict
 
 class CustomComponentPaletteItem(PaletteItem):
-    def __init__(self, componentName: str, componentData: CustomLogicComponent, **kwargs):
-        super().__init__(componentName, **kwargs)
+    def __init__(self, componentData: CustomLogicComponentData, **kwargs):
+        super().__init__(componentName=componentData.name, **kwargs)
         self.componentData = componentData
 
     @override
@@ -20,5 +21,5 @@ class CustomComponentPaletteItem(PaletteItem):
                 "action_type": "create",  # or "move"
                 "componentName": f"{self.componentName}",
                 "isCustom": True,
-                "customComponentData": self.componentData
+                "customComponentData": asdict(self.componentData)
             }

@@ -6,7 +6,7 @@ from PySide6.QtGui import QPainterPath, QPainterPathStroker
 
 from src.control.LogicComponentController import LogicComponentController
 from src.constants import GRID_COLS, GRID_ROWS, CELL_SIZE, MIME_TYPE, COMPONENT_MAP
-from src.model.CustomLogicComponent import CustomLogicComponent
+from src.model.CustomLogicComponentData import CustomLogicComponentData
 from src.model.LogicComponent import LogicComponent
 from src.infrastructure.eventBus import getBus
 from src.view.GridItems import GridItemFactory
@@ -14,7 +14,6 @@ from src.view.DraggingLine import DraggingLine
 from src.view.GridItems import GridItem
 from src.view.Connection import Connection
 import json
-import importlib
 from typing import List, Tuple
 
 class GridWidget(QtWidgets.QWidget):
@@ -120,9 +119,6 @@ class GridWidget(QtWidgets.QWidget):
     def addComponent(self, cell: Tuple[int,int], component: LogicComponent, immovable=False):
         newItem = GridItemFactory.createGridItem(component, immovable=immovable, scaleFactor=self.scale_factor)
         self.addItem(cell, newItem)
-
-    def addCustomComponent(self, cell: Tuple[int,int], componentData: CustomLogicComponent):
-
 
 
     def _visuallyAddConnection(self, srcComp: LogicComponent, srcKey: str, dstComp: LogicComponent, dstKey: str):
@@ -230,17 +226,16 @@ class GridWidget(QtWidgets.QWidget):
             if self.isOccupied(cell):
                 event.ignore()
                 return
-            try:
-                if not isCustom:
-                    cls = COMPONENT_MAP[className]
-                    component = self.logicController.addLogicComponent(cls)
-                    self.addComponent(cell, component)
-                else:
-                    componentData = payload.get("customComponentData")
-                    if self.logicController.addCustomLogicComponent(componentData):
-                        self.addCustomComponent(cell, componentData)
-            except Exception as e:
-                print("Error creating GridItem:", e)
+            #try:
+            if not isCustom:
+                cls = COMPONENT_MAP[className]
+                component = self.logicController.addLogicComponent(cls)
+            else:
+                componentData = CustomLogicComponentData(**payload.get("customComponentData"))
+                component =  self.logicController.addCustomLogicComponent(componentData)
+            self.addComponent(cell, component)
+            #except Exception as e:
+            #    print("Error creating GridItem:", e)
         elif actionType == "move":
             uid = payload.get("id")
             if not any(item.uid == uid for item in self.items):

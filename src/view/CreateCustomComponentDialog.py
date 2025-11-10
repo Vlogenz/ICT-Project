@@ -7,6 +7,7 @@ from PySide6.QtCore import Qt
 from src.control.CustomComponentController import CustomComponentController
 from src.control.LogicComponentController import LogicComponentController
 from src.model import Input, Output
+from src.model.CustomLogicComponentData import CustomLogicComponentData
 
 
 class CreateCustomComponentDialog(QDialog):
@@ -37,17 +38,16 @@ class CreateCustomComponentDialog(QDialog):
         outputKeysLayout = QGridLayout()
         layout.addLayout(outputKeysLayout)
 
-        for component in logicController.components:
-            if isinstance(component, Input):
-                inputKeysLayout.addWidget(QLabel(f"Input {len(self.inputNameLabels) + 1} (Bitwidth: {component.getState()['outValue'][1]})"), len(self.inputNameLabels), 0)
-                lineEdit = QLineEdit(f"input{len(self.inputNameLabels) + 1}")
-                inputKeysLayout.addWidget(lineEdit, len(self.inputNameLabels), 1)
-                self.inputNameLabels.append(lineEdit)
-            elif isinstance(component, Output):
-                outputKeysLayout.addWidget(QLabel(f"Output {len(self.outputNameLabels) + 1}"), len(self.outputNameLabels), 0)
-                lineEdit = QLineEdit(f"output{len(self.outputNameLabels) + 1}")
-                outputKeysLayout.addWidget(lineEdit, len(self.outputNameLabels), 1)
-                self.outputNameLabels.append(lineEdit)
+        for input in logicController.inputs:
+            inputKeysLayout.addWidget(QLabel(f"Input {len(self.inputNameLabels) + 1} (Bitwidth: {input.getState()['outValue'][1]})"), len(self.inputNameLabels), 0)
+            lineEdit = QLineEdit(f"input{len(self.inputNameLabels) + 1}")
+            inputKeysLayout.addWidget(lineEdit, len(self.inputNameLabels), 1)
+            self.inputNameLabels.append(lineEdit)
+        for output in logicController.outputs:
+            outputKeysLayout.addWidget(QLabel(f"Output {len(self.outputNameLabels) + 1}"), len(self.outputNameLabels), 0)
+            lineEdit = QLineEdit(f"output{len(self.outputNameLabels) + 1}")
+            outputKeysLayout.addWidget(lineEdit, len(self.outputNameLabels), 1)
+            self.outputNameLabels.append(lineEdit)
 
         # Sprite Selection
         spriteButton = QPushButton("Select Sprite")
@@ -96,12 +96,21 @@ class CreateCustomComponentDialog(QDialog):
             self.toggleHelpButton.setText("Hide help")
 
     def submitForm(self):
+        inputMap = {}
+        outputMap = {}
+        for i, input in enumerate(self.logicController.inputs):
+            key = self.inputNameLabels[i].text()
+            inputMap[key] = input.getState()["outValue"][1]
+        for i, output in enumerate(self.logicController.outputs):
+            key = self.outputNameLabels[i].text()
+            outputMap[key] = output.getState()["outValue"][1]
+
         newComponent = {
             "name": self.nameEdit.text(),
-            "inputKeys": [label.text() for label in self.inputNameLabels],
-            "outputKeys": [label.text() for label in self.outputNameLabels],
+            "inputMap": inputMap,
+            "outputMap": outputMap,
+            "components": self.logicController.getComponents(),
             "spritePath": self.spritePath,
-            "components": self.logicController.getComponents()
         }
         print(f"Creating component: {newComponent}")
         CustomComponentController.createCustomComponent(newComponent)

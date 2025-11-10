@@ -1,6 +1,8 @@
 import typing
 
+from src.Algorithms import Algorithms
 from src.model.CustomLogicComponent import CustomLogicComponent
+from src.model.CustomLogicComponentData import CustomLogicComponentData
 from src.model.Output import Output
 from src.model.LogicComponent import LogicComponent
 from src.model.Input import Input
@@ -29,7 +31,6 @@ class LogicComponentController:
         optional Arguments:
             components= List of components which has to be updated
         """
-        componentsToUpdate = []
         componentsToUpdate = tickList["components"]
         if len(componentsToUpdate) == 0:
             componentsToUpdate = self.components
@@ -110,11 +111,12 @@ class LogicComponentController:
                 return False
         return True
     
-    def _waitWithEventLoop(self, seconds):
+    def _waitWithEventLoop(self):
         """Wait for specified seconds while processing Qt events to keep GUI responsive"""
-        loop = QEventLoop()
-        QTimer.singleShot(int(seconds * 1000), loop.quit)
-        loop.exec()
+        if self.tickLength > 0:
+            loop = QEventLoop()
+            QTimer.singleShot(int(self.tickLength * 1000), loop.quit)
+            loop.exec()
             
                         
     def eval(self):
@@ -127,10 +129,10 @@ class LogicComponentController:
         # Using it prevented the view:components_updated event from emitting.
         # I just left it commented out so we can use it just in case.
         #getBus().setManual()
-        if self.khanFrontierEval():
+        if Algorithms.khanFrontierEval(self.inputs, self.components, self.updateComponents, self._waitWithEventLoop):
             getBus().setAuto()
             return True
-        elif self.eventDrivenEval():
+        elif Algorithms.eventDrivenEval(self.inputs, self.components, self.updateComponents, self._waitWithEventLoop):
             getBus().setAuto()
             return True
         else:
@@ -162,13 +164,15 @@ class LogicComponentController:
         
         return comp
 
-    def addCustomLogicComponent(self, component: CustomLogicComponent) -> bool:
+    def addCustomLogicComponent(self, componentData: CustomLogicComponentData):
         """Adds a custom logic component by adding all native subcomponents.
 
         Returns:
-            bool: True if and only if the custom logic component was added successfully.
+            LogicComponent: the new component
         """
-        return True
+        comp = CustomLogicComponent(componentData)
+        self.components.append(comp)
+        return comp
     
     
     def removeLogicComponent(self, component:LogicComponent):

@@ -2,7 +2,7 @@ from symtable import Class
 from PySide6 import QtWidgets, QtCore
 from typing import List, TypeVar, Type
 
-from src.model.CustomLogicComponent import CustomLogicComponent
+from src.model.CustomLogicComponentData import CustomLogicComponentData
 from src.view.CustomComponentPaletteItem import CustomComponentPaletteItem
 from src.view.PaletteItem import PaletteItem
 from src.model import LogicComponent
@@ -11,7 +11,7 @@ from src.constants import PALETTE_COLS, COMPONENT_MAP
 class LogicComponentPalette(QtWidgets.QScrollArea):
 
     T = TypeVar("T", bound=LogicComponent)
-    def __init__(self, classes: List[Type[T]] = None, customComponents: List[CustomLogicComponent] = None):
+    def __init__(self, classes: List[Type[T]] = None, customComponents: List[CustomLogicComponentData] = None):
         super().__init__()
         if classes is not None:
             classesList = classes
@@ -26,7 +26,7 @@ class LogicComponentPalette(QtWidgets.QScrollArea):
         if customComponents is not None:
             for i, comp in enumerate(customComponents):
                 index = i+len(classesList)
-                self.layout.addWidget(CustomComponentPaletteItem(comp.name), index // PALETTE_COLS, index % PALETTE_COLS)
+                self.layout.addWidget(CustomComponentPaletteItem(comp), index // PALETTE_COLS, index % PALETTE_COLS)
 
         paletteFrame = QtWidgets.QFrame()
         paletteFrame.setLayout(self.layout)

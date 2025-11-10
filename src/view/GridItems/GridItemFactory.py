@@ -1,4 +1,5 @@
 from src.model import LogicComponent, Input, HalfAdder, FullAdder, Multiplexer2Inp, Multiplexer4Inp, Multiplexer8Inp, ALUSimple, ALUAdvanced
+from .CustomComponentGridItem import CustomComponentGridItem
 from .GridItem import GridItem
 from .InputGridItem import InputGridItem
 from .HalfAdderGridItem import HalfAdderGridItem
@@ -8,6 +9,8 @@ from .Multiplexer4InpGridItem import Multiplexer4InpGridItem
 from .Multiplexer8InpGridItem import Multiplexer8InpGridItem
 from .ALUSimpleGridItem import ALUSimpleGridItem
 from .ALUAdvancedGridItem import ALUAdvancedGridItem
+from ...model.CustomLogicComponent import CustomLogicComponent
+
 
 class GridItemFactory:
     @staticmethod
@@ -28,4 +31,6 @@ class GridItemFactory:
             return ALUSimpleGridItem(component, **kwargs)
         if isinstance(component, ALUAdvanced):
             return ALUAdvancedGridItem(component, **kwargs)
+        if isinstance(component, CustomLogicComponent):
+            return CustomComponentGridItem(component, **kwargs)
         return GridItem(component, **kwargs)

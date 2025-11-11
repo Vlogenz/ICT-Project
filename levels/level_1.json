@@ -1,7 +1,7 @@
 {
     "level_id": 1,
     "name": "another dummy Level",
-    "description": "This is a dummy level for testing purposes.",
+    "description": "This is a dummy level for testing purposes. This one however has a really long description to test the sidebar expansion. Lorem ipsum dolor sit amet.",
     "difficulty": "Easy",
     "objectives": [
         "build and gate",
@@ -14,7 +14,10 @@
         
     ],
     "available_components": [
-        {"type": "And"}
+        {"type": "And"},
+        {"type": "Or"},
+        {"type": "Nand"},
+        {"type": "Nor"}
     ],
     "hints": [
         "This is a hint for the dummy level.",

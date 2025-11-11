@@ -79,3 +79,73 @@ class TestInputGridItem:
         qtbot.addWidget(item)
 
         assert item.immovable == True
+
+    def test_fixedValue_false_controls_enabled(self, qtbot):
+        input_comp = Input()
+        item = InputGridItem(input_comp, fixedValue=False)
+        qtbot.addWidget(item)
+
+        assert item.fixedValue == False
+        assert item.bitwidthButton.isEnabled() == True
+        assert item.toggleButton.isEnabled() == True
+        assert item.numberInput.isReadOnly() == False
+
+    def test_fixedValue_true_controls_disabled(self, qtbot):
+        input_comp = Input()
+        item = InputGridItem(input_comp, fixedValue=True)
+        qtbot.addWidget(item)
+
+        assert item.fixedValue == True
+        assert item.bitwidthButton.isEnabled() == False
+        assert item.toggleButton.isEnabled() == False
+        assert item.numberInput.isReadOnly() == True
+
+    def test_fixedValue_default_is_false(self, qtbot):
+        input_comp = Input()
+        item = InputGridItem(input_comp)
+        qtbot.addWidget(item)
+
+        # Default should be False (controls enabled)
+        assert item.fixedValue == False
+        assert item.bitwidthButton.isEnabled() == True
+
+    def test_fixedValue_true_prevents_toggle(self, qtbot):
+        input_comp = Input()
+        item = InputGridItem(input_comp, fixedValue=True)
+        qtbot.addWidget(item)
+
+        # Get initial state
+        initial_state = input_comp.getState()['outValue'][0]
+
+        # Try to click the disabled button
+        qtbot.mouseClick(item.toggleButton, QtCore.Qt.LeftButton)
+
+        # State should not change because button is disabled
+        final_state = input_comp.getState()['outValue'][0]
+        assert final_state == initial_state
+
+    def test_fixedValue_true_prevents_bitwidth_cycle(self, qtbot):
+        input_comp = Input()
+        item = InputGridItem(input_comp, fixedValue=True)
+        qtbot.addWidget(item)
+
+        # Get initial bitwidth
+        initial_bitwidth = input_comp.state['outValue'][1]
+
+        # Try to click the disabled button
+        qtbot.mouseClick(item.bitwidthButton, QtCore.Qt.LeftButton)
+
+        # Bitwidth should not change because button is disabled
+        final_bitwidth = input_comp.state['outValue'][1]
+        assert final_bitwidth == initial_bitwidth
+
+    def test_fixedValue_true_numberInput_readonly(self, qtbot):
+        input_comp = Input()
+        # Set bitwidth to 8 to show numberInput
+        input_comp.cycleBitwidth()
+        item = InputGridItem(input_comp, fixedValue=True)
+        qtbot.addWidget(item)
+
+        # NumberInput should be read-only
+        assert item.numberInput.isReadOnly() == True
+

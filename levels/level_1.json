@@ -8,7 +8,7 @@
         "Do something else"
     ],
     "components": [
-        {"type": "Input", "position": [0,1], "immovable": true},
+        {"type": "Input", "position": [0,1], "immovable": true, "fixedValue": true},
         {"type": "Input", "position": [0,3], "immovable": true},
         {"type": "Output", "position": [4,2], "immovable": true}
         

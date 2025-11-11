@@ -13,19 +13,18 @@ class InputGridItem(GridItem):
 
     def __init__(self, logicComponent: Input, **kwargs):
         super().__init__(logicComponent, **kwargs)
+        self.fixedValue: bool = kwargs.get("fixedValue", False)
         self.logicComponent = logicComponent
         self.outputs["outValue"].moveTo(CELL_SIZE - 24, 8)
         self.updateRects()
 
         # Create the button to rotate through bitwidths
         self.bitwidthButton = QPushButton(f"Bitwidth: {self.logicComponent.state["outValue"][1]}")
-        self.bitwidthButton.clicked.connect(self.cycleBitwidth) 
         self.layout.addWidget(self.bitwidthButton)
 
         # Add the toggle for 1 bit
         self.toggleButton = QPushButton(f"Toggle")
         self.toggleButton.setStyleSheet("color: black;")
-        self.toggleButton.clicked.connect(self.toggleState)
         self.layout.addWidget(self.toggleButton)
 
         self.toggleButton.hide()
@@ -35,11 +34,20 @@ class InputGridItem(GridItem):
         self.numberInput.insert("0")
         self.numberInput.setMaxLength(10)
         self.numberInput.setValidator(QIntValidator())
-        self.numberInput.editingFinished.connect(self.enterState)
 
         self.layout.addWidget(self.numberInput)
         self.numberInput.hide()
-        
+
+        if not self.fixedValue:
+            self.bitwidthButton.clicked.connect(self.cycleBitwidth)
+            self.toggleButton.clicked.connect(self.toggleState)
+            self.numberInput.editingFinished.connect(self.enterState)
+        else:
+            self.bitwidthButton.setDisabled(True)
+            self.toggleButton.setDisabled(True)
+            self.toggleButton.setStyleSheet("color:gray;")
+            self.numberInput.setReadOnly(True)
+
         self.refresh()
     
     def refresh(self):

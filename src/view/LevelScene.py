@@ -1,3 +1,4 @@
+from src.constants import PALETTE_COLS, CELL_SIZE
 from src.control.LevelController import LevelController
 from src.control.LevelFileController import LevelFileController
 from src.control.LogicComponentController import LogicComponentController
@@ -66,6 +67,8 @@ class LevelScene(QtWidgets.QWidget):
 
         # Add a label for level description
         levelInfoLabel = QtWidgets.QLabel()
+        levelInfoLabel.setFixedWidth(PALETTE_COLS * CELL_SIZE + 20)
+        levelInfoLabel.setWordWrap(True)
         try:
             levelName = self.levelData["name"]
             levelDescription = self.levelData["description"]

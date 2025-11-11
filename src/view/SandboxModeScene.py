@@ -51,7 +51,7 @@ class SandboxModeScene(QtWidgets.QWidget):
 
         # Simulation controls
         simControls = SimulationControls(self.logicController)
-        simControls.addButton(QtWidgets.QPushButton("Save as logic component"), self.openCreateCustomComponentDialog)
+        simControls.addButton("Save as logic component", self.openCreateCustomComponentDialog)
 
         # Add the items to the main grid layout
         layout.addLayout(sidebarFrame, 1, 0, 2, 1)

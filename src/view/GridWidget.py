@@ -114,8 +114,8 @@ class GridWidget(QtWidgets.QWidget):
             item.move(gx * CELL_SIZE * self.scale_factor + 4, gy * CELL_SIZE * self.scale_factor + 4)
             item.show()
 
-    def addComponent(self, cell: Tuple[int,int], component: LogicComponent, immovable=False):
-        newItem = GridItemFactory.createGridItem(component, immovable=immovable, scaleFactor=self.scale_factor)
+    def addComponent(self, cell: Tuple[int,int], component: LogicComponent, immovable=False, fixedValue=False):
+        newItem = GridItemFactory.createGridItem(component, immovable=immovable, fixedValue=fixedValue, scaleFactor=self.scale_factor)
         self.addItem(cell, newItem)
 
     def _visuallyAddConnection(self, srcComp: LogicComponent, srcKey: str, dstComp: LogicComponent, dstKey: str):
@@ -164,7 +164,7 @@ class GridWidget(QtWidgets.QWidget):
         """
         self.visuallyRemoveAllItems()
         for element in componentInfo:
-            self.addComponent(element["pos"], element["comp"], immovable=element["immovable"])
+            self.addComponent(element["pos"], element["comp"], immovable=element["immovable"], fixedValue=element.get("fixedValue", False))
         for item in self.items:
             for dstComp, dstKey in item.logicComponent.outputs:
                 srcKey = dstComp.inputs[dstKey][1]

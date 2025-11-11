@@ -226,16 +226,16 @@ class GridWidget(QtWidgets.QWidget):
             if self.isOccupied(cell):
                 event.ignore()
                 return
-            #try:
-            if not isCustom:
-                cls = COMPONENT_MAP[className]
-                component = self.logicController.addLogicComponent(cls)
-            else:
-                componentData = CustomLogicComponentData(**payload.get("customComponentData"))
-                component =  self.logicController.addCustomLogicComponent(componentData)
-            self.addComponent(cell, component)
-            #except Exception as e:
-            #    print("Error creating GridItem:", e)
+            try:
+                if not isCustom:
+                    cls = COMPONENT_MAP[className]
+                    component = self.logicController.addLogicComponent(cls)
+                else:
+                    componentData = CustomLogicComponentData(**payload.get("customComponentData"))
+                    component =  self.logicController.addCustomLogicComponent(componentData)
+                self.addComponent(cell, component)
+            except Exception as e:
+                print("Error creating GridItem:", e)
         elif actionType == "move":
             uid = payload.get("id")
             if not any(item.uid == uid for item in self.items):

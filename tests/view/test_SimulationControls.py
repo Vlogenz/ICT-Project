@@ -96,25 +96,37 @@ class TestSimulationControls:
         assert controls.frameShape() == QtWidgets.QFrame.StyledPanel
         assert controls.maximumHeight() == 50  # fixed height
 
-    def test_add_button_at_index(self, qtbot, logic_controller):
+    def test_add_button(self, qtbot, logic_controller):
         controls = SimulationControls(logic_controller)
         qtbot.addWidget(controls)
 
         initial_count = controls.layout.count()
         mock_function = Mock()
-        controls.addButton("Test Button", mock_function, 0)
+        # Test adding button at index
+        controls.addButton("Index test Button", mock_function, 0)
+        # Test adding button at end
+        controls.addButton("End test Button", mock_function)
 
         # Check that a new widget was added
-        assert controls.layout.count() == initial_count + 1
+        assert controls.layout.count() == initial_count + 2
 
         # Check that the first widget is the new button
         first_widget = controls.layout.itemAt(0).widget()
         assert isinstance(first_widget, QtWidgets.QPushButton)
-        assert first_widget.text() == "Test Button"
+        assert first_widget.text() == "Index test Button"
 
-        # Check that clicking the button calls the function
+        # Check that the last widget is the other new Button
+        last_widget = controls.layout.itemAt(controls.layout.count() - 1).widget()
+        assert isinstance(last_widget, QtWidgets.QPushButton)
+        assert last_widget.text() == "End test Button"
+
+        # Check that clicking the index button calls the function
         qtbot.mouseClick(first_widget, QtCore.Qt.LeftButton)
-        mock_function.assert_called_once()
+        assert mock_function.call_count == 1
+
+        # Check that clicking the end button calls the function
+        qtbot.mouseClick(last_widget, QtCore.Qt.LeftButton)
+        assert mock_function.call_count == 2
 
         # Check that original widgets are still present
         widgets = [controls.layout.itemAt(i).widget() for i in range(controls.layout.count())]

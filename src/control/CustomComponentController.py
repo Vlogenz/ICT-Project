@@ -18,6 +18,11 @@ class CustomComponentController:
         # Validate data
         try:
             name = data["name"]
+            inputMap = data["inputMap"]
+            outputMap = data["outputMap"]
+            if not (isinstance(name, str) and isinstance(inputMap, dict) and isinstance(outputMap, dict)):
+                print("Invalid custom component data")
+                return False
         except KeyError as e:
             # Return False if data is invalid
             print(f"Error reading custom component data: {e}")
@@ -43,9 +48,9 @@ class CustomComponentController:
                         })
 
             newComponentData = CustomLogicComponentData(
-                name = data["name"],
-                inputMap = data["inputMap"],
-                outputMap=data["outputMap"],
+                name = name,
+                inputMap = inputMap,
+                outputMap= outputMap,
                 components=components,
                 connections=connections
             )
@@ -63,8 +68,8 @@ class CustomComponentController:
                 else:
                     print(f"Sprite file does not exist: {spritePath}")
         except Exception as e:
-            # Return False if JSON saving failed
-            print(f"Error saving JSON file: {e}")
+            # Return False if saving failed
+            print(f"Error saving custom component data: {e}")
             return False
         #Return True otherwise
         return True

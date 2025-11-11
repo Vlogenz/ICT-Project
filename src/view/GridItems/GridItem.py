@@ -13,12 +13,12 @@ from src.infrastructure.eventBus import getBus
 class GridItem(QtWidgets.QFrame):
     """An Element in the grid with inputs and outputs"""
 
-    def __init__(self, logicComponent: LogicComponent, uid=None, parent=None, immovable=False, scaleFactor = 1.0):
+    def __init__(self, logicComponent: LogicComponent, uid=None, parent=None, **kwargs):
         super().__init__(parent)
         self.uid = uid or str(uuid.uuid4())
         self.logicComponent = logicComponent
-        self.immovable = immovable
-        self.scale_factor = scaleFactor
+        self.immovable = kwargs.get("immovable", False)
+        self.scale_factor = kwargs.get("scaleFactor", 1.0)
 
         base_width = CELL_SIZE - 8
         self.setFixedSize(int(base_width * self.scale_factor), int(base_width * self.scale_factor))

@@ -49,7 +49,8 @@ class LevelController:
             componentInfo.append({
                 "comp": comp,
                 "pos": pos,
-                "immovable": componentData["immovable"]
+                "immovable": componentData["immovable"],
+                "fixedValue": componentData.get("fixedValue", False)
             })
 
         # Set up connections if any

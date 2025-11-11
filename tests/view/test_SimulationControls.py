@@ -96,13 +96,13 @@ class TestSimulationControls:
         assert controls.frameShape() == QtWidgets.QFrame.StyledPanel
         assert controls.maximumHeight() == 50  # fixed height
 
-    def test_add_button(self, qtbot, logic_controller):
+    def test_add_button_at_index(self, qtbot, logic_controller):
         controls = SimulationControls(logic_controller)
         qtbot.addWidget(controls)
 
         initial_count = controls.layout.count()
         mock_function = Mock()
-        controls.addButton("Test Button", mock_function)
+        controls.addButton("Test Button", mock_function, 0)
 
         # Check that a new widget was added
         assert controls.layout.count() == initial_count + 1

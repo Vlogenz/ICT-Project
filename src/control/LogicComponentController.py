@@ -37,81 +37,6 @@ class LogicComponentController:
         if len(componentsToUpdate) == 0:
             componentsToUpdate = self.components
         self.bus.emit("view:components_updated", componentsToUpdate)
-
-    # def khanFrontierEval(self):
-    #     """evaluates all the components in topological order
-    #        if there are no circular dependencies
-    #
-    #     Returns:
-    #         bool: if evaluation was successful or not
-    #     """
-    #     tick = 0
-    #     indeg = {} # indegree of each component
-    #     for comp in self.components:
-    #         if type(comp) != Input:
-    #             # create a list of all components which are inputs to this component
-    #             compo = [tuple[0] for tuple in comp.inputs.values() if tuple is not None and type(tuple[0])!= Register]
-    #             indeg[comp] = len(set(compo)) # count only unique components
-    #
-    #     currentTick = self.inputs.copy() # start with inputs
-    #     while len(currentTick) > 0: # while there are still components to process
-    #         self.updateInTick[tick] = currentTick.copy() # store current components in tick dictionary
-    #         nextTick = [] # list of components for next tick
-    #         for u in currentTick:
-    #             vs = [tuple[0] for tuple in u.getOutputs()] # get all components which are outputs of current component
-    #             for v in vs:
-    #                 indeg[v] -= 1 # decrease indegree of output component
-    #                 if indeg[v] == 0: # if indegree is 0, add to next tick
-    #                     nextTick.append(v)
-    #         # move to next tick
-    #         currentTick = nextTick
-    #         tick +=1 # increase tick count
-    #
-    #     # if there are still components with indegree > 0, there is a circular dependency
-    #     if sum(indeg.values()) > 0:
-    #         return False
-    #     else:
-    #         # evaluate components tick by tick
-    #         for tick in self.updateInTick:
-    #             for comp in self.updateInTick[tick]:
-    #                 comp.eval()
-    #             self.updateComponents(components =self.updateInTick[tick])
-    #             if self.tickLength > 0:
-    #                 self._waitWithEventLoop(self.tickLength)
-    #         return True
-    #
-    #
-    # def eventDrivenEval(self, **kw: typing.List["LogicComponent"]):
-    #     """evaluates components eventdriven (starting from one (or multiple) Components in waves)
-    #
-    #     Args:
-    #         startingComponents (typing.List[&quot;LogicComponent&quot;]): Optional List of components from which to start
-    #         if not deliverd function will use the inputs as this list and evaluates everything
-    #
-    #     Returns:
-    #         bool: wether evaluation was successful or not
-    #     """
-    #     tick = 0
-    #     currentTick = kw.get("startingComponents",self.inputs.copy()) # start with inputs or given components
-    #     while len(currentTick)>0: # while there are still components to process
-    #         nextTick = [] # list of components for next tick
-    #         for g in currentTick:
-    #             if g.eval(): # evaluate component
-    #                 # if evaluation changed the output, add all connected components to next tick
-    #                 gOut = [tuple[0] for tuple in g.getOutputs()]
-    #                 for out in gOut:
-    #                     nextTick.append(out)
-    #
-    #
-    #         self.updateComponents(components=currentTick)
-    #         if self.tickLength > 0:
-    #             self._waitWithEventLoop(self.tickLength)
-    #         currentTick = nextTick
-    #         tick +=1
-    #         # if too many ticks, there is probably a circular dependency which don't has a stable state
-    #         if tick > MAX_EVAL_CYCLES*len(self.components):
-    #             return False
-    #     return True
     
     def _waitWithEventLoop(self):
         """Wait for specified seconds while processing Qt events to keep GUI responsive"""
@@ -276,8 +201,8 @@ class LogicComponentController:
                 
                 
         componentsToUpdate = list(set(componentsToUpdate))
-        self.eventDrivenEval(startingComponents=componentsToUpdate)
-        
+        Algorithms.eventDrivenEval(self.inputs, self.components, self.updateComponents, self._waitWithEventLoop, startingComponents=componentsToUpdate)
+
     def clearComponents(self):
         """Removes all components from the controller
         """

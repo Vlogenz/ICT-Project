@@ -19,7 +19,8 @@ class TestGridWidget:
         mime_data = QtCore.QMimeData()
         payload = {
             "action_type": "create",
-            "class_name": "And"
+            "componentName": "And",
+            "isCustom": False
         }
         mime_data.setData(MIME_TYPE, json.dumps(payload).encode('utf-8'))
 

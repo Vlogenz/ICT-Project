@@ -1,10 +1,10 @@
-from symtable import Class
 from PySide6 import QtWidgets, QtCore
 from typing import List, TypeVar, Type
 
 from src.model.CustomLogicComponentData import CustomLogicComponentData
 from src.view.CustomComponentPaletteItem import CustomComponentPaletteItem
 from src.view.PaletteItem import PaletteItem
+from src.view.util.CollapsibleSection import CollapsibleSection
 from src.model import LogicComponent
 from src.constants import PALETTE_COLS, COMPONENT_MAP
 
@@ -18,18 +18,28 @@ class LogicComponentPalette(QtWidgets.QScrollArea):
         else:
             classesList = COMPONENT_MAP.values()
 
-        self.layout = QtWidgets.QGridLayout()
-        for i, class_ in enumerate(classesList):
-            # Use index for a x-column grid
-            self.layout.addWidget(PaletteItem(class_.__name__), i // PALETTE_COLS, i % PALETTE_COLS)
+        mainLayout = QtWidgets.QVBoxLayout()
+        mainLayout.setSpacing(5)
 
-        if customComponents is not None:
+        # Create section for regular components
+        if classesList:
+            regularSection = CollapsibleSection("Logic Components")
+            for i, class_ in enumerate(classesList):
+                regularSection.addWidget(PaletteItem(class_.__name__), i // PALETTE_COLS, i % PALETTE_COLS)
+            mainLayout.addWidget(regularSection)
+
+        # Create section for custom components
+        if customComponents is not None and len(customComponents) > 0:
+            customSection = CollapsibleSection("Custom Components")
             for i, comp in enumerate(customComponents):
-                index = i+len(classesList)
-                self.layout.addWidget(CustomComponentPaletteItem(comp), index // PALETTE_COLS, index % PALETTE_COLS)
+                customSection.addWidget(CustomComponentPaletteItem(comp), i // PALETTE_COLS, i % PALETTE_COLS)
+            mainLayout.addWidget(customSection)
+
+        # Add stretch to push sections to the top
+        mainLayout.addStretch()
 
         paletteFrame = QtWidgets.QFrame()
-        paletteFrame.setLayout(self.layout)
+        paletteFrame.setLayout(mainLayout)
         self.setWidget(paletteFrame)
         self.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
         self.setSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Expanding)

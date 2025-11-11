@@ -37,16 +37,17 @@ class CustomLogicComponent(LogicComponent):
             if externalInput is not None:
                 inputComponents[i].setState(externalInput[0].getState()["outValue"])
 
+        # Internal evaluation
         returnValue = False
         if Algorithms.khanFrontierEval(inputComponents, self.childComponents):
             returnValue = True
         elif Algorithms.eventDrivenEval(inputComponents, self.childComponents):
             returnValue = True
-        self.mapToState()
-        return returnValue
 
-    def mapToState(self):
+        # Map internal output values to state
         outputComponents = [comp for comp in self.childComponents if isinstance(comp, Output)]
         for i, key in enumerate(self.state.keys()):
             self.state[key] = outputComponents[i].getState()["outValue"]
+
+        return returnValue
 

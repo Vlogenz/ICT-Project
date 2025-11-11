@@ -3,6 +3,9 @@ from src.model import LogicComponent, Input, Register
 from src.constants import MAX_EVAL_CYCLES
 
 class Algorithms:
+    """
+    A class that encapsulates the evaluation algorithms for logic circuits.
+    """
 
     @staticmethod
     def khanFrontierEval(inputs, components, updateFunction = None, waitFunction = None):

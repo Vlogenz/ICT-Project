@@ -11,7 +11,17 @@ from src.model.CustomLogicComponentData import CustomLogicComponentData
 
 
 class CreateCustomComponentDialog(QDialog):
+    """A popup dialog for creating a custom logic component."""
+
     def __init__(self, logicController: LogicComponentController):
+        """
+        Initializes the dialog with the following elements:
+        - A QLabel and a QLineEdit for each Input and Output component on the grid.
+        - A sprite selection button together with a pixmap that shows the currently selected sprite, if any
+        - A help button that toggles a small help text on how to use the dialog.
+        - Buttons to save or cancel the process.
+        """
+
         super().__init__()
         self.setWindowTitle("Create Custom Component")
         layout = QVBoxLayout()
@@ -80,6 +90,8 @@ class CreateCustomComponentDialog(QDialog):
         print("Initialized create custom component dialog")
 
     def selectSprite(self):
+        """Opens a file selection window to select an image file as sprite."""
+
         file_path, _ = QFileDialog.getOpenFileName(self, "Select Sprite Image", "", "Image Files (*.png *.jpg *.jpeg *.svg)")
         if file_path:
             self.spritePath = file_path
@@ -88,6 +100,8 @@ class CreateCustomComponentDialog(QDialog):
             self.spriteLabel.setText("")
 
     def toggleHelp(self):
+        """Toggles whether the help text is visible or not."""
+
         if self.helpLabel.isVisible():
             self.helpLabel.hide()
             self.toggleHelpButton.setText("Help")
@@ -96,6 +110,8 @@ class CreateCustomComponentDialog(QDialog):
             self.toggleHelpButton.setText("Hide help")
 
     def submitForm(self):
+        """Collects the data from the form's input fields and sends it to the custom component controller."""
+
         inputMap = {}
         outputMap = {}
         for i, input in enumerate(self.logicController.inputs):

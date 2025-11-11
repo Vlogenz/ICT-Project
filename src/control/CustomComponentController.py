@@ -11,10 +11,20 @@ from src.model.CustomLogicComponentData import CustomLogicComponentData
 COMPONENT_DIRECTORY = Path.home() / APP_NAME / "custom_components"
 
 class CustomComponentController:
+    """A controller to handle the custom components and store them in JSON files.
+    The files will be stored in the App's home directory (user home -> APP_NAME).
+    For each custom component, there will be a folder with the JSON file and a sprite.
+    """
 
     @staticmethod
     def createCustomComponent(data: dict) -> bool:
-        """Accepts the data as a dict and returns whether the saving process was successful or not."""
+        """Accepts the data as a dict and returns whether the saving process was successful or not.
+        Args:
+            data (dict): The data of the custom component to create.
+
+        Returns:
+            bool: True if and only if the saving process was successful, i.e. the data vas valid and no other errors occurred.
+        """
         # Validate data
         try:
             name = data["name"]
@@ -76,7 +86,11 @@ class CustomComponentController:
 
     @staticmethod
     def loadCustomComponents() -> List[CustomLogicComponentData]:
-        """Loads all custom components and returns them as a list of CustomLogicComponent"""
+        """Loads all custom components and returns them as a list of CustomLogicComponent
+
+        Returns:
+            List[CustomLogicComponentData]: The list of all currently available custom logic components.
+        """
         # Create empty list to for custom components
         customComponentList: List[CustomLogicComponentData] = []
 

@@ -2,6 +2,7 @@ from src.Algorithms import Algorithms
 from src.model import LogicComponent
 from src.model.CustomLogicComponentData import CustomLogicComponentData
 from src.model.Input import Input
+from src.model.Output import Output
 from src.constants import COMPONENT_MAP
 
 class CustomLogicComponent(LogicComponent):
@@ -30,16 +31,22 @@ class CustomLogicComponent(LogicComponent):
         """
         # Filter child components to get only Input components
         inputComponents = [comp for comp in self.childComponents if isinstance(comp, Input)]
+
+        # Map external input values to internal inputs
         for i, externalInput in enumerate(self.inputs.values()):
-            inputComponents[i].setState(externalInput[0].getState()["outValue"])
-        #print(f"external inputs: {self.inputs}")
+            if externalInput is not None:
+                inputComponents[i].setState(externalInput[0].getState()["outValue"])
 
-        if Algorithms.khanFrontierEval(inputComponents, self.childComponents, updateFunction=self.printUpdate):
-            return True
-        elif Algorithms.eventDrivenEval(inputComponents, self.childComponents, updateFunction=self.printUpdate):
-            return True
-        else:
-            return False
+        returnValue = False
+        if Algorithms.khanFrontierEval(inputComponents, self.childComponents):
+            returnValue = True
+        elif Algorithms.eventDrivenEval(inputComponents, self.childComponents):
+            returnValue = True
+        self.mapToState()
+        return returnValue
 
-    def printUpdate(self, components):
-        print(f"updating within custom component: {components}")
+    def mapToState(self):
+        outputComponents = [comp for comp in self.childComponents if isinstance(comp, Output)]
+        for i, key in enumerate(self.state.keys()):
+            self.state[key] = outputComponents[i].getState()["outValue"]
+

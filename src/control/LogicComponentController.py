@@ -34,7 +34,6 @@ class LogicComponentController:
         componentsToUpdate = tickList["components"]
         if len(componentsToUpdate) == 0:
             componentsToUpdate = self.components
-        print(f"Updating in logic controller: {componentsToUpdate}")
         self.bus.emit("view:components_updated", componentsToUpdate)
 
     # def khanFrontierEval(self):

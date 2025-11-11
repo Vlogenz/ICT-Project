@@ -43,7 +43,6 @@ class Algorithms:
             for tick in updateInTick:
                 for comp in updateInTick[tick]:
                     comp.eval()
-                    print(f"new state of {comp}: {comp.getState()}")
                 if updateFunction is not None:
                     updateFunction(components=updateInTick[tick])
                 if waitFunction is not None:

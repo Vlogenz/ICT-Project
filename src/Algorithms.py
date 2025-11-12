@@ -1,5 +1,5 @@
 import typing
-from src.model import LogicComponent, Input, Register
+from src.model import Input, Register
 from src.constants import MAX_EVAL_CYCLES
 
 class Algorithms:

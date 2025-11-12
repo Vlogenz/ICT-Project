@@ -1,13 +1,10 @@
-from typing import override
 
-from PySide6.QtWidgets import QWidget, QDialog, QLabel, QVBoxLayout, QLineEdit, QGridLayout, QDialogButtonBox, QPushButton, QFileDialog
+from PySide6.QtWidgets import QDialog, QLabel, QVBoxLayout, QLineEdit, QGridLayout, QDialogButtonBox, QPushButton, QFileDialog
 from PySide6.QtGui import QPixmap
 from PySide6.QtCore import Qt
 
 from src.control.CustomComponentController import CustomComponentController
 from src.control.LogicComponentController import LogicComponentController
-from src.model import Input, Output
-from src.model.CustomLogicComponentData import CustomLogicComponentData
 
 
 class CreateCustomComponentDialog(QDialog):
@@ -53,7 +50,7 @@ class CreateCustomComponentDialog(QDialog):
             lineEdit = QLineEdit(f"input{len(self.inputNameLabels) + 1}")
             inputKeysLayout.addWidget(lineEdit, len(self.inputNameLabels), 1)
             self.inputNameLabels.append(lineEdit)
-        for output in logicController.outputs:
+        for _ in range(len(logicController.outputs)):
             outputKeysLayout.addWidget(QLabel(f"Output {len(self.outputNameLabels) + 1}"), len(self.outputNameLabels), 0)
             lineEdit = QLineEdit(f"output{len(self.outputNameLabels) + 1}")
             outputKeysLayout.addWidget(lineEdit, len(self.outputNameLabels), 1)

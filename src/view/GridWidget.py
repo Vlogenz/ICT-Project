@@ -1,4 +1,3 @@
-from pydoc import classname
 
 from PySide6 import QtCore, QtGui, QtWidgets
 from PySide6.QtCore import QPoint

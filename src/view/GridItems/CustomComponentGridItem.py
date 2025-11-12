@@ -17,4 +17,12 @@ class CustomComponentGridItem(GridItem):
 
     @override
     def getImagePath(self) -> str:
-        return str(Path.home() / APP_NAME / "custom_components" / self.name / f"{self.name}.jpg")
+        # Dynamically find the image file with the correct extension
+        allowed_extensions = [".png", ".jpg", ".jpeg", ".svg"]
+        base_path = Path.home() / APP_NAME / "custom_components" / self.name
+        for ext in allowed_extensions:
+            image_path = base_path / f"{self.name}{ext}"
+            if image_path.exists():
+                return str(image_path)
+        # If no image found, return a default path or None
+        return ""

@@ -71,7 +71,6 @@ class SimulationControls(QtWidgets.QFrame):
             function: The function that should be called upon clicking the button
             index (int): The index to add the button in the order. Defaults to -1, meaning it is added to the end
         """
-        #TODO: Fix button text display
         newButton = QPushButton(text)
         newButton.setStyleSheet("color: black;")
         newButton.clicked.connect(function)

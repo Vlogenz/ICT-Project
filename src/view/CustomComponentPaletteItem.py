@@ -13,7 +13,15 @@ class CustomComponentPaletteItem(PaletteItem):
 
     @override
     def getImagePath(self) -> str:
-        return str(Path.home() / APP_NAME / "custom_components" / self.componentName / f"{self.componentName}.jpg")
+        # Try all supported image extensions
+        supported_exts = [".png", ".jpg", ".jpeg", ".svg"]
+        base_path = Path.home() / APP_NAME / "custom_components" / self.componentName
+        for ext in supported_exts:
+            candidate = base_path / f"{self.componentName}{ext}"
+            if candidate.exists():
+                return str(candidate)
+        # Optionally, return None or a default image path if not found
+        return ""
 
     @override
     def getPayload(self):

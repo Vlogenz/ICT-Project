@@ -1,4 +1,6 @@
+from src.control.CustomComponentController import CustomComponentController
 from src.control.LogicComponentController import LogicComponentController
+from src.view.CreateCustomComponentDialog import CreateCustomComponentDialog
 from src.view.LogicComponentPalette import LogicComponentPalette
 from src.view.GridWidget import GridWidget
 from src.view.DeleteArea import DeleteArea
@@ -35,7 +37,7 @@ class SandboxModeScene(QtWidgets.QWidget):
         backButton.clicked.connect(self.goToMain)
 
         # Palette
-        palette = LogicComponentPalette()
+        palette = LogicComponentPalette(customComponents=CustomComponentController.loadCustomComponents())
 
         # Grid
         self.grid = GridWidget(logicController)
@@ -49,6 +51,7 @@ class SandboxModeScene(QtWidgets.QWidget):
 
         # Simulation controls
         simControls = SimulationControls(self.logicController)
+        simControls.addButton("Save as logic component", self.openCreateCustomComponentDialog)
 
         # Add the items to the main grid layout
         layout.addLayout(sidebarFrame, 1, 0, 2, 1)
@@ -65,3 +68,7 @@ class SandboxModeScene(QtWidgets.QWidget):
         self.logicController.clearComponents()
         self.grid.unsubscribe()
         self.bus.emit("goToMain")
+
+    def openCreateCustomComponentDialog(self):
+        dialog = CreateCustomComponentDialog(self.logicController)
+        dialog.exec()

@@ -1,7 +1,7 @@
 import pytest
 from src.control.LevelController import LevelController
 from src.control.LogicComponentController import LogicComponentController
-from src.model import DataMemory, InstructionMemory
+from src.model import DataMemory, InstructionMemory, Register
 from src.model.And import And
 from src.model.Or import Or
 
@@ -91,7 +91,9 @@ def sample_level_data_with_memoryBlocks():
             {"type": "Output", "position": [8, 2], "immovable": True},
             {"type": "And", "position": [6,2], "immovable": True},
         {"type": "InstructionMemory", "position": [2,5], "immovable": False},
-        {"type": "DataMemory", "position": [4,5], "immovable": False}
+        {"type": "DataMemory", "position": [4,5], "immovable": False},
+        {"type": "Register", "position": [6,5], "immovable": False, "initialValue": 34},
+        {"type": "Register", "position": [8,5], "immovable": False, "initialValue": 42}
         
     ],
     "memoryContents": {
@@ -388,3 +390,12 @@ def test_adding_DataMemory(level_controller_with_memoryBlocks, logic_controller)
     dm = data_memory
     expected_data = level_controller_with_memoryBlocks.levelData["memoryContents"]["dataMemory"]
     assert dm.dataList[:len(expected_data)] == expected_data
+    
+def test_adding_Register_initialValue(level_controller_with_memoryBlocks, logic_controller):
+    """Test that Register is added and initialized correctly"""
+    level_controller_with_memoryBlocks.buildLevel()
+    
+    registers = [comp for comp in logic_controller.getComponents() if type(comp)== Register]
+    assert len(registers) == 2  # Two Register components should be defined in the level data provided
+    assert registers[0].state == {"outValue": (34, 32)}
+    assert registers[1].state == {"outValue": (42, 32)}

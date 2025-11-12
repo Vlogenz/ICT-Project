@@ -13,8 +13,10 @@
         {"type": "Output", "position": [4,2], "immovable": true},
         {"type": "And", "position": [2,2], "immovable": false},
         {"type": "InstructionMemory", "position": [2,5], "immovable": false},
-        {"type": "DataMemory", "position": [4,5], "immovable": false}
-        
+        {"type": "DataMemory", "position": [4,5], "immovable": false},
+        {"type": "Register", "position": [6,5], "immovable": false, "initialValue": 34},
+        {"type": "Register", "position": [8,5], "immovable": false, "initialValue": 42}
+
     ],
     "memoryContents": {
         "instructionMemory": [

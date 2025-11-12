@@ -1,5 +1,5 @@
 from src.control.LogicComponentController import LogicComponentController
-from src.model import DataMemory, InstructionMemory
+from src.model import DataMemory, InstructionMemory, Register
 from src.model.LogicComponent import LogicComponent
 from src.infrastructure.eventBus import getBus
 from src.constants import COMPONENT_MAP
@@ -53,6 +53,10 @@ class LevelController:
                 "immovable": componentData["immovable"],
                 "fixedValue": componentData.get("fixedValue", False)
             })
+            
+            if type(comp) == Register:
+                comp.state = {"outValue": (componentData["initialValue"], 32)}
+                
             
             if type(comp) == InstructionMemory or type(comp) == DataMemory:
                 memoryData = self.levelData["memoryContents"]

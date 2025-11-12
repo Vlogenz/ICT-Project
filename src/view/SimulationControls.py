@@ -3,6 +3,7 @@ from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QSlider, QPushButton, QLabel
 
 from src.control.LogicComponentController import LogicComponentController
+from src.infrastructure.eventBus import getBus
 
 
 class SimulationControls(QtWidgets.QFrame):
@@ -16,6 +17,7 @@ class SimulationControls(QtWidgets.QFrame):
         self.layout.setContentsMargins(4, 2, 4, 2)
 
         self.logicController = logicController
+        self.eventBus = getBus()
 
         self.startStopButton: QPushButton = QPushButton("Start")
         self.resetButton: QPushButton = QPushButton("Reset")
@@ -58,7 +60,10 @@ class SimulationControls(QtWidgets.QFrame):
 
     def startEvaluation(self):
         if not self.logicController.eval():
-            #TODO: Also "reset" the circuit so that we don't have red lines flying around
+            # Emit components_updated with empty array so that red connection lines disappear
+            self.eventBus.emit("view:components_updated", [])
+
+            # Show error message
             QtWidgets.QMessageBox.critical(
                 self,
                 "Evaluation failed!",

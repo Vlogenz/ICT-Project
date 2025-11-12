@@ -1,18 +1,22 @@
-import  typing
+import typing
 from .LogicComponent import LogicComponent
 
-class Collector1to8(LogicComponent):
-    
+
+class Collector1to3(LogicComponent):
+    """Collector that combines two 1-bit inputs into one 2-bit output.
+
+    Outputs `outValue` as a tuple (value:int, bitwidth:int) where bit 0 is from
+    `input1` and bit 1 is from `input2` , bit 2 is from `input3` (i.e. input1 -> LSB, input3 -> MSB).
+    """
+
     def __init__(self):
         super().__init__()
-        self.inputs: typing.Dict = {"input1": None, "input2": None, "input4": None, "input8": None,
-                                   "input16": None, "input32": None, "input64": None, "input128": None}
-        self.inputBitwidths: typing.Dict = {"input1": 1, "input2": 1, "input4": 1, "input8": 1,
-                                            "input16": 1, "input32": 1, "input64": 1, "input128": 1}
-        # Collector has exactly eight inputs
-        #   (Tuples of component and output key of that component)
-        self.state: dict = {"outValue": (0,8)}
-        
+        # Two 1-bit inputs. Each entry is either None or a tuple (component, output_key)
+        self.inputs: typing.Dict = {"input1": None, "input2": None, "input4": None}
+        self.inputBitwidths: typing.Dict = {"input1": 1, "input2": 1, "input4": 1}
+        # Output stored as (value, bitwidth)
+        self.state: dict = {"outValue": (0, 3)}
+
     def eval(self):
         """Evaluate the Collector, and return if the Output has changed.
 
@@ -30,9 +34,8 @@ class Collector1to8(LogicComponent):
                 #   uses the key from that tuple to access the right output from the 
                 #   components state
             outValue |= (bit << (i))
-        self.state["outValue"] = (outValue, 8)
+        self.state["outValue"] = (outValue, 3)
         if self.state != oldState:
             return True
         else:
             return False
-    

@@ -42,7 +42,7 @@ def test_4i1b_multiplexer_allows_multiple_outputs():
 
 def test_4i1b_multiplexer_selects_correct_output():
     four_input_multiplexer = Multiplexer4Inp()
-    four_input_multiplexer.addInput(DummyInput(3, 8),"outValue","selection")
+    four_input_multiplexer.addInput(DummyInput(3, 2),"outValue","selection")
     four_input_multiplexer.addInput(DummyInput(True, 1),"outValue","input1")
     four_input_multiplexer.addInput(DummyInput(False, 1),"outValue","input2")
     four_input_multiplexer.addInput(DummyInput(False, 1),"outValue","input3")
@@ -159,3 +159,4 @@ def test_4i_multiplexer_changes_bidwidths_after_emptying():
 
     assert four_input_multiplexer.getBitwidth("input1") == 1
     assert four_input_multiplexer.getOutputBitwidth() == 1
+

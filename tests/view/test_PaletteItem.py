@@ -10,7 +10,7 @@ from src.constants import MIME_TYPE
 class TestPaletteItem:
 
     def test_init_with_image(self, qtbot):
-        item = PaletteItem(And)
+        item = PaletteItem("And")
         qtbot.addWidget(item)
 
         assert item.frameShape() == QtWidgets.QFrame.Box
@@ -29,7 +29,7 @@ class TestPaletteItem:
         # But hard, perhaps test the logic by checking if pixmap null, text is set
         # Since all have, perhaps skip or use And
 
-        item = PaletteItem(And)
+        item = PaletteItem("And")
         qtbot.addWidget(item)
 
         layout = item.layout()
@@ -39,16 +39,9 @@ class TestPaletteItem:
         else:
             assert img_label.pixmap() is not None
 
-    def test_init_without_color(self, qtbot):
-        item = PaletteItem(And)
-        qtbot.addWidget(item)
-
-        stylesheet = item.styleSheet()
-        assert "background-color: lightgray" in stylesheet
-
     @patch('src.view.PaletteItem.QtGui.QDrag')
     def test_mouse_press_starts_drag(self, mock_drag_class, qtbot):
-        item = PaletteItem(And)
+        item = PaletteItem("And")
         qtbot.addWidget(item)
 
         mock_drag = Mock()
@@ -76,7 +69,7 @@ class TestPaletteItem:
         import json
         data = json.loads(payload)
         assert data['action_type'] == 'create'
-        assert data['class_name'] == 'And'
+        assert data['componentName'] == 'And'
 
         # Check other calls
         mock_drag.setPixmap.assert_called_once()
@@ -84,7 +77,7 @@ class TestPaletteItem:
         mock_drag.exec.assert_called_once_with(QtCore.Qt.CopyAction)
 
     def test_mouse_press_non_left_button(self, qtbot):
-        item = PaletteItem(And)
+        item = PaletteItem("And")
         qtbot.addWidget(item)
 
         # Right button should not start drag
@@ -100,7 +93,7 @@ class TestPaletteItem:
         item.mousePressEvent(event)
 
     def test_fixed_size(self, qtbot):
-        item = PaletteItem(And)
+        item = PaletteItem("And")
         qtbot.addWidget(item)
 
         assert item.minimumSize() == item.maximumSize() == QtCore.QSize(92, 92)

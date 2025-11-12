@@ -8,7 +8,7 @@ from src.constants import MIME_TYPE, CELL_SIZE
 class PaletteItem(QtWidgets.QFrame):
     """Drag-Source in the palette on the side."""
 
-    def __init__(self, logicComponentClass: Class, parent=None):
+    def __init__(self, componentName: str, parent=None):
         super().__init__(parent)
         self.setFrameShape(QtWidgets.QFrame.Box)
         self.setFixedSize(CELL_SIZE - 8, CELL_SIZE - 8)
@@ -16,25 +16,35 @@ class PaletteItem(QtWidgets.QFrame):
         layout = QtWidgets.QHBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
 
-        self.image_path = f"assets/gates/{logicComponentClass.__name__}.svg"
+        self.componentName = componentName
 
-        img_label = QtWidgets.QLabel()
-        img_label.setScaledContents(True)
-        pixmap = QtGui.QPixmap(self.image_path)
+        # Initialize image label
+        self.imgLabel = QtWidgets.QLabel()
+        self.imgLabel.setScaledContents(True)
+        layout.addWidget(self.imgLabel)
+        imagePath = self.getImagePath()
+        pixmap = QtGui.QPixmap(imagePath)
         if not pixmap.isNull():
-            img_label.setPixmap(pixmap)
+            self.imgLabel.setPixmap(pixmap)
         else:
-            img_label.setText(logicComponentClass.__name__)
-            img_label.setStyleSheet("color: black;")
+            self.imgLabel.setText(self.componentName)
+            self.imgLabel.setStyleSheet("color: black;")
 
-        img_label.setAlignment(QtCore.Qt.AlignCenter)
-        layout.addWidget(img_label)
-
-        self.logicComponentClass = logicComponentClass
+        self.imgLabel.setAlignment(QtCore.Qt.AlignCenter)
 
         # Apply stylesheet
         self.setStyleSheet(
             f"border: 1px solid lightgray; background-color: lightgray;")
+
+    def getImagePath(self) -> str:
+        return f"assets/gates/{self.componentName}.svg"
+
+    def getPayload(self):
+        return {
+                "action_type": "create",  # or "move"
+                "componentName": f"{self.componentName}",
+                "isCustom": False
+            }
 
     def mousePressEvent(self, event: QtGui.QMouseEvent):
         """This gets called when the user starts dragging the item."""
@@ -42,10 +52,7 @@ class PaletteItem(QtWidgets.QFrame):
         if event.button() == QtCore.Qt.LeftButton:
             drag = QtGui.QDrag(self)
             mime_data = QtCore.QMimeData()
-            payload = {
-                "action_type": "create",  # or "move"
-                "class_name": f"{self.logicComponentClass.__name__}",
-            }
+            payload = self.getPayload()
             mime_data.setData(MIME_TYPE, QtCore.QByteArray(json.dumps(payload).encode("utf-8")))
             drag.setMimeData(mime_data)
 

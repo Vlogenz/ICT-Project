@@ -8,6 +8,7 @@ GRID_ROWS = 40
 PALETTE_COLS = 3
 MIME_TYPE = "application/x-qt-grid-item"
 MAX_EVAL_CYCLES: int = 5
+APP_NAME = "CircuitQuest"
 
 class Scene(Enum):
     MAIN = 0

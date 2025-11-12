@@ -26,11 +26,11 @@ class GridItem(QtWidgets.QFrame):
         self.layout = QtWidgets.QVBoxLayout(self)
         self.layout.setContentsMargins(0,0,0,0)
         
-        self.image_path = f"assets/gates/{self.logicComponent.__class__.__name__}.svg"
+        self.image_path = self.getImagePath()
 
         self.pixmap = QtGui.QPixmap(self.image_path)
         if self.pixmap.isNull():
-            nameLabel = QtWidgets.QLabel(self.logicComponent.__class__.__name__)
+            nameLabel = QtWidgets.QLabel(self.getName())
             nameLabel.setAlignment(QtCore.Qt.AlignCenter)
             nameLabel.setStyleSheet("color: black;")
             self.layout.addWidget(nameLabel)
@@ -81,6 +81,12 @@ class GridItem(QtWidgets.QFrame):
 
         # Enable mouse tracking for tooltips
         self.setMouseTracking(True)
+
+    def getImagePath(self) -> str:
+        return f"assets/gates/{self.logicComponent.__class__.__name__}.svg"
+
+    def getName(self) -> str:
+        return self.logicComponent.__class__.__name__
 
     def paintEvent(self, event):
         """Draw the item and the ports. Overrides QWidget.paintEvent, which gets called automatically when update() is called."""

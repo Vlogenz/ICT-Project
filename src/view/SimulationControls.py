@@ -58,6 +58,7 @@ class SimulationControls(QtWidgets.QFrame):
 
     def startEvaluation(self):
         if not self.logicController.eval():
+            #TODO: Also "reset" the circuit so that we don't have red lines flying around
             QtWidgets.QMessageBox.critical(
                 self,
                 "Evaluation failed!",

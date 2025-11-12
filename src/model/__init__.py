@@ -24,5 +24,9 @@ from .Splitter32to8 import Splitter32to8
 from .Splitter8to1 import Splitter8to1
 from .Xnor import Xnor
 from .Xor import Xor
+from .DataMemory import DataMemory
+from .InstructionMemory import InstructionMemory
+from .ProgramCounter import ProgramCounter
+from .RegisterBlock import RegisterBlock
 
 """Nothing is in here, but pytest needs this file to recognize the folder as a package."""

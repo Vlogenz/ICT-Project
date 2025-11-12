@@ -1,5 +1,5 @@
 import typing
-from src.model import Input, Register
+from src.model import Input, InstructionMemory, ProgramCounter, Register
 from src.constants import MAX_EVAL_CYCLES
 
 class Algorithms:
@@ -58,13 +58,39 @@ class Algorithms:
 
         Args:
             startingComponents (typing.List[&quot;LogicComponent&quot;]): Optional List of components from which to start
-            if not deliverd function will use the inputs as this list and evaluates everything
+            if not deliverd function will use the inputs as this list and evaluates everything. If there are no Inputs, it will start
+            from the ProgramCounter(s)
 
         Returns:
             bool: wether evaluation was successful or not
         """
+        
+        maxEvaluationCycles = len(components)
+        instructionMemory = None
+        for comp in components:
+            if type(comp) == InstructionMemory:
+                instructionMemory = comp
+                break
+        # if there is a instruction memory, add its length to the maxEvaluationCycles
+        # to allow enough cycles for all instructions to be processed
+        if instructionMemory is not None:
+            maxEvaluationCycles = maxEvaluationCycles + len(instructionMemory.instructionList)
+        # Determine starting components:
+        # - if startingComponents provided via kw, use it
+        # - otherwise start from inputs (copy)
+        # - if inputs are empty, fall back to any ProgramCounter components
+        startingComponents = kw.get("startingComponents", None)
+        if startingComponents is None:
+            startingComponents = inputs.copy()
+
+        # If still empty, try to start from ProgramCounter components
+        if startingComponents is None or len(startingComponents) == 0:
+            startingComponents = [comp for comp in components if type(comp) == ProgramCounter]
+
+        if startingComponents is None or len(startingComponents) == 0:
+            return False  # nothing to start from
         tick = 0
-        currentTick = kw.get("startingComponents", inputs.copy())  # start with inputs or given components
+        currentTick = startingComponents  # start with inputs or given components
         while len(currentTick) > 0:  # while there are still components to process
             nextTick = []  # list of components for next tick
             for g in currentTick:
@@ -80,6 +106,6 @@ class Algorithms:
             currentTick = nextTick
             tick += 1
             # if too many ticks, there is probably a circular dependency which don't has a stable state
-            if tick > MAX_EVAL_CYCLES * len(components):
+            if tick > MAX_EVAL_CYCLES * maxEvaluationCycles:
                 return False
         return True

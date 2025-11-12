@@ -1,4 +1,5 @@
 from src.control.LogicComponentController import LogicComponentController
+from src.model import DataMemory, InstructionMemory
 from src.model.LogicComponent import LogicComponent
 from src.infrastructure.eventBus import getBus
 from src.constants import COMPONENT_MAP
@@ -52,6 +53,15 @@ class LevelController:
                 "immovable": componentData["immovable"],
                 "fixedValue": componentData.get("fixedValue", False)
             })
+            
+            if type(comp) == InstructionMemory or type(comp) == DataMemory:
+                memoryData = self.levelData["memoryContents"]
+                if type(comp) == InstructionMemory:
+                    instructions = memoryData["instructionMemory"]
+                    comp.loadInstructions(instructions)
+                if type(comp) == DataMemory:
+                    data = memoryData["dataMemory"]
+                    comp.loadData(data)
 
         # Set up connections if any
         if self.levelData.get("connections") is not None:

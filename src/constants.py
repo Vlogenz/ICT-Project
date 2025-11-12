@@ -42,5 +42,9 @@ COMPONENT_MAP = {
     "SignExtend": SignExtend,
     "ShiftLeft2": ShiftLeft2,
     "DecoderThreeBit": DecoderThreeBit,
-    "Register": Register
+    "Register": Register,
+    "DataMemory": DataMemory,
+    "InstructionMemory": InstructionMemory,
+    "ProgramCounter": ProgramCounter,
+    "RegisterBlock": RegisterBlock
     }

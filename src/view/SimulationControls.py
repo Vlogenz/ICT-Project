@@ -72,12 +72,17 @@ class SimulationControls(QtWidgets.QFrame):
         """Sets the functionality of the Reset button."""
         self.resetButton.clicked.connect(function)
 
-    def addButton(self, text: str, function):
+    def addButton(self, text: str, function, index=-1):
         """Adds a new button on the left of the start button and connects it to the given function.
         Args:
             text (str): The text that should be displayed by the new button
             function: The function that should be called upon clicking the button
+            index (int): The index to add the button in the order. Defaults to -1, meaning it is added to the end
         """
         newButton = QPushButton(text)
+        newButton.setStyleSheet("color: black;")
         newButton.clicked.connect(function)
-        self.layout.insertWidget(0, newButton)
+        if index == -1 or index >= self.layout.count():
+            self.layout.addWidget(newButton)
+        else:
+            self.layout.insertWidget(index, newButton)

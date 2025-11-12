@@ -59,7 +59,7 @@ class LevelScene(QtWidgets.QWidget):
         # Simulation controls
         simControls = SimulationControls(self.logicController)
         simControls.configureReset(self.levelController.resetLevel)
-        simControls.addButton("Check solution", self.checkSolution)
+        simControls.addButton("Check solution", self.checkSolution, 0)
 
         # Build the level
         levelController.setGrid(self.grid)

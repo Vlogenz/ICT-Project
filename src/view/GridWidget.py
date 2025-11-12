@@ -1,9 +1,11 @@
+
 from PySide6 import QtCore, QtGui, QtWidgets
 from PySide6.QtCore import QPoint
 from PySide6.QtGui import QPainterPath, QPainterPathStroker
 
 from src.control.LogicComponentController import LogicComponentController
-from src.constants import GRID_COLS, GRID_ROWS, CELL_SIZE, MIME_TYPE
+from src.constants import GRID_COLS, GRID_ROWS, CELL_SIZE, MIME_TYPE, COMPONENT_MAP
+from src.model.CustomLogicComponentData import CustomLogicComponentData
 from src.model.LogicComponent import LogicComponent
 from src.infrastructure.eventBus import getBus
 from src.view.GridItems import GridItemFactory
@@ -11,7 +13,6 @@ from src.view.DraggingLine import DraggingLine
 from src.view.GridItems import GridItem
 from src.view.Connection import Connection
 import json
-import importlib
 from typing import List, Tuple
 
 class GridWidget(QtWidgets.QWidget):
@@ -118,6 +119,7 @@ class GridWidget(QtWidgets.QWidget):
         newItem = GridItemFactory.createGridItem(component, immovable=immovable, fixedValue=fixedValue, scaleFactor=self.scale_factor)
         self.addItem(cell, newItem)
 
+
     def _visuallyAddConnection(self, srcComp: LogicComponent, srcKey: str, dstComp: LogicComponent, dstKey: str):
         """Adds a Connection object to the list of connections and updates the grid."""
         srcItem = [item for item in self.items if item.logicComponent == srcComp][0]
@@ -214,23 +216,26 @@ class GridWidget(QtWidgets.QWidget):
             event.ignore()
             return
 
-        action_type = payload.get("action_type")
-        class_name = payload.get("class_name")
-        package_name = "src.model"
+        actionType = payload.get("action_type")
+        className = payload.get("componentName")
+        isCustom = payload.get("isCustom")
 
-        if action_type == "create":
+        if actionType == "create":
             # Dynamically import and create a GridItem of this class
             if self.isOccupied(cell):
                 event.ignore()
                 return
             try:
-                package = importlib.import_module(package_name)
-                cls = getattr(package, class_name)
-                component = self.logicController.addLogicComponent(cls)
+                if not isCustom:
+                    cls = COMPONENT_MAP[className]
+                    component = self.logicController.addLogicComponent(cls)
+                else:
+                    componentData = CustomLogicComponentData(**payload.get("customComponentData"))
+                    component =  self.logicController.addCustomLogicComponent(componentData)
                 self.addComponent(cell, component)
             except Exception as e:
                 print("Error creating GridItem:", e)
-        elif action_type == "move":
+        elif actionType == "move":
             uid = payload.get("id")
             if not any(item.uid == uid for item in self.items):
                 event.ignore()
@@ -249,7 +254,7 @@ class GridWidget(QtWidgets.QWidget):
             self.update()
             event.acceptProposedAction()
         else:
-            print("Unknown action type:", action_type)
+            print("Unknown action type:", actionType)
             event.acceptProposedAction()
 
     # --- Starting a connection ---

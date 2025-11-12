@@ -1,7 +1,7 @@
 import pytest
 from PySide6 import QtWidgets
 from pytestqt import qtbot
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 from src.control.LogicComponentController import LogicComponentController
 from src.view.SandboxModeScene import SandboxModeScene
 from src.view.SimulationControls import SimulationControls
@@ -17,27 +17,29 @@ def logic_controller():
 class TestSandboxModeScene:
 
     def test_initialization(self, qtbot, logic_controller):
-        scene = SandboxModeScene(logic_controller)
-        qtbot.addWidget(scene)
+        with patch('src.view.SandboxModeScene.CustomComponentController.loadCustomComponents', return_value=[]):
+            scene = SandboxModeScene(logic_controller)
+            qtbot.addWidget(scene)
 
-        assert scene.windowTitle() == "Sandbox Mode"
-        assert isinstance(scene.layout(), QtWidgets.QGridLayout)
+            assert scene.windowTitle() == "Sandbox Mode"
+            assert isinstance(scene.layout(), QtWidgets.QGridLayout)
 
     def test_widgets_in_layout(self, qtbot, logic_controller):
-        scene = SandboxModeScene(logic_controller)
-        qtbot.addWidget(scene)
+        with patch('src.view.SandboxModeScene.CustomComponentController.loadCustomComponents', return_value=[]):
+            scene = SandboxModeScene(logic_controller)
+            qtbot.addWidget(scene)
 
-        layout = scene.layout()
-        # Check that there are widgets in the layout
-        assert layout.count() > 0
+            layout = scene.layout()
+            # Check that there are widgets in the layout
+            assert layout.count() > 0
 
-        # Find palette frame, sim controls, grid by position
-        backButton = layout.itemAtPosition(0, 0).widget()
-        sideBar = layout.itemAtPosition(1, 0)
-        sim_controls = layout.itemAtPosition(0, 1).widget()
-        grid = layout.itemAtPosition(1, 1).widget()
+            # Find palette frame, sim controls, grid by position
+            backButton = layout.itemAtPosition(0, 0).widget()
+            sideBar = layout.itemAtPosition(1, 0)
+            sim_controls = layout.itemAtPosition(0, 1).widget()
+            grid = layout.itemAtPosition(1, 1).widget()
 
-        assert isinstance(backButton, QtWidgets.QPushButton)
-        assert isinstance(sideBar, QtWidgets.QVBoxLayout)
-        assert isinstance(sim_controls, SimulationControls)
-        assert isinstance(grid, QtWidgets.QScrollArea)
+            assert isinstance(backButton, QtWidgets.QPushButton)
+            assert isinstance(sideBar, QtWidgets.QVBoxLayout)
+            assert isinstance(sim_controls, SimulationControls)
+            assert isinstance(grid, QtWidgets.QScrollArea)

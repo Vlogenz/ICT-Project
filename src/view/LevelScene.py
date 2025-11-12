@@ -4,6 +4,7 @@ from src.control.LevelFileController import LevelFileController
 from src.control.LogicComponentController import LogicComponentController
 from src.view.Hint import Hint
 from src.view.LogicComponentPalette import LogicComponentPalette
+from src.view.OutputPrediction import OutputPrediction
 
 from src.view.PaletteItem import PaletteItem
 from src.view.GridWidget import GridWidget
@@ -15,7 +16,6 @@ from PySide6 import QtGui, QtWidgets
 
 class LevelScene(QtWidgets.QWidget):
     """Main window for a selected level"""
-    #TODO: Add separate Check button and have Start only for pre-testing before the check
 
     def __init__(self, levelController: LevelController, levelFileController: LevelFileController):
         super().__init__()
@@ -38,6 +38,10 @@ class LevelScene(QtWidgets.QWidget):
         self.backButton.clicked.connect(self.goToLevelSelection)
 
         sidebarFrame = QtWidgets.QGridLayout()
+
+        # OutputPrediction, if necessary
+        if self.levelController.usesOutputPredictions():
+            sidebarFrame.addWidget(OutputPrediction(self.levelController))
 
         # Palette
         classes = self.levelController.getAvailableComponentClasses()

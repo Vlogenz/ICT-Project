@@ -10,8 +10,9 @@ class LevelController:
     def __init__(self, logicComponentController: LogicComponentController, levelData = None, grid = None):
         self.levelData = levelData
         self.logicComponentController = logicComponentController
-        self.currentLevel = None
         self.eventBus = getBus()
+        self.currentLevel = None
+        self.outputPredictions = []
 
     def setLevel(self, levelData):
         """Sets the current level data"""
@@ -29,6 +30,8 @@ class LevelController:
         """Builds the level using level data and emits an event so that the frontend updates as well."""
         self.currentLevel = self.levelData["level_id"]
         components = self.levelData["components"]
+        if self.usesOutputPredictions():
+            self.outputPredictions = [output.getState()["outValue"] for output in self.logicComponentController.outputs]
 
         #Info for each component:
         # - comp: the component itself
@@ -115,3 +118,11 @@ class LevelController:
         if self.levelData is not None and "hints" in self.levelData:
             return self.levelData["hints"]
         return []
+
+    def usesOutputPredictions(self) -> bool:
+        """Whether the current level uses output predictions by the user or not.
+
+        Returns:
+            bool: True if and only if the levelData file has the attribute 'usesOutputPredictions' with value True.
+        """
+        return self.levelData.get("usesOutputPredictions", False)

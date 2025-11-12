@@ -82,6 +82,8 @@ class GridItem(QtWidgets.QFrame):
         # Enable mouse tracking for tooltips
         self.setMouseTracking(True)
 
+        print(f"Created GridItem for logic component with id: {self.logicComponent.id}")
+
     def getImagePath(self) -> str:
         return f"assets/gates/{self.logicComponent.__class__.__name__}.svg"
 

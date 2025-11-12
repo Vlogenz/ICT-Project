@@ -1,8 +1,6 @@
 from dataclasses import dataclass
-from src.model import LogicComponent
-from typing import Dict, List, TypeVar, Type
+from typing import Dict, List
 
-T = TypeVar("T", bound=LogicComponent)
 @dataclass()
 class CustomLogicComponentData:
     """

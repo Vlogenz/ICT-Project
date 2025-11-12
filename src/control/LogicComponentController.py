@@ -39,7 +39,7 @@ class LogicComponentController:
         self.bus.emit("view:components_updated", componentsToUpdate)
     
     def _waitWithEventLoop(self):
-        """Wait for specified seconds while processing Qt events to keep GUI responsive"""
+        """Wait for the amount of seconds specified by self.tickLength while processing Qt events to keep GUI responsive"""
         if self.tickLength > 0:
             loop = QEventLoop()
             QTimer.singleShot(int(self.tickLength * 1000), loop.quit)

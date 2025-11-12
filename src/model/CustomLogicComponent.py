@@ -18,10 +18,10 @@ class CustomLogicComponent(LogicComponent):
             self.state[key] = (0, bitwidth)
         self.childComponents = [COMPONENT_MAP[className]() for className in componentData.components]
         for connection in componentData.connections:
-            srcComp = self.childComponents[connection["from"]["component"]]
-            dstComp = self.childComponents[connection["to"]["component"]]
-            srcComp.addOutput(dstComp, connection["to"]["input"])
-            dstComp.addInput(srcComp, connection["from"]["output"], connection["to"]["input"])
+            srcComp = self.childComponents[connection["origin"]]
+            dstComp = self.childComponents[connection["destination"]]
+            srcComp.addOutput(dstComp, connection["destinationKey"])
+            dstComp.addInput(srcComp, connection["originKey"], connection["destinationKey"])
 
     def eval(self) -> bool:
         """Evaluates all child components in order
@@ -50,4 +50,3 @@ class CustomLogicComponent(LogicComponent):
             self.state[key] = outputComponents[i].getState()["outValue"]
 
         return returnValue
-

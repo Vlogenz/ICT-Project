@@ -64,7 +64,7 @@ def existing_custom_component(temp_component_dir):
         "outputMap": {"out": 0},
         "components": ["And", "Or"],
         "connections": [
-            {"from": {"component": 0, "output": "outValue"}, "to": {"component": 1, "input": "input1"}}
+            {"origin": 0, "originKey": "outValue", "destination": 1, "destinationKey": "input1"}
         ]
     }
     
@@ -177,8 +177,8 @@ class TestCreateCustomComponent:
         
         # Should have 2 connections (or_gate has 2 inputs from and_gate)
         assert len(saved_data["connections"]) == 2
-        assert saved_data["connections"][0]["from"]["component"] == 0
-        assert saved_data["connections"][0]["to"]["component"] == 1
+        assert saved_data["connections"][0]["origin"] == 0
+        assert saved_data["connections"][0]["destination"] == 1
 
 
 class TestLoadCustomComponents:
@@ -384,4 +384,3 @@ class TestEdgeCases:
             saved_data = json.load(f)
         
         assert saved_data["inputMap"] == {"X": 0, "Y": 1}
-

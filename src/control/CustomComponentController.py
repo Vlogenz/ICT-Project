@@ -53,8 +53,10 @@ class CustomComponentController:
                         source_comp, output_key = connection
                         j = data["components"].index(source_comp)
                         connections.append({
-                            "from": {"component": j, "output": output_key},
-                            "to": {"component": i, "input": input_key}
+                            "origin": j,
+                            "originKey": output_key,
+                            "destination": i,
+                            "destinationKey": input_key
                         })
 
             newComponentData = CustomLogicComponentData(

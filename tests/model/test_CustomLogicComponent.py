@@ -20,9 +20,9 @@ def simple_and_component_data():
         outputMap={"out": 1},
         components=["Input", "Input", "And", "Output"],
         connections=[
-            {"from": {"component": 0, "output": "outValue"}, "to": {"component": 2, "input": "input1"}},
-            {"from": {"component": 1, "output": "outValue"}, "to": {"component": 2, "input": "input2"}},
-            {"from": {"component": 2, "output": "outValue"}, "to": {"component": 3, "input": "input"}}
+            {"origin": 0, "originKey": "outValue", "destination": 2, "destinationKey": "input1"},
+            {"origin": 1, "originKey": "outValue", "destination": 2, "destinationKey": "input2"},
+            {"origin": 2, "originKey": "outValue", "destination": 3, "destinationKey": "input"}
         ]
     )
 
@@ -38,23 +38,23 @@ def xor_component_data():
         components=["Input", "Input", "Not", "Not", "And", "And", "Or", "Output"],
         connections=[
             # Input A (0) -> Not (2)
-            {"from": {"component": 0, "output": "outValue"}, "to": {"component": 2, "input": "input"}},
+            {"origin": 0, "originKey": "outValue", "destination": 2, "destinationKey": "input"},
             # Input B (1) -> Not (3)
-            {"from": {"component": 1, "output": "outValue"}, "to": {"component": 3, "input": "input"}},
+            {"origin": 1, "originKey": "outValue", "destination": 3, "destinationKey": "input"},
             # Input A (0) -> And1 (4)
-            {"from": {"component": 0, "output": "outValue"}, "to": {"component": 4, "input": "input1"}},
+            {"origin": 0, "originKey": "outValue", "destination": 4, "destinationKey": "input1"},
             # Not B (3) -> And1 (4)
-            {"from": {"component": 3, "output": "outValue"}, "to": {"component": 4, "input": "input2"}},
+            {"origin": 3, "originKey": "outValue", "destination": 4, "destinationKey": "input2"},
             # Not A (2) -> And2 (5)
-            {"from": {"component": 2, "output": "outValue"}, "to": {"component": 5, "input": "input1"}},
+            {"origin": 2, "originKey": "outValue", "destination": 5, "destinationKey": "input1"},
             # Input B (1) -> And2 (5)
-            {"from": {"component": 1, "output": "outValue"}, "to": {"component": 5, "input": "input2"}},
+            {"origin": 1, "originKey": "outValue", "destination": 5, "destinationKey": "input2"},
             # And1 (4) -> Or (6)
-            {"from": {"component": 4, "output": "outValue"}, "to": {"component": 6, "input": "input1"}},
+            {"origin": 4, "originKey": "outValue", "destination": 6, "destinationKey": "input1"},
             # And2 (5) -> Or (6)
-            {"from": {"component": 5, "output": "outValue"}, "to": {"component": 6, "input": "input2"}},
+            {"origin": 5, "originKey": "outValue", "destination": 6, "destinationKey": "input2"},
             # Or (6) -> Output (7)
-            {"from": {"component": 6, "output": "outValue"}, "to": {"component": 7, "input": "input"}}
+            {"origin": 6, "originKey": "outValue", "destination": 7, "destinationKey": "input"}
         ]
     )
 
@@ -69,15 +69,15 @@ def multi_output_component_data():
         components=["Input", "Input", "And", "Or", "Output", "Output"],
         connections=[
             # Inputs to AND
-            {"from": {"component": 0, "output": "outValue"}, "to": {"component": 2, "input": "input1"}},
-            {"from": {"component": 1, "output": "outValue"}, "to": {"component": 2, "input": "input2"}},
+            {"origin": 0, "originKey": "outValue", "destination": 2, "destinationKey": "input1"},
+            {"origin": 1, "originKey": "outValue", "destination": 2, "destinationKey": "input2"},
             # Inputs to OR
-            {"from": {"component": 0, "output": "outValue"}, "to": {"component": 3, "input": "input1"}},
-            {"from": {"component": 1, "output": "outValue"}, "to": {"component": 3, "input": "input2"}},
+            {"origin": 0, "originKey": "outValue", "destination": 3, "destinationKey": "input1"},
+            {"origin": 1, "originKey": "outValue", "destination": 3, "destinationKey": "input2"},
             # AND to first output
-            {"from": {"component": 2, "output": "outValue"}, "to": {"component": 4, "input": "input"}},
+            {"origin": 2, "originKey": "outValue", "destination": 4, "destinationKey": "input"},
             # OR to second output
-            {"from": {"component": 3, "output": "outValue"}, "to": {"component": 5, "input": "input"}}
+            {"origin": 3, "originKey": "outValue", "destination": 5, "destinationKey": "input"}
         ]
     )
 
@@ -91,7 +91,7 @@ def wide_bitwidth_component_data():
         outputMap={"result": 8},
         components=["Input", "Output"],
         connections=[
-            {"from": {"component": 0, "output": "outValue"}, "to": {"component": 1, "input": "input"}}
+            {"origin": 0, "originKey": "outValue", "destination": 1, "destinationKey": "input"}
         ]
     )
 
@@ -393,8 +393,8 @@ class TestCustomLogicComponentEdgeCases:
             outputMap={"out": 1},
             components=["Input", "Not", "Output"],
             connections=[
-                {"from": {"component": 0, "output": "outValue"}, "to": {"component": 1, "input": "input"}},
-                {"from": {"component": 1, "output": "outValue"}, "to": {"component": 2, "input": "input"}}
+                {"origin": 0, "originKey": "outValue", "destination": 1, "destinationKey": "input"},
+                {"origin": 1, "originKey": "outValue", "destination": 2, "destinationKey": "input"}
             ]
         )
 
@@ -455,8 +455,8 @@ class TestCustomLogicComponentEdgeCases:
             outputMap={"out1": 1, "out8": 8},
             components=["Input", "Input", "Output", "Output"],
             connections=[
-                {"from": {"component": 0, "output": "outValue"}, "to": {"component": 2, "input": "input"}},
-                {"from": {"component": 1, "output": "outValue"}, "to": {"component": 3, "input": "input"}}
+                {"origin": 0, "originKey": "outValue", "destination": 2, "destinationKey": "input"},
+                {"origin": 1, "originKey": "outValue", "destination": 3, "destinationKey": "input"}
             ]
         )
 

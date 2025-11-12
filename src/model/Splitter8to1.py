@@ -8,8 +8,8 @@ class Splitter8to1(LogicComponent):
         self.inputs: typing.Dict = {"input1": None}
         self.inputBitwidths: typing.Dict = {"input1": 8}
         # Splitter has exactly one input and eight outputs
-        self.state: dict = {"outValue1": (0,1), "outValue2": (0,1), "outValue3": (0,1), "outValue4": (0,1),
-                           "outValue5": (0,1), "outValue6": (0,1), "outValue7": (0,1), "outValue8": (0,1)}
+        self.state: dict = {"outValue1": (0,1), "outValue2": (0,1), "outValue4": (0,1), "outValue8": (0,1),
+                           "outValue16": (0,1), "outValue32": (0,1), "outValue64": (0,1), "outValue128": (0,1)}
         
     def eval(self):
         """Evaluate the Splitter, and return if any Output has changed.
@@ -25,9 +25,9 @@ class Splitter8to1(LogicComponent):
             # gets the component out of the tuple in self.inputs and then 
             #   uses the key from that tuple to access the right output from the 
             #   components state
-        for i in range(1,9):
-            bit = (inValue >> (i-1)) & 1
-            self.state[f"outValue{i}"] = (bit, 1)
+        for i in range(0,8):
+            bit = (inValue >> (i)) & 1
+            self.state[f"outValue{2**i}"] = (bit, 1)
         if self.state != oldState:
             return True
         else:

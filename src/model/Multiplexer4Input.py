@@ -13,7 +13,7 @@ class Multiplexer4Inp(LogicComponent):
             "input4": None}
         
         self.inputBitwidths: typing.Dict = {
-            "selection": 8, 
+            "selection": 2, 
             "input1": 0, 
             "input2": 0, 
             "input3": 0, 
@@ -73,7 +73,7 @@ class Multiplexer4Inp(LogicComponent):
         if self.getBitwidth(internalKey) == 0 and success:
             inputBitwidth: int = input.getState()[key][1]
             self.inputBitwidths: typing.Dict = {
-                "selection": 1, 
+                "selection": 2, 
                 "input1": inputBitwidth, 
                 "input2": inputBitwidth, 
                 "input3": inputBitwidth, 
@@ -102,7 +102,7 @@ class Multiplexer4Inp(LogicComponent):
         if bitwidth == 0:
             bitwidth = self.getOutputBitwidth()
             self.inputBitwidths: typing.Dict = {
-                "selection": 1, 
+                "selection": 2, 
                 "input1": bitwidth, 
                 "input2": bitwidth, 
                 "input3": bitwidth, 
@@ -136,7 +136,7 @@ class Multiplexer4Inp(LogicComponent):
 
         if empty == True:
             self.inputBitwidths: typing.Dict = {
-                "selection": 1, 
+                "selection": 2, 
                 "input1": 0, 
                 "input2": 0, 
                 "input3": 0, 
@@ -169,7 +169,7 @@ class Multiplexer4Inp(LogicComponent):
 
         if empty == True:
             self.inputBitwidths: typing.Dict = {
-                "selection": 1, 
+                "selection": 2, 
                 "input1": 0, 
                 "input2": 0, 
                 "input3": 0, 

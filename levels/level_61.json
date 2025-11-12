@@ -1,0 +1,60 @@
+{
+    "level_id": 61,
+    "name": "Register block",
+    "description": "Ew already lokked at how single rigisters work. Now we want to control how to read from them and use them in the context of our processor.",
+    "difficulty": "Easy",
+    "objectives": [
+        "Create a register block wich lets you select two different registers from an array of four registers and outputs their values.",
+        "The Input has to be a value between 0 and 3 to select one of the four registers."
+
+        
+    ],
+    "components": [
+        {"type": "Input", "position": [0,3], "immovable": true, "label": "read register 1"},
+        {"type": "Input", "position": [0,4], "immovable": true, "label": "read register 2"},
+        {"type": "Output", "position": [7,3], "immovable": true, "label": "read data 1"},
+        {"type": "Output", "position": [7,4], "immovable": true, "label": "read data 2"},
+        {"type": "Register", "position": [3,2], "immovable": true, "label": "Register 0","initialValue": 42},
+        {"type": "Register", "position": [3,3], "immovable": true, "label": "Register 1","initialValue": 84},
+        {"type": "Register", "position": [3,4], "immovable": true, "label": "Register 2","initialValue": 126},
+        {"type": "Register", "position": [3,5], "immovable": true, "label": "Register 3","initialValue": 168}
+
+    ],
+    "connections": [
+    ],
+
+    "available_components": [
+        {"type": "Multiplexer4Inp"},
+        {"type": "Collector1to2"},
+        {"type": "Splitter8to1"}
+
+    ],
+    "hints": [
+        "Use two 4-input multiplexers to select the registers.",
+        "The two 8 bit inputs have to be converted to 2 bit inputs for the multiplexers.",
+        "Use splitters to convert the 8 bit input to 1 bit outputs and collect them again to form 2 bit inputs for the multiplexers."
+    ],
+    "tests": [
+        {   "inputs": [[0,8], [0,8]],"expected_output": [[42,32], [42,32]]},
+        {   "inputs": [[0,8], [1,8]],"expected_output": [[42,32], [84,32]]},
+        {   "inputs": [[0,8], [2,8]],"expected_output": [[42,32], [126,32]]},
+        {   "inputs": [[0,8], [3,8]],"expected_output": [[42,32], [168,32]]},
+
+        {   "inputs": [[1,8], [0,8]],"expected_output": [[84,32], [42,32]]},
+        {   "inputs": [[1,8], [1,8]],"expected_output": [[84,32], [84,32]]},
+        {   "inputs": [[1,8], [2,8]],"expected_output": [[84,32], [126,32]]},
+        {   "inputs": [[1,8], [3,8]],"expected_output": [[84,32], [168,32]]},
+
+        {   "inputs": [[2,8], [0,8]],"expected_output": [[126,32], [42,32]]},
+        {   "inputs": [[2,8], [1,8]],"expected_output": [[126,32], [84,32]]},
+        {   "inputs": [[2,8], [2,8]],"expected_output": [[126,32], [126,32]]},
+        {   "inputs": [[2,8], [3,8]],"expected_output": [[126,32], [168,32]]},
+
+        {   "inputs": [[3,8], [0,8]],"expected_output": [[168,32], [42,32]]},
+        {   "inputs": [[3,8], [1,8]],"expected_output": [[168,32], [84,32]]},
+        {   "inputs": [[3,8], [2,8]],"expected_output": [[168,32], [126,32]]},
+        {   "inputs": [[3,8], [3,8]],"expected_output": [[168,32], [168,32]]}
+
+    ]
+
+}

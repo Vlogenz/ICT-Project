@@ -24,6 +24,10 @@ from .Splitter32to8 import Splitter32to8
 from .Splitter8to1 import Splitter8to1
 from .Xnor import Xnor
 from .Xor import Xor
+from .DataMemory import DataMemory
+from .InstructionMemory import InstructionMemory
+from .ProgramCounter import ProgramCounter
+from .RegisterBlock import RegisterBlock
 from .Collector1to2 import Collector1to2
 from .Collector1to3 import Collector1to3
 

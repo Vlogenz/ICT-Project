@@ -1,6 +1,7 @@
 import pytest
 from src.control.LevelController import LevelController
 from src.control.LogicComponentController import LogicComponentController
+from src.model import DataMemory, InstructionMemory, Register
 from src.model.And import And
 from src.model.Or import Or
 
@@ -78,6 +79,57 @@ def sample_level_data_with_connections():
 
 
 @pytest.fixture
+def sample_level_data_with_memoryBlocks():
+    """Returns sample level data for testing"""
+    return {
+        "level_id": 1,
+        "name": "Test AND Gate Level",
+        "description": "Test level for AND gate",
+        "components": [
+            {"type": "Input", "position": [4, 1], "immovable": True},
+            {"type": "Input", "position": [4, 3], "immovable": True},
+            {"type": "Output", "position": [8, 2], "immovable": True},
+            {"type": "And", "position": [6,2], "immovable": True},
+        {"type": "InstructionMemory", "position": [2,5], "immovable": False},
+        {"type": "DataMemory", "position": [4,5], "immovable": False},
+        {"type": "Register", "position": [6,5], "immovable": False, "initialValue": 34},
+        {"type": "Register", "position": [8,5], "immovable": False, "initialValue": 42}
+        
+    ],
+    "memoryContents": {
+        "instructionMemory": [
+            0,203,1,234,4624,4572,564,1234,425323,3465134,65344,23534,6345,234,1234,6543
+        ],
+        "dataMemory": [
+            123,543,23,76,234,87,345,23,78,90,1234,5678,91011,1213,1415,1617
+        ]
+    },
+        "connections": [
+            {"origin": 0, "originKey": "outValue", "destination": 3, "destinationKey": "input1"},
+            {"origin": 1, "originKey": "outValue", "destination": 3, "destinationKey": "input2"},
+            {"origin": 3, "originKey": "outValue", "destination": 2, "destinationKey": "input"}
+        ],
+        "tests": [
+            {
+                "inputs": [[1, 1], [1, 1]],
+                "expected_output": [[1, 1]]
+            },
+            {
+                "inputs": [[1, 1], [0, 1]],
+                "expected_output": [[0, 1]]
+            },
+            {
+                "inputs": [[0, 1], [1, 1]],
+                "expected_output": [[0, 1]]
+            },
+            {
+                "inputs": [[0, 1], [0, 1]],
+                "expected_output": [[0, 1]]
+            }
+        ]
+    }
+
+@pytest.fixture
 def logic_controller():
     """Creates a LogicComponentController for testing"""
     controller = LogicComponentController()
@@ -96,6 +148,13 @@ def level_controller_with_connections(sample_level_data_with_connections, logic_
     """Creates a LevelController with sample data including connections"""
     controller = LevelController(logic_controller)
     controller.setLevel(sample_level_data_with_connections)
+    return controller
+
+@pytest.fixture
+def level_controller_with_memoryBlocks(sample_level_data_with_memoryBlocks, logic_controller):
+    """Creates a LevelController with sample data including memory blocks"""
+    controller = LevelController(logic_controller)
+    controller.setLevel(sample_level_data_with_memoryBlocks)
     return controller
 
 
@@ -301,3 +360,42 @@ def test_getAvailableComponentClasses_missing_key(logic_controller):
     available = controller.getAvailableComponentClasses()
 
     assert available == []
+
+def test_adding_InstructionMemory(level_controller_with_memoryBlocks, logic_controller):
+    """Test that InstructionMemory is added and loaded correctly"""
+    level_controller_with_memoryBlocks.buildLevel()
+    
+    instruction_memory = None
+    for comp in logic_controller.getComponents():
+        if type(comp) == InstructionMemory:
+            instruction_memory = comp
+            break
+    assert instruction_memory is not None
+
+    im = instruction_memory
+    expected_instructions = level_controller_with_memoryBlocks.levelData["memoryContents"]["instructionMemory"]
+    assert im.instructionList == expected_instructions
+    
+def test_adding_DataMemory(level_controller_with_memoryBlocks, logic_controller):
+    """Test that DataMemory is added and loaded correctly"""
+    level_controller_with_memoryBlocks.buildLevel()
+    
+    data_memory = None
+    for comp in logic_controller.getComponents():
+        if type(comp) == DataMemory:
+            data_memory = comp
+            break
+    assert data_memory is not None
+
+    dm = data_memory
+    expected_data = level_controller_with_memoryBlocks.levelData["memoryContents"]["dataMemory"]
+    assert dm.dataList[:len(expected_data)] == expected_data
+    
+def test_adding_Register_initialValue(level_controller_with_memoryBlocks, logic_controller):
+    """Test that Register is added and initialized correctly"""
+    level_controller_with_memoryBlocks.buildLevel()
+    
+    registers = [comp for comp in logic_controller.getComponents() if type(comp)== Register]
+    assert len(registers) == 2  # Two Register components should be defined in the level data provided
+    assert registers[0].state == {"outValue": (34, 32)}
+    assert registers[1].state == {"outValue": (42, 32)}

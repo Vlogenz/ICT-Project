@@ -32,7 +32,7 @@ class SimulationControls(QtWidgets.QFrame):
         self.speedSlider.setValue(10) # Default to instant evaluation
         self.speedSlider.valueChanged.connect(self.updateSpeed)
 
-        self.configureStart(self.logicController.eval)
+        self.configureStart(self.startEvaluation)
 
         self.layout.addWidget(self.startStopButton)
         self.layout.addWidget(self.resetButton)
@@ -55,6 +55,14 @@ class SimulationControls(QtWidgets.QFrame):
                 self.speedLabel.setText("Speed: 1 step/sec")
             else:
                 self.speedLabel.setText(f"Speed: {value} steps/sec")
+
+    def startEvaluation(self):
+        if not self.logicController.eval():
+            QtWidgets.QMessageBox.critical(
+                self,
+                "Evaluation failed!",
+                "Your logic circuit has cycles. Please resolve them and try again."
+            )
 
     def configureStart(self, function):
         """Sets the functionality of the Start button. By default, this is the eval() method of the logicController."""

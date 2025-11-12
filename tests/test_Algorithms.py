@@ -297,21 +297,22 @@ def test_eventDrivenEval_with_PC_and_instruction_memory():
     im = InstructionMemory()
 
     pc.addInput(im, "instruction", "input")
-    pc.addOutput(im, "address")
+    im.addOutput(pc, "input")
+    
     im.addInput(pc, "outValue", "readAddress")
-    im.addOutput(pc, "instruction")
+    pc.addOutput(im, "readAddress")
 
-    im.loadInstructions([4,8,12,16,20,24,28,32,0,0,0,0,0]) # Sample instructions
+    im.loadInstructions([4,8,12,16,20,24,28,32,32]) # Sample instructions
 
     inputs = []
     components = [pc, im]
-
+    im.eval()
     assert pc.getState()["outValue"] == (0, 32)
-    assert im.getState()["instruction"] == (0, 32)
+    assert im.getState()["instruction"] == (4, 32)
     
     assert Algorithms.eventDrivenEval(inputs, components)
-    assert pc.getState()["outValue"] == (0, 32)
-    assert im.getState()["instruction"] == (0, 32)
+    assert pc.getState()["outValue"] == (32, 32)
+    assert im.getState()["instruction"] == (32, 32)
 
 
 def test_eventDrivenEval_with_PC_and_instruction_memory_many_instructions():
@@ -323,19 +324,22 @@ def test_eventDrivenEval_with_PC_and_instruction_memory_many_instructions():
     im = InstructionMemory()
 
     pc.addInput(im, "instruction", "input")
-    pc.addOutput(im, "address")
+    im.addOutput(pc, "input")
+    
     im.addInput(pc, "outValue", "readAddress")
-    im.addOutput(pc, "instruction")
-
-    im.loadInstructions([i for i in range(4, 1000, 4)] + [0,0]) # Sample instructions
+    pc.addOutput(im, "readAddress")
+    
+    
+    instructions = [i for i in range(4, 1000, 4)] + [996,996]
+    im.loadInstructions(instructions) # Sample instructions
 
     inputs = []
     components = [pc, im]
-
+    im.eval()
     assert pc.getState()["outValue"] == (0, 32)
-    assert im.getState()["instruction"] == (0, 32)
+    assert im.getState()["instruction"] == (4, 32)
     
     assert Algorithms.eventDrivenEval(inputs, components)
-    assert pc.getState()["outValue"] == (0, 32)
-    assert im.getState()["instruction"] == (0, 32)
+    assert pc.getState()["outValue"] == (996, 32)
+    assert im.getState()["instruction"] == (996, 32)
     

@@ -8,8 +8,8 @@
         "Do something else"
     ],
     "components": [
-        {"type": "Input", "position": [0,1], "immovable": true},
-        {"type": "Input", "position": [0,3], "immovable": true},
+        {"type": "Or", "position": [0,1], "immovable": true},
+        {"type": "Or", "position": [0,3], "immovable": true},
         {"type": "Output", "position": [4,2], "immovable": true},
         {"type": "And", "position": [2,2], "immovable": false},
         {"type": "InstructionMemory", "position": [2,5], "immovable": false},
@@ -18,7 +18,7 @@
     ],
     "memoryContents": {
         "instructionMemory": [
-            0,203,1,234,4624,4572,564,1234,425323,3465134,65344,23534,6345,234,1234,6543
+            4,8,12,16,20,24,28,32,36,40,44,48,52,56,60,64,64
         ],
         "dataMemory": [
             123,543,23,76,234,87,345,23,78,90,1234,5678,91011,1213,1415,1617

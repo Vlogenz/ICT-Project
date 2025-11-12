@@ -75,6 +75,7 @@ class Algorithms:
         # to allow enough cycles for all instructions to be processed
         if instructionMemory is not None:
             maxEvaluationCycles = maxEvaluationCycles + len(instructionMemory.instructionList)
+            
         # Determine starting components:
         # - if startingComponents provided via kw, use it
         # - otherwise start from inputs (copy)

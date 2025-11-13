@@ -1,0 +1,26 @@
+{
+    "level_id": 11,
+    "name": "AND-Gate",
+    "description": "The AND gate checks if A and B are true, if this is the case, it will return 1, otherwise it returns 0.",
+    "difficulty": "Easy",
+    "objectives": [
+        "Connect the inputs with an AND gate. Then connect the AND gate to the Output"
+    ],
+    "components": [
+        {"type": "Input", "position": [0,1], "immovable": true, "label": "A"},
+        {"type": "Input", "position": [0,3], "immovable": true, "label": "B"}, 
+        {"type": "Output", "position": [4,2], "immovable": true}    
+    ],
+    "available_components": [
+        {"type": "And"}
+    ],
+    "hints": [
+        "Gates on the left can be dragged into the grid"
+    ],
+    "tests": [
+        {"inputs": [[0,1],[0,1]], "expected_output": [[0,1]]},
+        {"inputs": [[1,1],[0,1]], "expected_output": [[0,1]]},
+        {"inputs": [[0,1],[1,1]], "expected_output": [[0,1]]},
+        {"inputs": [[1,1],[1,1]], "expected_output": [[1,1]]}
+    ]
+}

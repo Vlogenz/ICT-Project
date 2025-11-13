@@ -1,0 +1,28 @@
+{
+    "level_id": 19,
+    "name": "Functional Completeness 3",
+    "description": "Try creating a XNOR gate using only NAND and NOR gates.",
+    "difficulty": "Medium",
+    "objectives": [
+        "Create a XNOR gate."
+    ],
+    "components": [
+        {"type": "Input", "position": [0,1], "immovable": true, "label": "A"},
+        {"type": "Input", "position": [0,5], "immovable": true, "label": "B"}, 
+        {"type": "Output", "position": [8,3], "immovable": true}    
+    ],
+    "available_components": [
+        {"type": "Nand"},
+        {"type": "Nor"}
+    ],
+    "hints": [
+        "Think back to level 5.",
+        "Two Not gates will cancel each other out."
+    ],
+    "tests": [
+        {"inputs": [[0,1],[0,1]], "expected_output": [[1,1]]},
+        {"inputs": [[1,1],[0,1]], "expected_output": [[0,1]]},
+        {"inputs": [[0,1],[1,1]], "expected_output": [[0,1]]},
+        {"inputs": [[1,1],[1,1]], "expected_output": [[1,1]]}
+    ]
+}

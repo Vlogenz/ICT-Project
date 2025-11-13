@@ -21,12 +21,14 @@ class Output(LogicComponent):
         old_state = self.state.copy()
         if self.inputs["input"] is None: # set input to false if no component is connected
             value = False
+            bitwidth = 1
         else:
             value = self.inputs["input"][0].getState()[self.inputs["input"][1]][0]
-        # gets the component out of the first tuple in self.inputs and then 
+            bitwidth = self.inputs["input"][0].getState()[self.inputs["input"][1]][1]
+        # gets the component out of the first tuple in self.inputs and then
             #   uses the key from that tuple to access the right output from the 
             #   components state
-        self.state = {"outValue": (value, 1)}
+        self.state = {"outValue": (value, bitwidth)}
         if self.state != old_state:
             return True
         else:
@@ -41,4 +43,3 @@ class Output(LogicComponent):
     def removeInput(self, input, key, internalKey):
         super().removeInput(input, key, internalKey)
         self.inputBitwidths["input"] = 0
-        

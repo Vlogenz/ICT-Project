@@ -112,7 +112,10 @@ class LevelScene(QtWidgets.QWidget):
             self.levelFileController.updateCompletedLevels(self.levelController.currentLevel)
             QtWidgets.QMessageBox.information(self, "You did it!", "All checks succeeded. You can proceed to the next level.")
         else:
-            QtWidgets.QMessageBox.critical(self, "Not quite!", "Some tests failed. Give it another try.")
+            failureMessage = "Some tests failed, give it another try."
+            if self.levelController.usesOutputPredictions():
+                failureMessage += " Make sure to check your output predictions."
+            QtWidgets.QMessageBox.critical(self, "Not quite!", failureMessage)
 
     def goToLevelSelection(self):
         """Cleans up the logic components and the grid and then emits the event to switch to the level selection."""

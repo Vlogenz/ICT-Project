@@ -75,8 +75,21 @@ class LevelController:
             print(f"Set outputPredictions to: {self.outputPredictions}")
 
     def checkSolution(self) -> bool:
-        """Checks if the current configuration solves the level"""
-        for i in range(len(self.levelData["tests"])): # Iterate through tests
+        """Checks if the current configuration solves the level.
+        In case there are output predictions, these will be checked first.
+        This assumes that either the input values are fixed for this level or the user chooses the right predictions for their input.
+        Afterward, all tests from the level file will be run.
+
+        Returns:
+            bool: True if and only if the output predictions (if any) are correct and the tests pass.
+        """
+        # In case there are output predictions, first check whether the predictions are right at the current input config.
+        if self.usesOutputPredictions():
+            for i, prediction in enumerate(self.outputPredictions):
+                if not prediction == self.logicComponentController.outputs[i].getState()["outValue"]:
+                    return False
+        # Then iterate through tests
+        for i in range(len(self.levelData["tests"])):
             test = self.levelData["tests"][i]
             for i in range(len(test["inputs"])): # iterate through inputs in specific test
                 self.logicComponentController.getInputs()[i].setState(tuple(test["inputs"][i]))
@@ -127,4 +140,6 @@ class LevelController:
         Returns:
             bool: True if and only if the levelData file has the attribute 'usesOutputPredictions' with value True.
         """
+        if self.levelData is None:
+            return False
         return self.levelData.get("usesOutputPredictions", False)

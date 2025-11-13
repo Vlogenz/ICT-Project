@@ -1,5 +1,5 @@
 from src.control.LogicComponentController import LogicComponentController
-from src.model import DataMemory, InstructionMemory, Register
+from src.model import DataMemory, InstructionMemory, Register, Input
 from src.model.LogicComponent import LogicComponent
 from src.infrastructure.eventBus import getBus
 from src.constants import COMPONENT_MAP
@@ -57,6 +57,10 @@ class LevelController:
             if type(comp) == Register:
                 comp.state = {"outValue": (componentData["initialValue"], 32)}
                 
+            if type(comp) == Input:
+                if "initialBitWidth" in componentData:
+                    comp.state = {"outValue": (0, componentData["initialBitWidth"])}
+                
             
             if type(comp) == InstructionMemory or type(comp) == DataMemory:
                 memoryData = self.levelData["memoryContents"]
@@ -91,6 +95,7 @@ class LevelController:
                 self.logicComponentController.getInputs()[i].setState(tuple(test["inputs"][i]))
             self.logicComponentController.eval()
             for i in range(len(test["expected_output"])): # iterate through expected outputs in specific test
+                #print(self.logicComponentController.getOutputs()[i].getState()['outValue'],"==?", tuple(test["expected_output"][i]))
                 if self.logicComponentController.getOutputs()[i].getState()['outValue'] != tuple(test["expected_output"][i]):
                     return False
         return True

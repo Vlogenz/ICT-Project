@@ -1,0 +1,108 @@
+{
+    "level_id": 62,
+    "name": "Adding the write option to register block",
+    "description": "Now we want to control how to read from and write to registers in the context of our processor.",
+    "difficulty": "Easy",
+    "objectives": [
+        "If the regWrite input is high, the value on writeData should be written to the register selected by writeReg input.",
+        "The Input has to be a value between 0 and 3 to select one of the four registers."
+
+        
+    ],
+    "components": [
+        {"type": "Input", "position": [0,3], "immovable": true, "label": "read register 1", "initialBitWidth": 8},
+        {"type": "Input", "position": [0,4], "immovable": true, "label": "read register 2", "initialBitWidth": 8},
+        {"type": "Output", "position": [10,3], "immovable": true, "label": "read data 1"},
+        {"type": "Output", "position": [10,4], "immovable": true, "label": "read data 2"},
+        {"type": "Register", "position": [6,2], "immovable": true, "label": "Register 0","initialValue": 42},
+        {"type": "Register", "position": [6,3], "immovable": true, "label": "Register 1","initialValue": 84},
+        {"type": "Register", "position": [6,4], "immovable": true, "label": "Register 2","initialValue": 126},
+        {"type": "Register", "position": [6,5], "immovable": true, "label": "Register 3","initialValue": 168},
+        {"type": "Input", "position": [0,7], "immovable": true, "label": "writeReg", "initialBitWidth": 8},
+        {"type": "Input", "position": [0,8], "immovable": true, "label": "writeData", "initialBitWidth": 32},
+        {"type": "Input", "position": [0,9], "immovable": true, "label": "regWrite", "initialBitWidth": 1},
+        {"type": "Splitter8to1", "position": [4,1], "immovable": true, "label": "Splitter read register 1"},
+        {"type": "Collector1to2", "position": [6,1], "immovable": false, "label": "Collector read register 1"},
+
+        {"type": "Splitter8to1", "position": [4,6], "immovable": true, "label": "Splitter read register 2"},
+        {"type": "Collector1to2", "position": [6,6], "immovable": false, "label": "Collector read register 2"},
+
+        {"type": "Multiplexer4Inp", "position": [9,3], "immovable": false, "label": "Multiplexer read data 1"},
+        {"type": "Multiplexer4Inp", "position": [9,4], "immovable": false, "label": "Multiplexer read data 2"}
+
+    ],
+    "connections": [
+        {"origin": 0, "originKey": "outValue", "destination": 11, "destinationKey": "input1"},
+        {"origin": 11, "originKey": "outValue1", "destination": 12, "destinationKey": "input1"},
+        {"origin": 11, "originKey": "outValue2", "destination": 12, "destinationKey": "input2"},
+        {"origin": 12, "originKey": "outValue", "destination": 15, "destinationKey": "selection"},
+        
+        {"origin": 1, "originKey": "outValue", "destination": 13, "destinationKey": "input1"},
+        {"origin": 13, "originKey": "outValue1", "destination": 14, "destinationKey": "input1"},
+        {"origin": 13, "originKey": "outValue2", "destination": 14, "destinationKey": "input2"},
+        {"origin": 14, "originKey": "outValue", "destination": 16, "destinationKey": "selection"},
+        
+
+        {"origin": 4, "originKey": "outValue", "destination": 15, "destinationKey": "input1"},
+        {"origin": 5, "originKey": "outValue", "destination": 15, "destinationKey": "input2"},
+        {"origin": 6, "originKey": "outValue", "destination": 15, "destinationKey": "input3"},
+        {"origin": 7, "originKey": "outValue", "destination": 15, "destinationKey": "input4"},
+
+        {"origin": 4, "originKey": "outValue", "destination": 16, "destinationKey": "input1"},
+        {"origin": 5, "originKey": "outValue", "destination": 16, "destinationKey": "input2"},
+        {"origin": 6, "originKey": "outValue", "destination": 16, "destinationKey": "input3"},
+        {"origin": 7, "originKey": "outValue", "destination": 16, "destinationKey": "input4"},
+
+        {"origin": 15, "originKey": "outputValue", "destination": 2, "destinationKey": "input"},
+        {"origin": 16, "originKey": "outputValue", "destination": 3, "destinationKey": "input"}    
+    ],
+
+    "available_components": [
+        {"type": "And"},
+        {"type": "Splitter8to1"},
+        {"type": "DecoderThreeBit"}
+
+    ],
+
+    "hints": [
+        "The input of writeReg has to be converted to a single bit selection for each register.",
+        "Use a splitter and then a decoder to achieve this.",
+        "Use AND gates to control the write enable of each register based on the regWrite input and the decoded writeReg signals.",
+        "Connect the writeData input directly to the data input of each register."
+    ],
+
+
+
+
+
+
+    "tests": [
+        {   "inputs": [[0,8], [0,8], [0,8], [999,32], [1,1]],"expected_output": []},
+        {   "inputs": [[0,8], [0,8], [1,8], [1,32], [1,1]],"expected_output": []},
+        {   "inputs": [[0,8], [0,8], [2,8], [43,32], [1,1]],"expected_output": []},
+        {   "inputs": [[0,8], [0,8], [3,8], [72,32], [1,1]],"expected_output": []},
+
+        {   "inputs": [[0,8], [0,8], [0,8], [0,32],[0,1]],"expected_output": [[999,32], [999,32]]},
+        {   "inputs": [[0,8], [1,8],[0,8], [0,32],[0,1]],"expected_output": [[999,32], [1,32]]},
+        {   "inputs": [[0,8], [2,8],[0,8], [0,32],[0,1]],"expected_output": [[999,32], [43,32]]},
+        {   "inputs": [[0,8], [3,8],[0,8], [0,32],[0,1]],"expected_output": [[999,32], [72,32]]},
+
+        {   "inputs": [[1,8], [0,8],[0,8], [0,32],[0,1]],"expected_output": [[1,32], [999,32]]},
+        {   "inputs": [[1,8], [1,8],[0,8], [0,32],[0,1]],"expected_output": [[1,32], [1,32]]},
+        {   "inputs": [[1,8], [2,8],[0,8], [0,32],[0,1]],"expected_output": [[1,32], [43,32]]},
+        {   "inputs": [[1,8], [3,8],[0,8], [0,32],[0,1]],"expected_output": [[1,32], [72,32]]},
+
+        {   "inputs": [[2,8], [0,8],[0,8], [0,32],[0,1]],"expected_output": [[43,32], [999,32]]},
+        {   "inputs": [[2,8], [1,8],[0,8], [0,32],[0,1]],"expected_output": [[43,32], [1,32]]},
+        {   "inputs": [[2,8], [2,8],[0,8], [0,32],[0,1]],"expected_output": [[43,32], [43,32]]},
+        {   "inputs": [[2,8], [3,8],[0,8], [0,32],[0,1]],"expected_output": [[43,32], [72,32]]},
+
+        {   "inputs": [[3,8], [0,8],[0,8], [0,32],[0,1]],"expected_output": [[72,32], [999,32]]},
+        {   "inputs": [[3,8], [1,8],[0,8], [0,32],[0,1]],"expected_output": [[72,32], [1,32]]},
+        {   "inputs": [[3,8], [2,8],[0,8], [0,32],[0,1]],"expected_output": [[72,32], [43,32]]},
+        {   "inputs": [[3,8], [3,8],[0,8], [0,32],[0,1]],"expected_output": [[72,32], [72,32]]}
+    
+        
+    ]
+
+}

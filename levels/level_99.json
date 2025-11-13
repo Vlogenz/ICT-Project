@@ -5,7 +5,7 @@
     "difficulty": "Easy",
     "objectives": [
         "build and gate",
-        "Do something else"
+        "Do something elseses"
     ],
     "components": [
         {"type": "Or", "position": [0,1], "immovable": true},

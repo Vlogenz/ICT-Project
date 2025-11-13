@@ -30,8 +30,6 @@ class LevelController:
         """Builds the level using level data and emits an event so that the frontend updates as well."""
         self.currentLevel = self.levelData["level_id"]
         components = self.levelData["components"]
-        if self.usesOutputPredictions():
-            self.outputPredictions = [output.getState()["outValue"] for output in self.logicComponentController.outputs]
 
         #Info for each component:
         # - comp: the component itself
@@ -71,6 +69,10 @@ class LevelController:
                 except KeyError as e:
                     print(f"Error adding connection: {e}")
         self.eventBus.emit("view:rebuild_circuit", componentInfo)
+
+        if self.usesOutputPredictions():
+            self.outputPredictions = [output.getState()["outValue"] for output in self.logicComponentController.outputs]
+            print(f"Set outputPredictions to: {self.outputPredictions}")
 
     def checkSolution(self) -> bool:
         """Checks if the current configuration solves the level"""

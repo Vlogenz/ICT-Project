@@ -3,6 +3,7 @@
     "name": "another dummy Level",
     "description": "This is a dummy level for testing purposes. This one however has a really long description to test the sidebar expansion. Lorem ipsum dolor sit amet.",
     "difficulty": "Easy",
+    "usesOutputPredictions": true,
     "objectives": [
         "build and gate",
         "Do something else"

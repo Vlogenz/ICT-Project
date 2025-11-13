@@ -9,7 +9,7 @@ class OutputPrediction(QtWidgets.QFrame):
         self.levelController = levelController
 
         self.layout = QtWidgets.QGridLayout(self)
-        self.layout.addWidget(QtWidgets.QLabel("Output predictions:"), 0, 0)
+        self.layout.addWidget(QtWidgets.QLabel("<h2>Output predictions:</h2>"), 0, 0)
         for i, prediction in enumerate(self.levelController.outputPredictions):
             value, bitwidth = prediction
             predictionLabel = QtWidgets.QLabel(f"Output {i+1} (Bitwidth: {bitwidth})")

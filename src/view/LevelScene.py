@@ -37,37 +37,37 @@ class LevelScene(QtWidgets.QWidget):
         self.backButton = QtWidgets.QPushButton("< Back to level selection")
         self.backButton.clicked.connect(self.goToLevelSelection)
 
+        # Grid
+        self.grid = GridWidget(self.logicController)
+
+        # Build the level
+        levelController.setGrid(self.grid)
+        levelController.buildLevel()
+
         sidebarFrame = QtWidgets.QGridLayout()
 
         # OutputPrediction, if necessary
         if self.levelController.usesOutputPredictions():
-            sidebarFrame.addWidget(OutputPrediction(self.levelController))
+            sidebarFrame.addWidget(OutputPrediction(self.levelController), 0, 0, 1, 2)
 
         # Palette
         classes = self.levelController.getAvailableComponentClasses()
         palette = LogicComponentPalette(classes)
-        sidebarFrame.addWidget(palette, 0, 0, 1, 2)
-
-        # Grid
-        self.grid = GridWidget(self.logicController)
+        sidebarFrame.addWidget(palette, 1, 0, 1, 2)
 
         # Delete area
         deleteArea = DeleteArea(self.grid)
-        sidebarFrame.addWidget(deleteArea, 1, 1)
+        sidebarFrame.addWidget(deleteArea, 2, 1)
 
         # Hint button
         hintButton = Hint(self.levelController)
-        sidebarFrame.addWidget(hintButton, 1, 0)
+        sidebarFrame.addWidget(hintButton, 2, 0)
 
 
         # Simulation controls
         simControls = SimulationControls(self.logicController)
         simControls.configureReset(self.levelController.resetLevel)
         simControls.addButton("Check solution", self.checkSolution, 0)
-
-        # Build the level
-        levelController.setGrid(self.grid)
-        levelController.buildLevel()
 
         # Add a label for level description
         levelInfoLabel = QtWidgets.QLabel()

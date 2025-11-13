@@ -1,7 +1,7 @@
 {
     "level_id": 61,
     "name": "Register block",
-    "description": "Ew already lokked at how single rigisters work. Now we want to control how to read from them and use them in the context of our processor.",
+    "description": "We already looked at how single registers work. Now we want to control how to read from them and use them in the context of our processor.",
     "difficulty": "Easy",
     "objectives": [
         "Create a register block wich lets you select two different registers from an array of four registers and outputs their values.",

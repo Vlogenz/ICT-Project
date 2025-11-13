@@ -1,6 +1,6 @@
 {
     "level_id": 62,
-    "name": "Adding the write option toRegister block",
+    "name": "Adding the write option to register block",
     "description": "Now we want to control how to read from and write to registers in the context of our processor.",
     "difficulty": "Easy",
     "objectives": [

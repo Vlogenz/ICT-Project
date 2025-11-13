@@ -286,7 +286,8 @@ class TestGridWidget:
         grid.eventBus.emit("view:components_updated", [and_gate, not_gate])
 
         # Check if activation is updated (depends on component states)
-        assert grid.connections[0].isActive
+        # Since And has no inputs, out is 0, so connection is not active
+        assert not grid.connections[0].isActive
 
     def test_deletion_via_delete_area(self, qtbot):
         from src.view.DeleteArea import DeleteArea

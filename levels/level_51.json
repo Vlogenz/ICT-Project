@@ -8,14 +8,14 @@
         "Output should be:\n- AND when op = 00\n- OR when op = 01\n- Sum (A + B, sum bit) when op = 10"
     ],
     "components": [
-        {"type": "Input", "position": [0,9], "immovable": true, "label": "op0"},
-        {"type": "Input", "position": [0,7], "immovable": true, "label": "op1"},
-        {"type": "Collector1to2", "position": [1,8], "immovable": true},
-        {"type": "Input", "position": [0,3], "immovable": true, "label": "A"},
-        {"type": "Input", "position": [0,5], "immovable": true, "label": "B"},
-        {"type": "Input", "position": [0,1], "immovable": true, "label": "carry_in"},
-        {"type": "Output", "position": [15,4], "immovable": true, "label": "OUT"},
-        {"type": "Output", "position": [15,2], "immovable": true, "label": "Carry_out"}
+        {"type": "Input", "position": [12,11], "immovable": true, "label": "op0"},
+        {"type": "Input", "position": [12,10], "immovable": true, "label": "op1"},
+        {"type": "Collector1to2", "position": [13,10], "immovable": true},
+        {"type": "Input", "position": [0,5], "immovable": true, "label": "A"},
+        {"type": "Input", "position": [0,7], "immovable": true, "label": "B"},
+        {"type": "Input", "position": [6,11], "immovable": true, "label": "carry_in"},
+        {"type": "Output", "position": [16,5], "immovable": true, "label": "OUT"},
+        {"type": "Output", "position": [16,3], "immovable": true, "label": "Carry_out"}
     ],
 
     "available_components": [

@@ -103,7 +103,7 @@ class TestCustomLogicComponentInitialization:
         """Test basic initialization of a custom component"""
         comp = CustomLogicComponent(simple_and_component_data)
 
-        assert comp.name == "SimpleAND"
+        assert comp.customComponentName == "SimpleAND"
         assert "in1" in comp.inputs
         assert "in2" in comp.inputs
         assert comp.inputs["in1"] is None
@@ -413,7 +413,7 @@ class TestCustomLogicComponentEdgeCases:
         """Test that component name is preserved"""
         comp = CustomLogicComponent(simple_and_component_data)
 
-        assert comp.name == "SimpleAND"
+        assert comp.customComponentName == "SimpleAND"
 
     def test_eval_returns_boolean(self, simple_and_component_data):
         """Test that eval always returns a boolean"""

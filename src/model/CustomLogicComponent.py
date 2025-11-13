@@ -10,7 +10,7 @@ class CustomLogicComponent(LogicComponent):
 
     def __init__(self, componentData: CustomLogicComponentData):
         super().__init__()
-        self.name = componentData.name
+        self.customComponentName = componentData.name
         for key, bitwidth in componentData.inputMap.items():
             self.inputs[key] = None
             self.inputBitwidths[key] = bitwidth

@@ -3,6 +3,8 @@ from PySide6.QtWidgets import QDialog, QLabel, QVBoxLayout, QLineEdit, QGridLayo
 from PySide6.QtGui import QPixmap
 from PySide6.QtCore import Qt
 
+import re
+
 from src.control.CustomComponentController import CustomComponentController
 from src.control.LogicComponentController import LogicComponentController
 
@@ -46,13 +48,21 @@ class CreateCustomComponentDialog(QDialog):
         layout.addLayout(outputKeysLayout)
 
         for input in logicController.inputs:
-            inputKeysLayout.addWidget(QLabel(f"Input {len(self.inputNameLabels) + 1} (Bitwidth: {input.getState()['outValue'][1]})"), len(self.inputNameLabels), 0)
-            lineEdit = QLineEdit(f"input{len(self.inputNameLabels) + 1}")
+            if input.getLabel() != "":
+                labelText = input.getLabel()
+            else:
+                labelText = f"Input {len(self.inputNameLabels) + 1}"
+            inputKeysLayout.addWidget(QLabel(f"{labelText} (Bitwidth: {input.getState()['outValue'][1]})"), len(self.inputNameLabels), 0)
+            lineEdit = QLineEdit(toCamelCase(labelText))
             inputKeysLayout.addWidget(lineEdit, len(self.inputNameLabels), 1)
             self.inputNameLabels.append(lineEdit)
-        for _ in range(len(logicController.outputs)):
-            outputKeysLayout.addWidget(QLabel(f"Output {len(self.outputNameLabels) + 1}"), len(self.outputNameLabels), 0)
-            lineEdit = QLineEdit(f"output{len(self.outputNameLabels) + 1}")
+        for output in logicController.outputs:
+            if output.getLabel() != "":
+                labelText = output.getLabel()
+            else:
+                labelText = f"Output {len(self.outputNameLabels) + 1}"
+            outputKeysLayout.addWidget(QLabel(labelText), len(self.outputNameLabels), 0)
+            lineEdit = QLineEdit(toCamelCase(labelText))
             outputKeysLayout.addWidget(lineEdit, len(self.outputNameLabels), 1)
             self.outputNameLabels.append(lineEdit)
 
@@ -84,7 +94,6 @@ class CreateCustomComponentDialog(QDialog):
         layout.addWidget(buttonBox)
 
         self.setLayout(layout)
-        print("Initialized create custom component dialog")
 
     def selectSprite(self):
         """Opens a file selection window to select an image file as sprite."""
@@ -127,3 +136,13 @@ class CreateCustomComponentDialog(QDialog):
         }
         print(f"Creating component: {newComponent}")
         CustomComponentController.createCustomComponent(newComponent)
+
+def toCamelCase(text):
+    # Replace hyphens and underscores with spaces, then capitalize each word
+    s = re.sub(r"(_|-)+", " ", text).title()
+
+    # Remove all spaces
+    s = s.replace(" ", "")
+
+    # Convert the first character to lowercase to achieve true camelCase
+    return ''.join([s[0].lower(), s[1:]]) if s else s

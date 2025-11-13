@@ -230,4 +230,7 @@ class LogicComponentController:
         self.inputs.clear()
         self.outputs.clear()
         self.updateInTick.clear()
+        self.registerBlock = None
+        self.instructionMemory = None
+        self.dataMemory = None
         self.bus.emit("view:components_cleared")

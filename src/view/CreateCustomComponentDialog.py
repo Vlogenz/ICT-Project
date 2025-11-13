@@ -94,7 +94,6 @@ class CreateCustomComponentDialog(QDialog):
         layout.addWidget(buttonBox)
 
         self.setLayout(layout)
-        print("Initialized create custom component dialog")
 
     def selectSprite(self):
         """Opens a file selection window to select an image file as sprite."""

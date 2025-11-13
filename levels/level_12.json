@@ -1,6 +1,6 @@
 {
     "level_id": 12,
-    "name": "OR-Gate",
+    "name": "OR Gate",
     "description": "The OR gate checks if either A or B are true, if either are true, it will return 1, otherwise it returns 0.",
     "difficulty": "Easy",
     "objectives": [

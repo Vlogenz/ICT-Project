@@ -1,6 +1,6 @@
 {
     "level_id": 13,
-    "name": "NOT-Gate",
+    "name": "NOT Gate",
     "description": "The NOT gate simply inverts the given input.  If it recieves a 1 it will return 0, and vice versa.",
     "difficulty": "Easy",
     "objectives": [

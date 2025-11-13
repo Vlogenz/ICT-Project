@@ -1,6 +1,6 @@
 {
     "level_id": 11,
-    "name": "AND-Gate",
+    "name": "AND Gate",
     "description": "The AND gate checks if A and B are true, if this is the case, it will return 1, otherwise it returns 0.",
     "difficulty": "Easy",
     "objectives": [

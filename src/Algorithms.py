@@ -1,6 +1,7 @@
 import typing
 from src.model import Input, InstructionMemory, ProgramCounter, Register
 from src.constants import MAX_EVAL_CYCLES
+from src.infrastructure.eventBus import getBus
 
 class Algorithms:
     """
@@ -37,6 +38,7 @@ class Algorithms:
             # move to next tick
             currentTick = nextTick
             tick += 1  # increase tick count
+            
 
         # if there are still components with indegree > 0, there is a circular dependency
         if sum(indeg.values()) > 0:
@@ -50,6 +52,7 @@ class Algorithms:
                     updateFunction(components=updateInTick[tick])
                 if waitFunction is not None:
                     waitFunction()
+            
             return True
 
     @staticmethod
@@ -109,4 +112,5 @@ class Algorithms:
             # if too many ticks, there is probably a circular dependency which don't has a stable state
             if tick > MAX_EVAL_CYCLES * maxEvaluationCycles:
                 return False
+        
         return True

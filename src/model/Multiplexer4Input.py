@@ -205,6 +205,6 @@ class Multiplexer4Inp(LogicComponent):
 
         #   Check to see if data has changed
         if (self.state["outputValue"] == oldState):
-            return False
+            return True
         else:
             return True

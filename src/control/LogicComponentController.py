@@ -61,9 +61,11 @@ class LogicComponentController:
         # I just left it commented out so we can use it just in case.
         #getBus().setManual()
         if Algorithms.khanFrontierEval(self.inputs, self.components, self.updateComponents, self._waitWithEventLoop):
+            self.updateRegisters()
             getBus().setAuto()
             return True
         elif Algorithms.eventDrivenEval(self.inputs, self.components, self.updateComponents, self._waitWithEventLoop):
+            self.updateRegisters()
             getBus().setAuto()
             return True
         else:

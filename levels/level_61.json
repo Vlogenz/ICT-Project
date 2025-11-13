@@ -10,8 +10,8 @@
         
     ],
     "components": [
-        {"type": "Input", "position": [0,3], "immovable": true, "label": "read register 1"},
-        {"type": "Input", "position": [0,4], "immovable": true, "label": "read register 2"},
+        {"type": "Input", "position": [0,3], "immovable": true, "label": "read register 1", "initialBitWidth": 8},
+        {"type": "Input", "position": [0,4], "immovable": true, "label": "read register 2","initialBitWidth": 8},
         {"type": "Output", "position": [7,3], "immovable": true, "label": "read data 1"},
         {"type": "Output", "position": [7,4], "immovable": true, "label": "read data 2"},
         {"type": "Register", "position": [3,2], "immovable": true, "label": "Register 0","initialValue": 42},

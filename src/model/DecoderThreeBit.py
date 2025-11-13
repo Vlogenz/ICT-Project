@@ -23,13 +23,13 @@ class DecoderThreeBit(LogicComponent):
         c = 0
         
         if self.inputs["input1"] is not None:
-            a = self.inputs["input1"][0].getState()[self.inputs["input1"][1]][0]
+            c = self.inputs["input1"][0].getState()[self.inputs["input1"][1]][0]
         
         if self.inputs["input2"] is not None:
             b = self.inputs["input2"][0].getState()[self.inputs["input2"][1]][0]
         
         if self.inputs["input3"] is not None:
-            c = self.inputs["input3"][0].getState()[self.inputs["input3"][1]][0]
+            a = self.inputs["input3"][0].getState()[self.inputs["input3"][1]][0]
         
         value =(a<<2) + (b<<1) + c
         

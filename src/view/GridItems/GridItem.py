@@ -3,7 +3,7 @@ from PySide6 import QtWidgets, QtGui, QtCore
 import json
 
 from PySide6.QtGui import QAction, QCursor, QBrush, QPalette
-from PySide6.QtWidgets import QMenu, QPushButton
+from PySide6.QtWidgets import QMenu, QPushButton, QInputDialog
 
 from src.model.LogicComponent import LogicComponent
 from src.constants import CELL_SIZE, MIME_TYPE
@@ -28,12 +28,15 @@ class GridItem(QtWidgets.QFrame):
         
         self.image_path = self.getImagePath()
 
+        self.nameLabel = QtWidgets.QLabel(self.getName())
+        self.nameLabel.setAlignment(QtCore.Qt.AlignCenter)
+        self.nameLabel.setStyleSheet("color: black;")
+
         self.pixmap = QtGui.QPixmap(self.image_path)
         if self.pixmap.isNull():
-            nameLabel = QtWidgets.QLabel(self.getName())
-            nameLabel.setAlignment(QtCore.Qt.AlignCenter)
-            nameLabel.setStyleSheet("color: black;")
-            self.layout.addWidget(nameLabel)
+            self.layout.addWidget(self.nameLabel)
+        else:
+            self.nameLabel.hide()
 
         # Define ports dynamically based on what the LogicComponent has
         self.outputs = {
@@ -86,6 +89,8 @@ class GridItem(QtWidgets.QFrame):
         return f"assets/gates/{self.logicComponent.__class__.__name__}.svg"
 
     def getName(self) -> str:
+        if self.logicComponent.getLabel() != "":
+            return self.logicComponent.getLabel()
         return self.logicComponent.__class__.__name__
 
     def paintEvent(self, event):
@@ -146,7 +151,7 @@ class GridItem(QtWidgets.QFrame):
             else:
                 self.setToolTip(f"Input '{key}': Not connected\n- Bitwidth: {self.logicComponent.inputBitwidths[key]}")
         else:
-            self.setToolTip("")
+            self.setToolTip(f"{self.getName()} ({self.logicComponent.__class__.__name__})")
 
         # If dragging a line, propagate the event to parent for updating the dragging line
         if self.parentWidget() and hasattr(self.parentWidget(), 'draggingLine') and self.parentWidget().draggingLine:
@@ -158,9 +163,11 @@ class GridItem(QtWidgets.QFrame):
         """Open a context menu with options like deleting the item."""
         menu = QMenu(self)  # Parent the menu to avoid leaks
         if not self.immovable:
-            deleteAction = QAction("Delete component", self)
+            deleteAction = QAction("Delete", self)
             deleteAction.triggered.connect(self.deleteItem)
             menu.addAction(deleteAction)
+            renameAction = QAction("Rename", self)
+            renameAction.triggered.connect(self.openRenameDialog)
         menu.exec_(QCursor.pos())  # Display the menu at the cursor's current position
 
     def deleteItem(self):
@@ -230,6 +237,11 @@ class GridItem(QtWidgets.QFrame):
                 label.setText(str(state[0]))
             else:
                 label.setText("NC")
+
+    def openRenameDialog(self):
+        text, ok = QInputDialog.getText(self, "Rename component", "Enter a label:")
+        if ok and text:
+            self.logicComponent.setLabel(text)
 
     def unsubscribe(self):
         """Removes the subscription to the view:components_updated event.

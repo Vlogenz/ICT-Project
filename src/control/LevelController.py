@@ -44,6 +44,7 @@ class LevelController:
             
             component_class = COMPONENT_MAP[component_type_str]
             comp = self.logicComponentController.addLogicComponent(component_class)
+            comp.setLabel(componentData.get("label", ""))
 
             pos = tuple(componentData["position"])
             componentInfo.append({

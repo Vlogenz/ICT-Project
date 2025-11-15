@@ -1,0 +1,26 @@
+{
+    "level_id": 18,
+    "name": "Functional Completeness 2",
+    "description": "NAND gates can also create any function, similar to NOR gates.",
+    "difficulty": "Medium",
+    "objectives": [
+        "Create a combination of NAND gates which is functionally identical to an AND gate."
+    ],
+    "components": [
+        {"type": "Input", "position": [0,1], "immovable": true, "label": "A"},
+        {"type": "Input", "position": [0,3], "immovable": true, "label": "B"}, 
+        {"type": "Output", "position": [6,2], "immovable": true}    
+    ],
+    "available_components": [
+        {"type": "Nand"}
+    ],
+    "hints": [
+        "Try placing only 3 NAND gates."
+    ],
+    "tests": [
+        {"inputs": [[0,1],[0,1]], "expected_output": [[0,1]]},
+        {"inputs": [[1,1],[0,1]], "expected_output": [[0,1]]},
+        {"inputs": [[0,1],[1,1]], "expected_output": [[0,1]]},
+        {"inputs": [[1,1],[1,1]], "expected_output": [[1,1]]}
+    ]
+}

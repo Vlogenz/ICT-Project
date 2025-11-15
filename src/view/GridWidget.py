@@ -125,6 +125,7 @@ class GridWidget(QtWidgets.QWidget):
         srcItem = [item for item in self.items if item.logicComponent == srcComp][0]
         dstItem = [item for item in self.items if item.logicComponent == dstComp][0]
         self.connections.append(Connection(srcItem, srcKey, dstItem, dstKey))
+        print(f"added connection to grid: {srcComp},{srcKey},{dstComp},{dstKey}")
         dstItem.update()
         self.update()
 

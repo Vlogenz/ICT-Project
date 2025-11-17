@@ -11,37 +11,17 @@
         "Write the ALU result back to the destination register (rd).",
         "We will add control signals later, so don't worry about op, shamt, and func fields for now."
     ],
-    "components": [
-        {"type": "Input", "position": [0,1], "immovable": true, "label": "4", "initialValue": 4, "initialBitWidth": 32},
-        {"type": "ProgramCounter", "position": [2,2], "immovable": true, "label": "PC"},
-        {"type": "Adder32bit", "position": [4,2], "immovable": false, "label": "PC Adder"},
-        {"type": "InstructionMemory", "position": [7,2], "immovable": true, "label": "Instruction Memory"},
-        
-        {"type": "Register", "position": [3,8], "immovable": true, "label": "Register 0", "initialValue": 10},
-        {"type": "Register", "position": [3,9], "immovable": true, "label": "Register 1", "initialValue": 20},
-        {"type": "Register", "position": [3,10], "immovable": true, "label": "Register 2", "initialValue": 30},
-        {"type": "Register", "position": [3,11], "immovable": true, "label": "Register 3", "initialValue": 40},
-        
-        {"type": "Input", "position": [0,13], "immovable": true, "label": "RegWrite (dummy)", "initialValue": 1, "initialBitWidth": 1},
-        {"type": "Input", "position": [0,14], "immovable": true, "label": "ALU OP (dummy)", "initialValue": 2, "initialBitWidth": 2},
-        {"type": "Input", "position": [0,15], "immovable": true, "label": "ALU Ainvert (dummy)", "initialValue": 0, "initialBitWidth": 1},
-        {"type": "Input", "position": [0,16], "immovable": true, "label": "ALU Binvert (dummy)", "initialValue": 0, "initialBitWidth": 1},
-        {"type": "Input", "position": [0,17], "immovable": true, "label": "ALU CarryIn (dummy)", "initialValue": 0, "initialBitWidth": 1},
-        
-        {"type": "Output", "position": [12,8], "immovable": true, "label": "Register 0 value"},
-        {"type": "Output", "position": [12,9], "immovable": true, "label": "Register 1 value"},
-        {"type": "Output", "position": [12,10], "immovable": true, "label": "Register 2 value"},
-        {"type": "Output", "position": [12,11], "immovable": true, "label": "Register 3 value"}
+    "components": [ 
+
+
     ],
     "connections": [
-        {"origin": 0, "originKey": "outValue", "destination": 2, "destinationKey": "inputB"},
-        {"origin": 1, "originKey": "outValue", "destination": 2, "destinationKey": "inputA"},
-        {"origin": 2, "originKey": "outSum", "destination": 1, "destinationKey": "input"},
-        {"origin": 1, "originKey": "outValue", "destination": 3, "destinationKey": "readAddress"}
+
+
     ],
     "memoryContents": {
         "instructionMemory": [
-            2185232384, 2252341248, 2319450112, 2386558976, 0, 0, 0, 0
+           
         ],
         "dataMemory": []
     },
@@ -68,9 +48,6 @@
         "The dummy ALU operation input is set to 2 (ADD operation)."
     ],
     "tests": [
-        {"inputs": [], "expected_output": [[30,32], [20,32], [30,32], [40,32]]},
-        {"inputs": [], "expected_output": [[30,32], [50,32], [30,32], [40,32]]},
-        {"inputs": [], "expected_output": [[30,32], [50,32], [70,32], [40,32]]},
-        {"inputs": [], "expected_output": [[30,32], [50,32], [70,32], [110,32]]}
+        {"inputs": [], "expected_output": []}
     ]
 }

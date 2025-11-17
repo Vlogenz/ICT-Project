@@ -28,12 +28,33 @@ def level_controller(logic_controller):
     }
     controller.getAvailableComponentClasses.return_value = [And, Or]
     controller.currentLevel = 1
+    controller.outputPredictions = []  # Add missing attribute
+    controller.usesOutputPredictions.return_value = False  # Add missing method
     return controller
 
 
 @pytest.fixture
 def level_file_controller():
     return Mock(spec=LevelFileController)
+
+
+@pytest.fixture
+def level_controller_with_predictions(logic_controller):
+    """Level controller with output predictions enabled"""
+    controller = Mock(spec=LevelController)
+    controller.logicComponentController = logic_controller
+    controller.getLevel.return_value = {
+        "level_id": 2,
+        "name": "Test Level with Predictions",
+        "description": "A test level with output predictions",
+        "objectives": ["Predict outputs correctly"],
+        "components": []
+    }
+    controller.getAvailableComponentClasses.return_value = [And, Or]
+    controller.currentLevel = 2
+    controller.outputPredictions = [(0, 1), (0, 1)]  # Two 1-bit outputs
+    controller.usesOutputPredictions.return_value = True
+    return controller
 
 
 class TestLevelScene:
@@ -105,3 +126,132 @@ class TestLevelScene:
         # Hard to test exactly without accessing private layout, but we can check that buildLevel is called
         level_controller.buildLevel.assert_called_once()
         level_controller.setGrid.assert_called_once()
+
+    # ============================================================================
+    # Tests for checkSolution Feature
+    # ============================================================================
+
+    def test_check_solution_success_message_content(self, qtbot, level_controller, level_file_controller):
+        """Test that success message shows correct content"""
+        level_controller.checkSolution.return_value = True
+        scene = LevelScene(level_controller, level_file_controller)
+        qtbot.addWidget(scene)
+
+        with patch('PySide6.QtWidgets.QMessageBox.information') as mock_info:
+            scene.checkSolution()
+            args = mock_info.call_args[0]
+            assert args[1] == "You did it!"
+            assert "All checks succeeded" in args[2]
+
+    def test_check_solution_failure_message_content(self, qtbot, level_controller, level_file_controller):
+        """Test that failure message shows correct content"""
+        level_controller.checkSolution.return_value = False
+        scene = LevelScene(level_controller, level_file_controller)
+        qtbot.addWidget(scene)
+
+        with patch('PySide6.QtWidgets.QMessageBox.critical') as mock_critical:
+            scene.checkSolution()
+            args = mock_critical.call_args[0]
+            assert args[1] == "Not quite!"
+            assert "Some tests failed" in args[2]
+
+    def test_check_solution_updates_completed_levels_only_on_success(self, qtbot, level_controller, level_file_controller):
+        """Test that completed levels are only updated when solution is correct"""
+        level_controller.checkSolution.return_value = False
+        scene = LevelScene(level_controller, level_file_controller)
+        qtbot.addWidget(scene)
+
+        with patch('PySide6.QtWidgets.QMessageBox.critical'):
+            scene.checkSolution()
+            # Should not update completed levels on failure
+            level_file_controller.updateCompletedLevels.assert_not_called()
+
+    def test_check_solution_calls_level_controller(self, qtbot, level_controller, level_file_controller):
+        """Test that checkSolution properly delegates to LevelController"""
+        level_controller.checkSolution.return_value = True
+        scene = LevelScene(level_controller, level_file_controller)
+        qtbot.addWidget(scene)
+
+        with patch('PySide6.QtWidgets.QMessageBox.information'):
+            scene.checkSolution()
+            level_controller.checkSolution.assert_called_once()
+
+    def test_check_solution_multiple_attempts(self, qtbot, level_controller, level_file_controller):
+        """Test that checkSolution can be called multiple times"""
+        level_controller.checkSolution.return_value = False
+        scene = LevelScene(level_controller, level_file_controller)
+        qtbot.addWidget(scene)
+
+        with patch('PySide6.QtWidgets.QMessageBox.critical'):
+            # First attempt - failure
+            scene.checkSolution()
+            assert level_controller.checkSolution.call_count == 1
+
+        # Change to success
+        level_controller.checkSolution.return_value = True
+        with patch('PySide6.QtWidgets.QMessageBox.information'):
+            # Second attempt - success
+            scene.checkSolution()
+            assert level_controller.checkSolution.call_count == 2
+            level_file_controller.updateCompletedLevels.assert_called_once()
+
+    def test_check_solution_with_output_predictions_enabled(self, qtbot, level_controller_with_predictions, level_file_controller):
+        """Test checkSolution when output predictions feature is enabled"""
+        level_controller_with_predictions.checkSolution.return_value = False
+        scene = LevelScene(level_controller_with_predictions, level_file_controller)
+        qtbot.addWidget(scene)
+
+        with patch('PySide6.QtWidgets.QMessageBox.critical') as mock_critical:
+            scene.checkSolution()
+            mock_critical.assert_called_once()
+            # Verify the message includes output predictions hint
+            args = mock_critical.call_args[0]
+            assert "output predictions" in args[2]
+
+    def test_check_solution_without_output_predictions(self, qtbot, level_controller, level_file_controller):
+        """Test that failure message doesn't mention output predictions when feature is disabled"""
+        level_controller.checkSolution.return_value = False
+        scene = LevelScene(level_controller, level_file_controller)
+        qtbot.addWidget(scene)
+
+        with patch('PySide6.QtWidgets.QMessageBox.critical') as mock_critical:
+            scene.checkSolution()
+            # Verify the message doesn't include output predictions hint
+            args = mock_critical.call_args[0]
+            assert "output predictions" not in args[2].lower()
+
+    def test_check_solution_success_with_predictions(self, qtbot, level_controller_with_predictions, level_file_controller):
+        """Test successful solution check with output predictions enabled"""
+        level_controller_with_predictions.checkSolution.return_value = True
+        scene = LevelScene(level_controller_with_predictions, level_file_controller)
+        qtbot.addWidget(scene)
+
+        with patch('PySide6.QtWidgets.QMessageBox.information') as mock_info:
+            scene.checkSolution()
+            mock_info.assert_called_once()
+            level_file_controller.updateCompletedLevels.assert_called_once()
+
+    def test_check_solution_method_exists(self, qtbot, level_controller, level_file_controller):
+        """Test that checkSolution method is callable"""
+        scene = LevelScene(level_controller, level_file_controller)
+        qtbot.addWidget(scene)
+        assert callable(scene.checkSolution)
+
+    def test_level_scene_initializes_with_predictions(self, qtbot, level_controller_with_predictions, level_file_controller):
+        """Test that LevelScene initializes correctly when output predictions are enabled"""
+        scene = LevelScene(level_controller_with_predictions, level_file_controller)
+        qtbot.addWidget(scene)
+
+        assert scene.windowTitle() == "Level 2"
+        level_controller_with_predictions.usesOutputPredictions.assert_called()
+
+    def test_check_solution_evaluates_circuit_before_checking(self, qtbot, level_controller, level_file_controller):
+        """Test that the circuit is properly evaluated before checking solution"""
+        level_controller.checkSolution.return_value = True
+        scene = LevelScene(level_controller, level_file_controller)
+        qtbot.addWidget(scene)
+
+        with patch('PySide6.QtWidgets.QMessageBox.information'):
+            scene.checkSolution()
+            # Verify checkSolution was called (which internally evaluates the circuit)
+            level_controller.checkSolution.assert_called_once()

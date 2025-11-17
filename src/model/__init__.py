@@ -35,6 +35,8 @@ from .RegisterBlock import RegisterBlock
 from .Collector1to2 import Collector1to2
 from .Collector1to3 import Collector1to3
 from .Adder32bit import Adder32bit
+from .Collector1to6 import Collector1to6
+from .Collector1to5 import Collector1to5
 
 
 

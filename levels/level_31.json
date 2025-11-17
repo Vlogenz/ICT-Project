@@ -1,5 +1,5 @@
 {
-    "level_id": 15,
+    "level_id": 31,
     "name": "D-Latch",
     "description": "Building on the RS-Flipflop, a D latch is a digital memory element that stores one bit of information. It has two main inputs: the data input (D) and the enable input (sometimes called gate, clock, or latch enable). When the enable input is active (1), the output Q follows the data input D immediately, making the latch \"transparent.\" When the enable input is deactivated (0), the latch holds or \"stores\" the last value present at the data input, regardless of any further changes to D. A D-Latch removes the invalid RS combination by creating S and R from a data input D. The clock imput C is the upper input and the data input D is the lower input.",
     "difficulty": "Middle",

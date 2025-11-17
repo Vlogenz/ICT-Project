@@ -1,5 +1,5 @@
 {
-    "level_id": 14,
+    "level_id": 30,
     "name": "RS-FLipflop",
     "description": "An RS-Flipflop stores 1-Bit by storing the last value of the input and returning it on the next clock cycle. \nS (Set) forces the output to 1, R (Reset) forces it to **0`.\nIf both inputs are 0, the circuit keeps its previous value due to feedback.\nThis is the fundamental memory element showing how state is preserved.",
     "difficulty": "Middle",

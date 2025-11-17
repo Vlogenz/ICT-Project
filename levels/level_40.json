@@ -1,0 +1,25 @@
+{
+  "level_id": 40,
+  "name": "Half Adder",
+  "description": "A Half-Adder adds two 1-bit numbers (A and B).\nIt produces a Sum and a Carry. This is the smallest building block of binary addition.",
+  "difficulty": "Medium",
+  "objectives": ["Create a circuit that adds to 1bit together and returns sum and carry"],
+  "components": [
+    {"type": "Input", "position": [0,1], "immovable": true, "label": "A"},
+    {"type": "Input", "position": [0,3], "immovable": true, "label": "B"},
+    {"type": "Output", "position":  [4, 1], "immovable":  true, "label":  "Sum"},
+    {"type": "Output", "position":  [4, 3], "immovable":  true, "label":  "CarryOut"}
+  ],
+  "available_components": [
+    {"type":  "Xor"},
+    {"type": "And"}
+  ],
+  "hints": [],
+  "solution": "",
+  "tests": [
+      {"inputs": [[0,1],[0,1]], "expected_output": [[0,1],[0,1]]},
+      {"inputs": [[1,1],[0,1]], "expected_output": [[1,1],[0,1]]},
+      {"inputs": [[0,1],[1,1]], "expected_output": [[1,1],[0,1]]},
+      {"inputs": [[1,1],[1,1]], "expected_output": [[0,1],[1,1]]}
+  ]
+}

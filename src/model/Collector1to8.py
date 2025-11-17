@@ -2,6 +2,7 @@ import  typing
 from .LogicComponent import LogicComponent
 
 class Collector1to8(LogicComponent):
+    """ Collector that combines eight 1-bit inputs into one 8-bit output."""
     
     def __init__(self):
         super().__init__()
@@ -13,22 +14,23 @@ class Collector1to8(LogicComponent):
         #   (Tuples of component and output key of that component)
         self.state: dict = {"outValue": (0,8)}
         
-    def eval(self):
+    def eval(self) -> bool:
         """Evaluate the Collector, and return if the Output has changed.
 
         Returns:
             bool: True if the output state has changed, False otherwise.
         """
         oldState = self.state.copy()
-        outValue = 0
+        outValue: int = 0
         for i,value in enumerate(self.inputs.values()):
             if value is None: # set input to false if no component is connected
-                bit = 0
+                bit: int = 0
             else:
-                bit = value[0].getState()[value[1]][0]
+                bit: int = value[0].getState()[value[1]][0]
                 # gets the component out of the tuple in self.inputs and then 
                 #   uses the key from that tuple to access the right output from the 
                 #   components state
+            # shift the bit into the correct position and combine
             outValue |= (bit << (i))
         self.state["outValue"] = (outValue, 8)
         if self.state != oldState:

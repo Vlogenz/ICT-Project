@@ -1,3 +1,4 @@
+"""List of all available Logic Components in the model package for easier imports."""
 from .ALUAdvanced import ALUAdvanced
 from .ALUSimple import ALUSimple
 from .And import And
@@ -37,4 +38,3 @@ from .Collector1to3 import Collector1to3
 
 
 
-"""Nothing is in here, but pytest needs this file to recognize the folder as a package."""

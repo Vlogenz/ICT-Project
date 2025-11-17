@@ -20,18 +20,18 @@ class InstructionMemory(LogicComponent):
         """
         oldState = self.state.copy()
         if self.inputs["readAddress"] is None: # set input to zero if no component is connected
-            address = 0
+            address: int = 0
         else:
-            address = self.inputs["readAddress"][0].getState()[self.inputs["readAddress"][1]][0]
+            address: int = self.inputs["readAddress"][0].getState()[self.inputs["readAddress"][1]][0]
             # gets the component out of the first tuple in self.inputs and then 
             #   uses the key from that tuple to access the right output from the 
             #   components state
         
         address = address // 4  # Convert byte address to word address
         if address < len(self.instructionList):
-            instruction = self.instructionList[address]
+            instruction: int = self.instructionList[address]
         else:
-            instruction = 0  # Default instruction if address is out of range
+            instruction: int = 0  # Default instruction if address is out of range
         self.state = {
             "instruction": (instruction, 32)
         }

@@ -4,6 +4,7 @@ from .LogicComponent import LogicComponent
 
 
 class FullAdder(LogicComponent):
+    """ Full Adder that adds two 1-bit inputs and a carry-in, producing a 1-bit sum and a carry-out."""
 
     def __init__(self):
         super().__init__()
@@ -20,24 +21,24 @@ class FullAdder(LogicComponent):
         
         oldState = self.state.copy()
         if self.inputs["inputA"] is None: # set input to false if no component is connected
-            a = False
+            a:int = 0
         else:
-            a = self.inputs["inputA"][0].getState()[self.inputs["inputA"][1]][0]
+            a:int = self.inputs["inputA"][0].getState()[self.inputs["inputA"][1]][0]
             # gets the component out of the first tuple in self.inputs and then
             #   uses the key from that tuple to access the right output from the
             #   components state
 
         if self.inputs["inputB"] is None: # set input to false if no component is connected
-            b = False
+            b:int = 0
         else:
-            b = self.inputs["inputB"][0].getState()[self.inputs["inputB"][1]][0]
+            b:int = self.inputs["inputB"][0].getState()[self.inputs["inputB"][1]][0]
             # gets the component out of the second tuple in self.inputs and then
             #   uses the key from that tuple to access the right output from the
             #   components state
         if self.inputs["inputCin"] is None: # set input to false if no component is connected
-            cin = False
+            cin:int = 0
         else:
-            cin = self.inputs["inputCin"][0].getState()[self.inputs["inputCin"][1]][0]
+            cin:int = self.inputs["inputCin"][0].getState()[self.inputs["inputCin"][1]][0]
             # gets the component out of the third tuple in self.inputs and then
             #   uses the key from that tuple to access the right output from the
             #   components state

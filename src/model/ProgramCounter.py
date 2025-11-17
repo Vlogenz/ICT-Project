@@ -3,6 +3,8 @@ from .LogicComponent import LogicComponent
 from src.infrastructure.eventBus import getBus
 
 class ProgramCounter(LogicComponent):
+    """ Program Counter component with one input and one output. """
+    
     def __init__(self):
         super().__init__()
         self.inputs: typing.Dict = {"input": None}
@@ -21,9 +23,9 @@ class ProgramCounter(LogicComponent):
         """
         oldState = self.state.copy()
         if self.inputs["input"] is None:  # set input to zero if no component is connected
-            value = 0
+            value: int = 0
         else:
-            value = self.inputs["input"][0].getState()[self.inputs["input"][1]][0]
+            value: int = self.inputs["input"][0].getState()[self.inputs["input"][1]][0]
             # gets the component out of the first tuple in self.inputs and then
             #   uses the key from that tuple to access the right output from the
             #   components state

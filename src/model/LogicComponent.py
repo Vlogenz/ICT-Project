@@ -3,8 +3,8 @@ import typing
 from src.infrastructure.eventBus import getBus
 
 class LogicComponent(ABC):
-    
-    id = 0
+    """Abstract base class for all logic components in the circuit simulator."""
+    id: int = 0
     
     def __init__(self):
         
@@ -20,13 +20,14 @@ class LogicComponent(ABC):
     # Implementation left to the subclasses
     @abstractmethod
     def eval(self) -> bool:
+        """Evaluate the component and return if the Output has changed."""
         pass
 
     def getInputs(self) -> typing.List["LogicComponent"]:
         return self.inputs
     
     #if amount of inputs is restricted, it has to be implmenented in the subclass
-    def addInput(self, input: "LogicComponent", key: str, internalKey: str):
+    def addInput(self, input: "LogicComponent", key: str, internalKey: str) -> bool:
         """
         Add an input connection to this component.
         Args:
@@ -36,7 +37,7 @@ class LogicComponent(ABC):
         Raises:
             KeyError: If the internalKey is not found in inputs or already occupied.
         Returns:
-            bool: True if the input was added successfully, False if the input slot is already occupied
+            bool: True if the input was added successfully, False if the input slot was already occupied
         """
         if internalKey in self.inputs and self.inputs[internalKey] is None:
             self.inputs[internalKey] = (input,key)
@@ -49,7 +50,7 @@ class LogicComponent(ABC):
             raise KeyError(f"Key {internalKey} not found in inputs")  
         
 
-    def removeInput(self, input: "LogicComponent", key:str, internalKey: str):
+    def removeInput(self, input: "LogicComponent", key:str, internalKey: str) -> None:
         """
         Remove an input connection from this component.
         Args:
@@ -65,9 +66,10 @@ class LogicComponent(ABC):
             raise KeyError(f"Key {internalKey} not found in inputs or input does not match.")
 
     def getOutputs(self) -> typing.List[tuple]:
+        """Returns a list of output connections from this component."""
         return self.outputs
-    
-    def addOutput(self, output: "LogicComponent", key: str):
+
+    def addOutput(self, output: "LogicComponent", key: str) -> None:
         """Add an output connection to this component
 
         Args:
@@ -75,8 +77,8 @@ class LogicComponent(ABC):
             key (str): the key of the input from the output component
         """
         self.outputs.append((output,key))
-    
-    def removeOutput(self, output: "LogicComponent", key:str):
+
+    def removeOutput(self, output: "LogicComponent", key:str) -> None:
         """Remove an output connection from this component
 
         Args:
@@ -86,10 +88,10 @@ class LogicComponent(ABC):
         if (output,key) in self.outputs:
             self.outputs.remove((output,key))
 
-    def getState(self):
+    def getState(self) -> dict:
         return self.state
-    
-    def __hash__(self):
+
+    def __hash__(self) -> int:
         return self.id
     
     def getBitwidth(self,key: str)-> int:

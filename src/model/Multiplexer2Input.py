@@ -2,6 +2,7 @@ import  typing
 from .LogicComponent import LogicComponent
 
 class Multiplexer2Inp(LogicComponent):
+    """ 2-input Multiplexer that selects one of the two inputs based on a 1-bit selection input. """
 
     def __init__(self):
         super().__init__()
@@ -26,7 +27,7 @@ class Multiplexer2Inp(LogicComponent):
 
         return outputs[0][0].getBitwidth(outputs[0][1])
 
-    def addInput(self, input: "LogicComponent", key: str, internalKey: str):
+    def addInput(self, input: "LogicComponent", key: str, internalKey: str) -> bool:
         """
         Add an input connection to this component and lock input bidwidth if not already done.
         Args:
@@ -37,7 +38,7 @@ class Multiplexer2Inp(LogicComponent):
             bool: True if the input was added successfully, False if the input failed to add
         """
 
-        #   Redundant(?) check to ensure that the selection value isn't too big for the multiplexer
+        #   check to ensure that the selection value isn't too big for the multiplexer
         #   we subtract 2 from the inputs length to exclude selection and to counter length starting from 1
         #   Here it ensures that the value is either 0 or 1, we handle transforming this into something usable in eval()
         if internalKey == "selection" and input.getState()[key][0] > (len(self.inputs) - 2):
@@ -88,7 +89,7 @@ class Multiplexer2Inp(LogicComponent):
         
         return True
     
-    def removeInput(self, input: "LogicComponent", key: str, internalKey: str):
+    def removeInput(self, input: "LogicComponent", key: str, internalKey: str) -> bool:
         """
         Remove an input connection from this component, resets bitwidths if nothing is connected.
         Args:
@@ -121,7 +122,7 @@ class Multiplexer2Inp(LogicComponent):
         
         return True
     
-    def removeOutput(self, output: "LogicComponent", key: str):
+    def removeOutput(self, output: "LogicComponent", key: str) -> bool:
         """
         Remove an output connection from this component, resets all bitwidths if nothing is connected.
         Args:

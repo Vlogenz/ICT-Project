@@ -2,6 +2,8 @@ import typing
 from .LogicComponent import LogicComponent
 
 class DecoderThreeBit(LogicComponent):
+    """3-bit Decoder that decodes three 1-bit inputs into eight 1-bit outputs."""
+    
     def __init__(self):
         super().__init__()
         self.inputs: typing.Dict = {"input1": None, "input2": None, "input3": None} 
@@ -18,10 +20,10 @@ class DecoderThreeBit(LogicComponent):
         old_state = self.state.copy()
         
         # Default input values to 0 if not connected
-        a = 0
-        b = 0
-        c = 0
-        
+        a: int = 0
+        b: int = 0
+        c: int = 0
+
         if self.inputs["input1"] is not None:
             c = self.inputs["input1"][0].getState()[self.inputs["input1"][1]][0]
         
@@ -31,12 +33,13 @@ class DecoderThreeBit(LogicComponent):
         if self.inputs["input3"] is not None:
             a = self.inputs["input3"][0].getState()[self.inputs["input3"][1]][0]
         
-        value =(a<<2) + (b<<1) + c
+        # calculate the binary value from the three inputs (abc)
+        value: int =(a<<2) + (b<<1) + c
         
         # Reset all outputs to 0
-        for i in range(1, 9):
-            self.state[f"outValue{i}"] = (0, 1)
-        
+        for key in self.state.keys():
+            self.state[key] = (0, 1)
+
         # Set the selected output to 1
         self.state[f"outValue{value + 1}"] = (1, 1)
         if self.state != old_state:

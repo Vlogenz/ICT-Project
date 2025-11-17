@@ -2,6 +2,7 @@ import typing
 from .LogicComponent import LogicComponent
 
 class Output(LogicComponent):
+    """ Output component with one input and no outputs. """
     
     def __init__(self):
         super().__init__()
@@ -20,9 +21,9 @@ class Output(LogicComponent):
         """
         old_state = self.state.copy()
         if self.inputs["input"] is None: # set input to false if no component is connected
-            value = False
+            value: int = 0
         else:
-            value = self.inputs["input"][0].getState()[self.inputs["input"][1]][0]
+            value: int = self.inputs["input"][0].getState()[self.inputs["input"][1]][0]
         # gets the component out of the first tuple in self.inputs and then 
             #   uses the key from that tuple to access the right output from the 
             #   components state
@@ -32,14 +33,16 @@ class Output(LogicComponent):
         else:
             return False
         
-    def addInput(self, input, key, internalKey):
+    def addInput(self, input, key, internalKey)-> bool:
+        """ Add an input to the Output component."""
         success = super().addInput(input, key, internalKey)
         if success:
             self.inputBitwidths["input"] = input.getState()[key][1]
             self.state = {"outValue": (0, self.inputBitwidths["input"])}
         return success
     
-    def removeInput(self, input, key, internalKey):
+    def removeInput(self, input, key, internalKey)-> None:
+        """ Remove an input from the Output component."""
         super().removeInput(input, key, internalKey)
         self.inputBitwidths["input"] = 0
         

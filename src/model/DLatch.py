@@ -2,6 +2,7 @@ import typing
 from .LogicComponent import LogicComponent
 
 class DLatch(LogicComponent):
+    """ D Latch that stores a 1-bit value based on clock and data inputs."""
 
     def __init__(self):
         super().__init__()
@@ -20,20 +21,20 @@ class DLatch(LogicComponent):
 		"""
         oldState = self.state.copy()
         if self.inputs["inputC"] is None: # set input to false if no component is connected
-            c = False
+            c: int = 0
         else:
-            c = self.inputs["inputC"][0].getState()[self.inputs["inputC"][1]][0]
+            c: int = self.inputs["inputC"][0].getState()[self.inputs["inputC"][1]][0]
             # gets the component out of the first tuple in self.inputs and then
             #   uses the key from that tuple to access the right output from the
             #   components state
         if self.inputs["inputD"] is None: # set input to false if no component is connected
-            d = False
+            d: int = 0
         else:
-            d = self.inputs["inputD"][0].getState()[self.inputs["inputD"][1]][0]
+            d: int = self.inputs["inputD"][0].getState()[self.inputs["inputD"][1]][0]
             # gets the component out of the second tuple in self.inputs and then 
             #   uses the key from that tuple to access the right output from the 
             #   components state
-        if c: # if clock is high, set output to D
+        if c == 1: # if clock is high, set output to D
             oldState = self.state.copy()
             self.state["outQ"] = (d,1)
             self.state["out!Q"] = (1 - d,1)

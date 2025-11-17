@@ -46,23 +46,21 @@ class TestGridItem:
         expected_tooltip = "Input 'input1': Not connected\n- Bitwidth: 1"
         assert item.toolTip() == expected_tooltip
 
-    def test_hover_over_non_port_area_clears_tooltip(self, qtbot):
+    def test_hover_over_non_port_area_shows_component_tooltip(self, qtbot):
         controller = LogicComponentController()
         and_gate = controller.addLogicComponent(And)
         item = GridItem(and_gate)
         qtbot.addWidget(item)
         item.show()
 
-        # Set a tooltip first
-        item.setToolTip("Test")
-
         # Move mouse to center (non-port area)
         center_pos = QtCore.QPoint(item.width() // 2, item.height() // 2)
         event = QtGui.QMouseEvent(QtCore.QEvent.MouseMove, center_pos, QtCore.Qt.NoButton, QtCore.Qt.NoButton, QtCore.Qt.NoModifier)
         item.mouseMoveEvent(event)
 
-        # Check tooltip is cleared
-        assert item.toolTip() == ""
+        # Check tooltip shows component name and class name
+        expected_tooltip = "And (And)"
+        assert item.toolTip() == expected_tooltip
 
     def test_delete_grid_item_via_right_click_menu(self, qtbot):
         controller = LogicComponentController()

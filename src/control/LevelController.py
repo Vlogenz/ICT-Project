@@ -46,6 +46,7 @@ class LevelController:
             
             component_class = COMPONENT_MAP[component_type_str]
             comp = self.logicComponentController.addLogicComponent(component_class)
+            comp.setLabel(componentData.get("label", ""))
 
             pos = tuple(componentData["position"])
             componentInfo.append({
@@ -162,3 +163,6 @@ class LevelController:
         if self.levelData is None:
             return False
         return self.levelData.get("usesOutputPredictions", False)
+
+    def getOutputs(self):
+        return self.logicComponentController.outputs

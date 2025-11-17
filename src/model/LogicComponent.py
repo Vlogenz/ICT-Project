@@ -22,10 +22,6 @@ class LogicComponent(ABC):
     def eval(self) -> bool:
         pass
 
-    # TODO: Implement sprite handling
-    def getSprite(self) -> None:
-        pass
-
     def getInputs(self) -> typing.List["LogicComponent"]:
         return self.inputs
     

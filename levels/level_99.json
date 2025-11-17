@@ -1,0 +1,73 @@
+{
+    "level_id": 0,
+    "name": "dummy Level and gate",
+    "description": "This is a dummy level for testing purposes.",
+    "difficulty": "Easy",
+    "objectives": [
+        "build and gate",
+        "Do something elseses"
+    ],
+    "components": [
+        {"type": "Or", "position": [0,1], "immovable": true},
+        {"type": "Or", "position": [0,3], "immovable": true},
+        {"type": "Output", "position": [4,2], "immovable": true},
+        {"type": "And", "position": [2,2], "immovable": false},
+        {"type": "InstructionMemory", "position": [2,5], "immovable": false},
+        {"type": "DataMemory", "position": [4,5], "immovable": false},
+        {"type": "Register", "position": [6,5], "immovable": false, "initialValue": 34},
+        {"type": "Register", "position": [8,5], "immovable": false, "initialValue": 42}
+
+    ],
+    "memoryContents": {
+        "instructionMemory": [
+            4,8,12,16,20,24,28,32,36,40,44,48,52,56,60,64,64
+        ],
+        "dataMemory": [
+            123,543,23,76,234,87,345,23,78,90,1234,5678,91011,1213,1415,1617
+        ]
+    },
+    "connections": [
+        {"origin": 0, "originKey": "outValue", "destination": 3, "destinationKey": "input1"},
+        {"origin": 1, "originKey": "outValue", "destination": 3, "destinationKey": "input2"},
+        {"origin": 3, "originKey": "outValue", "destination": 2, "destinationKey": "input"}
+    ],
+
+    "available_components": [
+        {"type": "And"},
+        {"type": "Or"},
+        {"type": "Not"},
+        {"type": "Nand"},
+        {"type": "Nor"},
+        {"type": "Xor"},
+        {"type": "Xnor"},
+        {"type": "Input"},
+        {"type": "Output"},
+        {"type": "DataMemory"},
+        {"type": "InstructionMemory"},
+        {"type": "ProgramCounter"},
+        {"type": "RegisterBlock"}
+    ],
+    "hints": [
+        "This is a hint for the dummy level.",
+        "Remember to connect the inputs to the output."
+    ],
+    "tests": [
+        {
+            "inputs": [[1,1], [1,1]],
+            "expected_output": [[1,1]]
+        },
+        {
+            "inputs": [[1,1], [0,1]],
+            "expected_output": [[0,1]]
+        },
+        {
+            "inputs": [[0,1], [1,1]],
+            "expected_output": [[0,1]]
+        },
+        {
+            "inputs": [[0,1], [0,1]],
+            "expected_output": [[0,1]]
+        }
+    ]
+
+}

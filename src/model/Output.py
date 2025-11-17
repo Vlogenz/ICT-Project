@@ -9,7 +9,7 @@ class Output(LogicComponent):
         self.inputBitwidths: typing.Dict = {"input": 0} 
         # Output has exactly one input
         # (Tuples of component and output key of that component)
-        self.state: dict = {"outValue": (0,1)}  # Initial state
+        self.state: dict = {"outValue": (0,0)}  # Initial state
 
 
     def eval(self) -> bool:
@@ -26,7 +26,7 @@ class Output(LogicComponent):
         # gets the component out of the first tuple in self.inputs and then 
             #   uses the key from that tuple to access the right output from the 
             #   components state
-        self.state = {"outValue": (value, 1)}
+        self.state = {"outValue": (value, self.inputBitwidths["input"])}
         if self.state != old_state:
             return True
         else:
@@ -36,6 +36,7 @@ class Output(LogicComponent):
         success = super().addInput(input, key, internalKey)
         if success:
             self.inputBitwidths["input"] = input.getState()[key][1]
+            self.state = {"outValue": (0, self.inputBitwidths["input"])}
         return success
     
     def removeInput(self, input, key, internalKey):

@@ -10,6 +10,7 @@ class Register(LogicComponent):
         #   (Tuples of component and output key of that component)
         self.state: dict = {"outValue": (0,32)}  # Initial state
         self.nextState = (0,32)  # Next state to be loaded
+        self.needNewState = False
     
     def eval(self) -> bool:
         """Evaluate the register state based on the input state.
@@ -26,6 +27,8 @@ class Register(LogicComponent):
                 #   uses the key from that tuple to access the right output from the 
                 #   components state
             self.nextState = (value, 32)
+            self.needNewState = True
+        
         return False
     
     def updateState(self)-> bool:
@@ -34,5 +37,7 @@ class Register(LogicComponent):
         Returns:
             bool: True if the output state has changed, False otherwise.
         """
-        self.state = {"outValue": self.nextState}
-           
+        if self.needNewState:
+            self.state = {"outValue": self.nextState}
+            self.needNewState = False
+        return False

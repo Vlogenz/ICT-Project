@@ -24,7 +24,7 @@ class TestDataMemoryRead:
         """Test that byte addresses are converted to word addresses (divided by 4)"""
         getBus().setManual()
         dm = DataMemory()
-        
+        dm.addInput(DummyInput(1,1), "outValue", "memRead")
         # Set data at word address 5 (byte address 20)
         dm.dataList[5] = 999
         
@@ -38,6 +38,7 @@ class TestDataMemoryRead:
         """Test reading from various memory addresses"""
         getBus().setManual()
         dm = DataMemory()
+        dm.addInput(DummyInput(1,1), "outValue", "memRead")
         
         # Set different values at different addresses
         dm.dataList[0] = 10
@@ -66,6 +67,7 @@ class TestDataMemoryRead:
         """Test reading when no address input is connected (should default to 0)"""
         getBus().setManual()
         dm = DataMemory()
+        dm.addInput(DummyInput(1,1), "outValue", "memRead")
         
         dm.dataList[0] = 77
         
@@ -78,6 +80,7 @@ class TestDataMemoryRead:
         """Test reading from an address that's out of bounds"""
         getBus().setManual()
         dm = DataMemory()
+        dm.addInput(DummyInput(1,1), "outValue", "memRead")
         
         # Try to read from word 200 (byte address 800), which is out of bounds (only 128 words)
         dm.addInput(DummyInput(800, 32), "outValue", "address")
@@ -99,6 +102,7 @@ class TestDataMemoryRead:
         """Test that byte addresses are correctly converted to word addresses"""
         getBus().setManual()
         dm = DataMemory()
+        dm.addInput(DummyInput(1,1), "outValue", "memRead")
         
         # Set a unique value at the word address
         test_value = word_address * 11 + 7
@@ -122,6 +126,7 @@ class TestDataMemoryRead:
         """Test reading various values from memory"""
         getBus().setManual()
         dm = DataMemory()
+        dm.addInput(DummyInput(1,1), "outValue", "memRead")
         
         word_addr = address // 4
         dm.dataList[word_addr] = value
@@ -131,4 +136,133 @@ class TestDataMemoryRead:
         
         assert dm.state["readData"] == (value, 32)
 
+class TestDataMemoryWrite:
+    """Tests for writing to DataMemory"""
+    
+    def test_write_and_read_back(self):
+        """Test writing a value and reading it back"""
+        getBus().setManual()
+        dm = DataMemory()
+        
+        # Write value 1234 to address 16 (word 4)
+        dm.addInput(DummyInput(16, 32), "outValue", "address")
+        dm.addInput(DummyInput(1234, 32), "outValue", "writeData")
+        dm.addInput(DummyInput(1, 1), "outValue", "memWrite")  # Enable write
+        changed = dm.eval()
+        assert not changed  # No output change on write
+        
+        # Disable write and enable read
+        dm.inputs["memWrite"] = None
+        dm.addInput(DummyInput(1, 1), "outValue", "memRead")  # Enable read
+        changed = dm.eval()
+        assert changed  # No output change on read
+        assert dm.state["readData"] == (1234, 32)
+        
+    def test_write_without_memwrite(self):
+        """Test that no write occurs when memWrite is not enabled"""
+        getBus().setManual()
+        dm = DataMemory()
+        
+        # Attempt to write value 5678 to address 32 (word 8) without memWrite
+        dm.addInput(DummyInput(32, 32), "outValue", "address")
+        dm.addInput(DummyInput(5678, 32), "outValue", "writeData")
+        changed = dm.eval()
+        assert not changed  # No output change on write attempt
+        
+        # Now read back from address 32
+        dm.addInput(DummyInput(1, 1), "outValue", "memRead")  # Enable read
+        changed = dm.eval()
+        assert changed  # Output should change on read
+        assert dm.state["readData"] == (0, 32)  # Should still be 0 since no write occurred
+        
+        
+    @pytest.mark.parametrize("address,value", [
+        (0, 0),
+        (4, 255),
+        (40, 1024),
+        (100, 65535),
+        (200, 2**20),
+        (508, 2**31 - 1),
+        
+    ])
+    def test_write_and_read_multiple_addresses(self, address, value):
+        """Test writing and reading from multiple addresses"""
+        getBus().setManual()
+        dm = DataMemory()
 
+        # Write the value to the specified address
+        dm.addInput(DummyInput(address, 32), "outValue", "address")
+        dm.addInput(DummyInput(value, 32), "outValue", "writeData")
+        dm.addInput(DummyInput(1, 1), "outValue", "memWrite")  # Enable write
+        changed = dm.eval()
+        assert not changed  # No output change on write
+
+        # Disable write and enable read
+        dm.inputs["memWrite"] = None
+        dm.addInput(DummyInput(1, 1), "outValue", "memRead")  # Enable read
+        changed = dm.eval()
+        assert changed  # Output should change on read
+        assert dm.state["readData"] == (value, 32)
+        
+    def test_write_and_read_without_address_input(self):
+        """Test writing and reading when no address input is connected (should default to 0)"""
+        getBus().setManual()
+        dm = DataMemory()
+        
+        # Write value 8888 without address input (should write to address 0)
+        dm.addInput(DummyInput(8888, 32), "outValue", "writeData")
+        dm.addInput(DummyInput(1, 1), "outValue", "memWrite")  # Enable write
+        changed = dm.eval()
+        assert not changed  # No output change on write
+        
+        # Disable write and enable read
+        dm.inputs["memWrite"] = None
+        dm.addInput(DummyInput(1, 1), "outValue", "memRead")  # Enable read
+        changed = dm.eval()
+        assert changed  # Output should change on read
+        assert dm.state["readData"] == (8888, 32)
+        
+    def test_write_out_of_bounds_address(self):
+        """Test writing to an address that's out of bounds"""
+        getBus().setManual()
+        dm = DataMemory()
+        
+        # Attempt to write to word 200 (byte address 800), which is out of bounds
+        dm.addInput(DummyInput(800, 32), "outValue", "address")
+        dm.addInput(DummyInput(12345, 32), "outValue", "writeData")
+        dm.addInput(DummyInput(1, 1), "outValue", "memWrite")  # Enable write
+        changed = dm.eval()
+        assert not changed  # No output change on write attempt
+        
+        # Now read back from address 800
+        dm.inputs["memWrite"] = None
+        dm.addInput(DummyInput(1, 1), "outValue", "memRead")  # Enable read
+        changed = dm.eval()
+        assert changed  # Output should change on read
+        assert dm.state["readData"] == (0, 32)  # Should still be 0 since write was out of bounds
+
+    def test_read_while_writing_raises_error(self):
+        """Test that reading and writing at the same time raises an error"""
+        getBus().setManual()
+        dm = DataMemory()
+        
+        dm.addInput(DummyInput(0, 32), "outValue", "address")
+        dm.addInput(DummyInput(1111, 32), "outValue", "writeData")
+        dm.addInput(DummyInput(1, 1), "outValue", "memWrite")  # Enable write
+        dm.addInput(DummyInput(1, 1), "outValue", "memRead")   # Enable read
+        
+        with pytest.raises(ValueError, match="DataMemory cannot read and write at the same time."):
+            dm.eval()
+            
+    def test_load_data(self):
+        """Test loading data into DataMemory"""
+        getBus().setManual()
+        dm = DataMemory()
+        
+        test_data = [i * 10 for i in range(128)]
+        dm.loadData(test_data)
+        
+        # Verify that data was loaded correctly
+        for addr in range(128):
+            assert dm.dataList[addr] == test_data[addr]
+    

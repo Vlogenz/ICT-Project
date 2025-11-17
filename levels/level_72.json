@@ -1,0 +1,53 @@
+{
+    "level_id": 72,
+    "name": "R-type Instructions",
+    "description": "One of the assembler types we mentioned earlier is the R-type. An R-type command (Register-type instruction) in MIPS is a format used for arithmetic and logical operations that work only with registers. Like all assembler commands, it is always 32 bits long. It's divided into six specific fields that define how the instruction operates. The opcode field is 6 bits wide and specifies the general operation type — for R-type commands, this value is usually 000000. The rs field is 5 bits and identifies the first source register. The rt field is also 5 bits and specifies the second source register used in the operation. The rd field is 5 bits wide and indicates the destination register where the result will be stored. The shamt (shift amount) field is 5 bits and is used only for shift operations. The func (function) field is 6 bits and tells the processor the exact operation to perform. When the CPU executes the instruction, it reads the registers specified by rs and rt, performs the operation defined by func, and writes the result to rd. As an example: 'add $t1, $t2, $t3' does the following: take the contents of $t2, add them to the contents of $t3, and store this result in $t1.",
+    "difficulty": "Medium",
+    "objectives": [
+        "Extend the previous lesson to handle R-type commands.",
+        "Extract the instruction fields (rs, rt, rd) from the 32-bit instruction using splitters.",
+        "Use the register block to read values from rs and rt registers.",
+        "Perform ALU operation on the values from the two source registers.",
+        "Write the ALU result back to the destination register (rd).",
+        "We will add control signals later, so don't worry about op, shamt, and func fields for now."
+    ],
+    "components": [ 
+
+
+    ],
+    "connections": [
+
+
+    ],
+    "memoryContents": {
+        "instructionMemory": [
+           
+        ],
+        "dataMemory": []
+    },
+    "available_components": [
+        {"type": "Splitter32to8"},
+        {"type": "Splitter8to1"},
+        {"type": "Collector1to2"},
+        {"type": "Collector1to8"},
+        {"type": "Multiplexer4Inp"},
+        {"type": "ALUSimple"},
+        {"type": "And"},
+        {"type": "DecoderThreeBit"}
+    ],
+    "hints": [
+        "The 32-bit instruction from Instruction Memory needs to be split to extract rs, rt, and rd fields.",
+        "Use Splitter32to8 to split the instruction into 4 bytes.",
+        "R-type format: [opcode 6bits][rs 5bits][rt 5bits][rd 5bits][shamt 5bits][func 6bits]",
+        "The rs field starts at bit 21, rt at bit 16, and rd at bit 11.",
+        "You'll need to extract specific bits from the bytes to get the 5-bit register addresses.",
+        "Use multiplexers to read from the correct registers based on rs and rt.",
+        "Use the ALU to perform operations on the two register values.",
+        "Use a decoder and AND gates to write the ALU result to the correct destination register (rd).",
+        "Connect all register outputs to the output components to see the register values.",
+        "The dummy ALU operation input is set to 2 (ADD operation)."
+    ],
+    "tests": [
+        {"inputs": [], "expected_output": []}
+    ]
+}

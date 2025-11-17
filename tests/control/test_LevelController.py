@@ -94,7 +94,7 @@ def sample_level_data_with_memoryBlocks():
         {"type": "DataMemory", "position": [4,5], "immovable": False},
         {"type": "Register", "position": [6,5], "immovable": False, "initialValue": 34},
         {"type": "Register", "position": [8,5], "immovable": False, "initialValue": 42}
-        
+
     ],
     "memoryContents": {
         "instructionMemory": [
@@ -361,10 +361,479 @@ def test_getAvailableComponentClasses_missing_key(logic_controller):
 
     assert available == []
 
+
+# ============================================================================
+# Tests for Output Predictions Feature
+# ============================================================================
+
+@pytest.fixture
+def sample_level_data_with_output_predictions():
+    """Returns sample level data with output predictions enabled"""
+    return {
+        "level_id": 2,
+        "name": "Test Level with Output Predictions",
+        "description": "Test level that uses output predictions",
+        "usesOutputPredictions": True,
+        "components": [
+            {"type": "Input", "position": [4, 1], "immovable": True},
+            {"type": "Input", "position": [4, 3], "immovable": True},
+            {"type": "Output", "position": [8, 2], "immovable": True},
+            {"type": "And", "position": [6, 2], "immovable": True}
+        ],
+        "connections": [
+            {"origin": 0, "originKey": "outValue", "destination": 3, "destinationKey": "input1"},
+            {"origin": 1, "originKey": "outValue", "destination": 3, "destinationKey": "input2"},
+            {"origin": 3, "originKey": "outValue", "destination": 2, "destinationKey": "input"}
+        ],
+        "tests": [
+            {
+                "inputs": [[1, 1], [1, 1]],
+                "expected_output": [[1, 1]]
+            },
+            {
+                "inputs": [[1, 1], [0, 1]],
+                "expected_output": [[0, 1]]
+            },
+            {
+                "inputs": [[0, 1], [1, 1]],
+                "expected_output": [[0, 1]]
+            },
+            {
+                "inputs": [[0, 1], [0, 1]],
+                "expected_output": [[0, 1]]
+            }
+        ]
+    }
+
+
+@pytest.fixture
+def level_controller_with_output_predictions(sample_level_data_with_output_predictions, logic_controller):
+    """Creates a LevelController with output predictions enabled"""
+    controller = LevelController(logic_controller)
+    controller.setLevel(sample_level_data_with_output_predictions)
+    return controller
+
+
+def test_usesOutputPredictions_true(level_controller_with_output_predictions):
+    """Test usesOutputPredictions returns True when feature is enabled"""
+    assert level_controller_with_output_predictions.usesOutputPredictions() == True
+
+
+def test_usesOutputPredictions_false(level_controller):
+    """Test usesOutputPredictions returns False when feature is not enabled"""
+    assert level_controller.usesOutputPredictions() == False
+
+
+def test_usesOutputPredictions_missing_key(logic_controller):
+    """Test usesOutputPredictions returns False when key is missing from levelData"""
+    level_data = {
+        "level_id": 1,
+        "components": []
+    }
+    controller = LevelController(logic_controller)
+    controller.setLevel(level_data)
+
+    assert controller.usesOutputPredictions() == False
+
+
+def test_usesOutputPredictions_none_levelData(logic_controller):
+    """Test usesOutputPredictions with None levelData"""
+    controller = LevelController(logic_controller)
+    # levelData is None by default
+
+    # Should not crash and return False
+    assert controller.usesOutputPredictions() == False
+
+
+def test_buildLevel_sets_output_predictions(level_controller_with_output_predictions, logic_controller):
+    """Test that buildLevel sets outputPredictions when usesOutputPredictions is True"""
+    # Initially outputPredictions should be empty
+    assert level_controller_with_output_predictions.outputPredictions == []
+
+    # Build level
+    level_controller_with_output_predictions.buildLevel()
+
+    # After building, outputPredictions should be set based on current output values
+    assert len(level_controller_with_output_predictions.outputPredictions) == 1
+    # Initially outputs should be (0, 1) since inputs are off
+    assert level_controller_with_output_predictions.outputPredictions[0] == (0, 1)
+
+
+def test_buildLevel_does_not_set_output_predictions_when_disabled(level_controller, logic_controller):
+    """Test that buildLevel does not set outputPredictions when feature is disabled"""
+    # Build level without output predictions
+    level_controller.buildLevel()
+
+    # outputPredictions should remain empty
+    assert level_controller.outputPredictions == []
+
+
+def test_buildLevel_multiple_outputs_predictions(logic_controller):
+    """Test buildLevel sets predictions for multiple outputs"""
+    level_data = {
+        "level_id": 3,
+        "name": "Multi-output Level",
+        "usesOutputPredictions": True,
+        "components": [
+            {"type": "Input", "position": [1, 1], "immovable": True},
+            {"type": "Output", "position": [3, 1], "immovable": True},
+            {"type": "Output", "position": [3, 2], "immovable": True},
+            {"type": "Output", "position": [3, 3], "immovable": True}
+        ],
+        "connections": [
+            {"origin": 0, "originKey": "outValue", "destination": 1, "destinationKey": "input"},
+            {"origin": 0, "originKey": "outValue", "destination": 2, "destinationKey": "input"},
+            {"origin": 0, "originKey": "outValue", "destination": 3, "destinationKey": "input"}
+        ],
+        "tests": []
+    }
+
+    controller = LevelController(logic_controller)
+    controller.setLevel(level_data)
+    controller.buildLevel()
+
+    # Should have 3 output predictions
+    assert len(controller.outputPredictions) == 3
+    # All should be (0, 1) initially
+    assert controller.outputPredictions[0] == (0, 1)
+    assert controller.outputPredictions[1] == (0, 1)
+    assert controller.outputPredictions[2] == (0, 1)
+
+
+def test_checkSolution_with_correct_output_predictions(level_controller_with_output_predictions, logic_controller):
+    """Test checkSolution passes when output predictions match current output"""
+    # Build level
+    level_controller_with_output_predictions.buildLevel()
+
+    # Get the current output state and set it as prediction
+    outputs = logic_controller.getOutputs()
+    current_output_value = outputs[0].getState()["outValue"]
+    level_controller_with_output_predictions.outputPredictions = [current_output_value]
+
+    # Check solution should pass (predictions are correct)
+    result = level_controller_with_output_predictions.checkSolution()
+    assert result == True
+
+
+def test_checkSolution_with_incorrect_output_predictions(level_controller_with_output_predictions, logic_controller):
+    """Test checkSolution fails when output predictions don't match current output"""
+    # Build level
+    level_controller_with_output_predictions.buildLevel()
+
+    # Set incorrect prediction (opposite of current state)
+    outputs = logic_controller.getOutputs()
+    current_output_value = outputs[0].getState()["outValue"]
+
+    # If current is (0, 1), predict (1, 1), and vice versa
+    if current_output_value[0] == 0:
+        wrong_prediction = (1, 1)
+    else:
+        wrong_prediction = (0, 1)
+
+    level_controller_with_output_predictions.outputPredictions = [wrong_prediction]
+
+    # Check solution should fail due to wrong predictions
+    result = level_controller_with_output_predictions.checkSolution()
+    assert result == False
+
+
+def test_checkSolution_with_predictions_and_tests(level_controller_with_output_predictions, logic_controller):
+    """Test checkSolution validates both predictions and tests"""
+    # Build level
+    level_controller_with_output_predictions.buildLevel()
+
+    # Set correct prediction for current state
+    outputs = logic_controller.getOutputs()
+    current_output_value = outputs[0].getState()["outValue"]
+    level_controller_with_output_predictions.outputPredictions = [current_output_value]
+
+    # checkSolution should validate predictions first, then run tests
+    # Since the AND gate is correctly wired, tests should pass
+    result = level_controller_with_output_predictions.checkSolution()
+    assert result == True
+
+
+def test_checkSolution_multiple_output_predictions_all_correct(logic_controller):
+    """Test checkSolution with multiple outputs where all predictions are correct"""
+    level_data = {
+        "level_id": 4,
+        "name": "Multi-output with predictions",
+        "usesOutputPredictions": True,
+        "components": [
+            {"type": "Input", "position": [1, 1], "immovable": True},
+            {"type": "Output", "position": [3, 1], "immovable": True},
+            {"type": "Output", "position": [3, 2], "immovable": True}
+        ],
+        "connections": [
+            {"origin": 0, "originKey": "outValue", "destination": 1, "destinationKey": "input"},
+            {"origin": 0, "originKey": "outValue", "destination": 2, "destinationKey": "input"}
+        ],
+        "tests": [
+            {
+                "inputs": [[0, 1]],
+                "expected_output": [[0, 1], [0, 1]]
+            },
+            {
+                "inputs": [[1, 1]],
+                "expected_output": [[1, 1], [1, 1]]
+            }
+        ]
+    }
+
+    controller = LevelController(logic_controller)
+    controller.setLevel(level_data)
+    controller.buildLevel()
+
+    # Set correct predictions (both outputs mirror input which starts at 0)
+    controller.outputPredictions = [(0, 1), (0, 1)]
+
+    # Should pass
+    result = controller.checkSolution()
+    assert result == True
+
+
+def test_checkSolution_multiple_output_predictions_one_wrong(logic_controller):
+    """Test checkSolution with multiple outputs where one prediction is wrong"""
+    level_data = {
+        "level_id": 5,
+        "name": "Multi-output with predictions",
+        "usesOutputPredictions": True,
+        "components": [
+            {"type": "Input", "position": [1, 1], "immovable": True},
+            {"type": "Output", "position": [3, 1], "immovable": True},
+            {"type": "Output", "position": [3, 2], "immovable": True}
+        ],
+        "connections": [
+            {"origin": 0, "originKey": "outValue", "destination": 1, "destinationKey": "input"},
+            {"origin": 0, "originKey": "outValue", "destination": 2, "destinationKey": "input"}
+        ],
+        "tests": []
+    }
+
+    controller = LevelController(logic_controller)
+    controller.setLevel(level_data)
+    controller.buildLevel()
+
+    # Set one correct and one wrong prediction
+    controller.outputPredictions = [(0, 1), (1, 1)]  # Second is wrong
+
+    # Should fail
+    result = controller.checkSolution()
+    assert result == False
+
+
+def test_resetLevel_preserves_output_predictions_feature(level_controller_with_output_predictions, logic_controller):
+    """Test that resetLevel maintains the output predictions feature setting"""
+    # Build level
+    level_controller_with_output_predictions.buildLevel()
+
+    # Verify feature is enabled
+    assert level_controller_with_output_predictions.usesOutputPredictions() == True
+
+    # Reset level
+    level_controller_with_output_predictions.resetLevel()
+
+    # Feature should still be enabled after reset
+    assert level_controller_with_output_predictions.usesOutputPredictions() == True
+
+    # Output predictions should be reset based on new build
+    assert len(level_controller_with_output_predictions.outputPredictions) == 1
+
+
+def test_output_predictions_empty_list_for_level_without_outputs(logic_controller):
+    """Test that buildLevel handles levels with no outputs gracefully"""
+    level_data = {
+        "level_id": 6,
+        "name": "Level without outputs",
+        "usesOutputPredictions": True,
+        "components": [
+            {"type": "Input", "position": [1, 1], "immovable": True}
+        ],
+        "connections": [],
+        "tests": []
+    }
+
+    controller = LevelController(logic_controller)
+    controller.setLevel(level_data)
+    controller.buildLevel()
+
+    # Should have empty predictions list
+    assert controller.outputPredictions == []
+
+
+def test_checkSolution_without_predictions_runs_tests_only(level_controller, logic_controller):
+    """Test that checkSolution only runs tests when output predictions are disabled"""
+    # Build level without output predictions
+    level_controller.buildLevel()
+
+    # Add AND gate and connect properly
+    logic_controller.addLogicComponent(And)
+    and_gate = logic_controller.getComponents()[3]
+
+    inputs = logic_controller.getInputs()
+    outputs = logic_controller.getOutputs()
+
+    logic_controller.addConnection(inputs[0], "outValue", and_gate, "input1")
+    logic_controller.addConnection(inputs[1], "outValue", and_gate, "input2")
+    logic_controller.addConnection(and_gate, "outValue", outputs[0], "input")
+
+    # checkSolution should only validate tests, not predictions
+    result = level_controller.checkSolution()
+    assert result == True
+
+    # outputPredictions should still be empty
+    assert level_controller.outputPredictions == []
+
+
+def test_output_predictions_with_different_bitwidths(logic_controller):
+    """Test output predictions work correctly with different bitwidths (1-bit, 8-bit, 32-bit)"""
+    level_data = {
+        "level_id": 7,
+        "name": "Multi-bitwidth Level with Predictions",
+        "usesOutputPredictions": True,
+        "components": [
+            # 1-bit inputs
+            {"type": "Input", "position": [1, 1], "immovable": True},
+            {"type": "Input", "position": [1, 2], "immovable": True},
+            {"type": "Input", "position": [1, 3], "immovable": True},
+            {"type": "Input", "position": [1, 4], "immovable": True},
+            {"type": "Input", "position": [1, 5], "immovable": True},
+            {"type": "Input", "position": [1, 6], "immovable": True},
+            {"type": "Input", "position": [1, 7], "immovable": True},
+            {"type": "Input", "position": [1, 8], "immovable": True},
+            # Collector1to8 to combine 8 1-bit inputs into 8-bit output
+            {"type": "Collector1to8", "position": [3, 4], "immovable": True},
+            # Output for 1-bit
+            {"type": "Output", "position": [5, 1], "immovable": True},
+            # Output for 8-bit
+            {"type": "Output", "position": [5, 4], "immovable": True},
+        ],
+        "connections": [
+            # Connect inputs to collector (using correct bit-position names)
+            {"origin": 0, "originKey": "outValue", "destination": 8, "destinationKey": "input1"},
+            {"origin": 1, "originKey": "outValue", "destination": 8, "destinationKey": "input2"},
+            {"origin": 2, "originKey": "outValue", "destination": 8, "destinationKey": "input4"},
+            {"origin": 3, "originKey": "outValue", "destination": 8, "destinationKey": "input8"},
+            {"origin": 4, "originKey": "outValue", "destination": 8, "destinationKey": "input16"},
+            {"origin": 5, "originKey": "outValue", "destination": 8, "destinationKey": "input32"},
+            {"origin": 6, "originKey": "outValue", "destination": 8, "destinationKey": "input64"},
+            {"origin": 7, "originKey": "outValue", "destination": 8, "destinationKey": "input128"},
+            # Connect first input directly to 1-bit output
+            {"origin": 0, "originKey": "outValue", "destination": 9, "destinationKey": "input"},
+            # Connect collector to 8-bit output
+            {"origin": 8, "originKey": "outValue", "destination": 10, "destinationKey": "input"},
+        ],
+        "tests": [
+            {
+                "inputs": [[0, 1], [0, 1], [0, 1], [0, 1], [0, 1], [0, 1], [0, 1], [0, 1]],
+                "expected_output": [[0, 1], [0, 8]]
+            },
+            {
+                "inputs": [[1, 1], [0, 1], [1, 1], [0, 1], [1, 1], [0, 1], [1, 1], [0, 1]],
+                "expected_output": [[1, 1], [85, 8]]  # 0b01010101 = 85
+            },
+            {
+                "inputs": [[1, 1], [1, 1], [1, 1], [1, 1], [1, 1], [1, 1], [1, 1], [1, 1]],
+                "expected_output": [[1, 1], [255, 8]]
+            }
+        ]
+    }
+
+    controller = LevelController(logic_controller)
+    controller.setLevel(level_data)
+    controller.buildLevel()
+
+    # Should have 2 output predictions (one 1-bit, one 8-bit)
+    assert len(controller.outputPredictions) == 2
+    # Both should be (0, bitwidth) initially
+    assert controller.outputPredictions[0] == (0, 1)  # 1-bit output
+    assert controller.outputPredictions[1] == (0, 8)  # 8-bit output
+
+    # Test with correct predictions
+    result = controller.checkSolution()
+    assert result == True
+
+    # Test with wrong 1-bit prediction
+    controller.outputPredictions = [(1, 1), (0, 8)]  # First is wrong
+    result = controller.checkSolution()
+    assert result == False
+
+    # Test with wrong 8-bit prediction
+    controller.outputPredictions = [(0, 1), (42, 8)]  # Second is wrong
+    result = controller.checkSolution()
+    assert result == False
+
+    # Test with both wrong
+    controller.outputPredictions = [(1, 1), (42, 8)]  # Both wrong
+    result = controller.checkSolution()
+    assert result == False
+
+
+def test_output_predictions_with_32bit_output(logic_controller):
+    """Test output predictions work correctly with 32-bit outputs using Collector8to32"""
+    level_data = {
+        "level_id": 8,
+        "name": "32-bit Level with Predictions",
+        "usesOutputPredictions": True,
+        "components": [
+            # Four 8-bit inputs (by cycling bitwidth on Input components)
+            {"type": "Input", "position": [1, 1], "immovable": True},
+            {"type": "Input", "position": [1, 2], "immovable": True},
+            {"type": "Input", "position": [1, 3], "immovable": True},
+            {"type": "Input", "position": [1, 4], "immovable": True},
+            # Collector8to32 to combine four 8-bit inputs into 32-bit output
+            {"type": "Collector8to32", "position": [3, 2], "immovable": True},
+            # Output for 32-bit
+            {"type": "Output", "position": [5, 2], "immovable": True},
+        ],
+        "connections": [
+            {"origin": 0, "originKey": "outValue", "destination": 4, "destinationKey": "input1"},
+            {"origin": 1, "originKey": "outValue", "destination": 4, "destinationKey": "input2"},
+            {"origin": 2, "originKey": "outValue", "destination": 4, "destinationKey": "input3"},
+            {"origin": 3, "originKey": "outValue", "destination": 4, "destinationKey": "input4"},
+            {"origin": 4, "originKey": "outValue", "destination": 5, "destinationKey": "input"},
+        ],
+        "tests": []
+    }
+
+    controller = LevelController(logic_controller)
+    controller.setLevel(level_data)
+    controller.buildLevel()
+
+    # The Collector8to32 outputs 32-bit even with 1-bit inputs (treating them as 8-bit with value 0)
+    # So the output should already be 32-bit
+    assert len(controller.outputPredictions) == 1
+
+    # Get current output value
+    outputs = logic_controller.getOutputs()
+    current_value = outputs[0].getState()["outValue"]
+
+    # The output should be 32-bit (from Collector8to32)
+    assert current_value[1] == 32
+    # Value should be 0 since all inputs are 0
+    assert current_value[0] == 0
+
+    # Set correct prediction
+    controller.outputPredictions = [current_value]
+
+    # Verify checkSolution works with correct 32-bit prediction
+    result = controller.checkSolution()
+    assert result == True
+
+    # Test with wrong 32-bit value prediction
+    controller.outputPredictions = [(12345, 32)]
+    result = controller.checkSolution()
+    assert result == False
+
+    # Test with wrong bitwidth in prediction
+    controller.outputPredictions = [(0, 8)]  # Wrong bitwidth
+    result = controller.checkSolution()
+    assert result == False
+
 def test_adding_InstructionMemory(level_controller_with_memoryBlocks, logic_controller):
     """Test that InstructionMemory is added and loaded correctly"""
     level_controller_with_memoryBlocks.buildLevel()
-    
+
     instruction_memory = None
     for comp in logic_controller.getComponents():
         if type(comp) == InstructionMemory:
@@ -375,11 +844,11 @@ def test_adding_InstructionMemory(level_controller_with_memoryBlocks, logic_cont
     im = instruction_memory
     expected_instructions = level_controller_with_memoryBlocks.levelData["memoryContents"]["instructionMemory"]
     assert im.instructionList == expected_instructions
-    
+
 def test_adding_DataMemory(level_controller_with_memoryBlocks, logic_controller):
     """Test that DataMemory is added and loaded correctly"""
     level_controller_with_memoryBlocks.buildLevel()
-    
+
     data_memory = None
     for comp in logic_controller.getComponents():
         if type(comp) == DataMemory:
@@ -390,11 +859,11 @@ def test_adding_DataMemory(level_controller_with_memoryBlocks, logic_controller)
     dm = data_memory
     expected_data = level_controller_with_memoryBlocks.levelData["memoryContents"]["dataMemory"]
     assert dm.dataList[:len(expected_data)] == expected_data
-    
+
 def test_adding_Register_initialValue(level_controller_with_memoryBlocks, logic_controller):
     """Test that Register is added and initialized correctly"""
     level_controller_with_memoryBlocks.buildLevel()
-    
+
     registers = [comp for comp in logic_controller.getComponents() if type(comp)== Register]
     assert len(registers) == 2  # Two Register components should be defined in the level data provided
     assert registers[0].state == {"outValue": (34, 32)}

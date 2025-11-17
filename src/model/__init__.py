@@ -26,6 +26,7 @@ from .Xnor import Xnor
 from .Xor import Xor
 from .Collector1to2 import Collector1to2
 from .Collector1to3 import Collector1to3
+from .Adder32bit import Adder32bit
 
 
 

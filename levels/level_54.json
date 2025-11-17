@@ -313,8 +313,7 @@
     ],
 
     "available_components": [
-        {"type": "Or"},
-        {"type": "Not"}
+
     ],
 
     "hints": [

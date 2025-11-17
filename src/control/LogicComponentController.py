@@ -1,7 +1,7 @@
 import typing
 
 from src.Algorithms import Algorithms
-from src.model import DataMemory, InstructionMemory
+from src.model import DataMemory, InstructionMemory, ProgramCounter
 from src.model.CustomLogicComponent import CustomLogicComponent
 from src.model.CustomLogicComponentData import CustomLogicComponentData
 from src.model.Output import Output
@@ -60,6 +60,7 @@ class LogicComponentController:
         # Using it prevented the view:components_updated event from emitting.
         # I just left it commented out so we can use it just in case.
         #getBus().setManual()
+        self.bus.emit("logic:instruction_count",len(self.instructionMemory.instructionList) if self.instructionMemory is not None else 0)
         if Algorithms.khanFrontierEval(self.inputs, self.components, self.updateComponents, self._waitWithEventLoop):
             self.updateRegisters()
             getBus().setAuto()
@@ -152,6 +153,14 @@ class LogicComponentController:
                 self.inputs.remove(component)
             if type(component) == Output:
                 self.outputs.remove(component)
+            if type(component) == RegisterBlock:
+                self.registerBlock = None
+            if type(component) == InstructionMemory:
+                self.instructionMemory = None
+            if type(component) == DataMemory:
+                self.dataMemory = None
+            if type(component) == ProgramCounter:
+                self.bus.unsubscribe("logic:instruction_count", component.onInstructionCount)
         else:
             raise ReferenceError("Can't remove non existent component from controller")
         

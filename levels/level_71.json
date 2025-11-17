@@ -1,0 +1,43 @@
+{
+    "level_id": 71,
+    "name": "Loading Commands",
+    "description": "This program isn't there to teach you about assembler, but a bit of basic knowledge is necessary to build our processor. Each Assembler Command is either one of three format types, more on that in later levels. If we want to execute a program on our processor, we have a list of commands that our processor will execute after each other. After each step we need to advance our program counter by 4 steps to get to the next command, which we can then load into our registers.",
+    "difficulty": "Easy",
+    "objectives": [
+        "Build a circuit that accesses the next command and loads it into the Instruction Memory.",
+        "The Program Counter should increment by 4 each cycle to point to the next instruction.",
+        "Connect the PC output to the Instruction Memory to fetch the command."
+    ],
+    "components": [
+        {"type": "Input", "position": [3,1], "immovable": true, "label": "4", "initialValue": 4, "initialBitWidth": 32},
+        {"type": "ProgramCounter", "position": [2,3], "immovable": true, "label": "PC"},
+        {"type": "InstructionMemory", "position": [6,3], "immovable": true, "label": "Instruction Memory"},
+        {"type": "Output", "position": [9,3], "immovable": true, "label": "Instruction"}
+    ],
+    "connections": [
+    ],
+    "memoryContents": {
+        "instructionMemory": [
+            100, 200, 300, 400, 500, 600, 700, 800
+        ],
+        "dataMemory": []
+    },
+    "available_components": [
+        {"type": "Adder32bit"}
+    ],
+    "hints": [
+        "The Program Counter needs to increment by 4 each cycle.",
+        "Use the 32-bit Adder to add 4 to the current PC value.",
+        "Connect the PC output to both the Adder (inputA) and to the Instruction Memory (readAddress) to fetch the instruction.",
+        "Connect the constant 4 input to the Adder's inputB.",
+        "The Adder result (PC+4) should be fed back to the PC input for the next cycle.",
+        "Connect the Instruction Memory output to the Output component."
+    ],
+    "tests": [
+        {"inputs": [], "expected_output": [[100,32]]},
+        {"inputs": [], "expected_output": [[200,32]]},
+        {"inputs": [], "expected_output": [[300,32]]},
+        {"inputs": [], "expected_output": [[400,32]]},
+        {"inputs": [], "expected_output": [[500,32]]}
+    ]
+}

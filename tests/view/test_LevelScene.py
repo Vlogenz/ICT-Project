@@ -30,6 +30,7 @@ def level_controller(logic_controller):
     controller.currentLevel = 1
     controller.outputPredictions = []  # Add missing attribute
     controller.usesOutputPredictions.return_value = False  # Add missing method
+    controller.getOutputs.return_value = []  # Mock empty outputs list
     return controller
 
 
@@ -54,6 +55,12 @@ def level_controller_with_predictions(logic_controller):
     controller.currentLevel = 2
     controller.outputPredictions = [(0, 1), (0, 1)]  # Two 1-bit outputs
     controller.usesOutputPredictions.return_value = True
+    # Mock two output components with state
+    mock_output1 = Mock()
+    mock_output1.getState.return_value = {"outValue": (0, 1)}
+    mock_output2 = Mock()
+    mock_output2.getState.return_value = {"outValue": (0, 1)}
+    controller.getOutputs.return_value = [mock_output1, mock_output2]
     return controller
 
 

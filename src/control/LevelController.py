@@ -163,3 +163,6 @@ class LevelController:
         if self.levelData is None:
             return False
         return self.levelData.get("usesOutputPredictions", False)
+
+    def getOutputs(self):
+        return self.logicComponentController.outputs

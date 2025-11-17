@@ -1,4 +1,5 @@
 from src.control.LogicComponentController import LogicComponentController
+from src.model import DataMemory, InstructionMemory, Register, Input
 from src.model.LogicComponent import LogicComponent
 from src.infrastructure.eventBus import getBus
 from src.constants import COMPONENT_MAP
@@ -10,8 +11,9 @@ class LevelController:
     def __init__(self, logicComponentController: LogicComponentController, levelData = None, grid = None):
         self.levelData = levelData
         self.logicComponentController = logicComponentController
-        self.currentLevel = None
         self.eventBus = getBus()
+        self.currentLevel = None
+        self.outputPredictions = []
 
     def setLevel(self, levelData):
         """Sets the current level data"""
@@ -44,6 +46,7 @@ class LevelController:
             
             component_class = COMPONENT_MAP[component_type_str]
             comp = self.logicComponentController.addLogicComponent(component_class)
+            comp.setLabel(componentData.get("label", ""))
 
             pos = tuple(componentData["position"])
             componentInfo.append({
@@ -52,6 +55,23 @@ class LevelController:
                 "immovable": componentData["immovable"],
                 "fixedValue": componentData.get("fixedValue", False)
             })
+            
+            if type(comp) == Register:
+                comp.state = {"outValue": (componentData["initialValue"], 32)}
+                
+            if type(comp) == Input:
+                if "initialBitWidth" in componentData:
+                    comp.state = {"outValue": (0, componentData["initialBitWidth"])}
+                
+            
+            if type(comp) == InstructionMemory or type(comp) == DataMemory:
+                memoryData = self.levelData["memoryContents"]
+                if type(comp) == InstructionMemory:
+                    instructions = memoryData["instructionMemory"]
+                    comp.loadInstructions(instructions)
+                if type(comp) == DataMemory:
+                    data = memoryData["dataMemory"]
+                    comp.loadData(data)
 
         # Set up connections if any
         if self.levelData.get("connections") is not None:
@@ -70,14 +90,32 @@ class LevelController:
                     print(f"Error adding connection: {e}")
         self.eventBus.emit("view:rebuild_circuit", componentInfo)
 
+        if self.usesOutputPredictions():
+            self.outputPredictions = [output.getState()["outValue"] for output in self.logicComponentController.outputs]
+            print(f"Set outputPredictions to: {self.outputPredictions}")
+
     def checkSolution(self) -> bool:
-        """Checks if the current configuration solves the level"""
-        for i in range(len(self.levelData["tests"])): # Iterate through tests
+        """Checks if the current configuration solves the level.
+        In case there are output predictions, these will be checked first.
+        This assumes that either the input values are fixed for this level or the user chooses the right predictions for their input.
+        Afterward, all tests from the level file will be run.
+
+        Returns:
+            bool: True if and only if the output predictions (if any) are correct and the tests pass.
+        """
+        # In case there are output predictions, first check whether the predictions are right at the current input config.
+        if self.usesOutputPredictions():
+            for i, prediction in enumerate(self.outputPredictions):
+                if not prediction == self.logicComponentController.outputs[i].getState()["outValue"]:
+                    return False
+        # Then iterate through tests
+        for i in range(len(self.levelData["tests"])):
             test = self.levelData["tests"][i]
             for i in range(len(test["inputs"])): # iterate through inputs in specific test
                 self.logicComponentController.getInputs()[i].setState(tuple(test["inputs"][i]))
             self.logicComponentController.eval()
             for i in range(len(test["expected_output"])): # iterate through expected outputs in specific test
+                #print(self.logicComponentController.getOutputs()[i].getState()['outValue'],"==?", tuple(test["expected_output"][i]))
                 if self.logicComponentController.getOutputs()[i].getState()['outValue'] != tuple(test["expected_output"][i]):
                     return False
         return True
@@ -116,3 +154,16 @@ class LevelController:
         if self.levelData is not None and "hints" in self.levelData:
             return self.levelData["hints"]
         return []
+
+    def usesOutputPredictions(self) -> bool:
+        """Whether the current level uses output predictions by the user or not.
+
+        Returns:
+            bool: True if and only if the levelData file has the attribute 'usesOutputPredictions' with value True.
+        """
+        if self.levelData is None:
+            return False
+        return self.levelData.get("usesOutputPredictions", False)
+
+    def getOutputs(self):
+        return self.logicComponentController.outputs

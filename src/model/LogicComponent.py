@@ -12,6 +12,7 @@ class LogicComponent(ABC):
         self.inputBitwidths: typing.Dict = {} # internalKey of input and the bitwidth of that input
         self.outputs: typing.List[("LogicComponent",str)] = [] # list of tupels of outputs and the key they are connected to (important for the controllers algorithms)
         self.id = LogicComponent.id
+        self.label: str = ""
         LogicComponent.id +=1
         self.state: dict = {} # Default state for components with one output: (0,1) = (value, bitlength)
         self.bus = getBus()
@@ -19,10 +20,6 @@ class LogicComponent(ABC):
     # Implementation left to the subclasses
     @abstractmethod
     def eval(self) -> bool:
-        pass
-
-    # TODO: Implement sprite handling
-    def getSprite(self) -> None:
         pass
 
     def getInputs(self) -> typing.List["LogicComponent"]:
@@ -105,5 +102,12 @@ class LogicComponent(ABC):
             int: the bitwidth of the input
         """
         return self.inputBitwidths[key]    
-    
+
+    def getLabel(self) -> str:
+        """Returns the label of the LogicComponent"""
+        return self.label
+
+    def setLabel(self, label: str):
+        """Sets the label to the given text"""
+        self.label = label
         

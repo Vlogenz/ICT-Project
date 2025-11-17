@@ -233,7 +233,12 @@ class GridWidget(QtWidgets.QWidget):
                 else:
                     componentData = CustomLogicComponentData(**payload.get("customComponentData"))
                     component =  self.logicController.addCustomLogicComponent(componentData)
-                self.addComponent(cell, component)
+                if component is not None:
+                    self.addComponent(cell, component)
+                else:
+                    # TODO apparently i cannot click the OK Button on this
+                    self.showErrorToast("You cannot add another one of those!",
+                                       "You can only have one instance of this component in your circuit. And there already is one present.")
             except Exception as e:
                 print("Error creating GridItem:", e)
         elif actionType == "move":

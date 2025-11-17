@@ -1,0 +1,45 @@
+{
+    "level_id": 14,
+    "name": "NAND and NOR gates",
+    "description": "When combining the NOT gate with an AND gate, a new type of gate is created.  This gate is called the \"Not AND\" gate, or NAND gate.  The same principle applies to the OR gate, which will create the NOR gate.",
+    "difficulty": "Easy",
+    "objectives": [
+        "Create a NAND gate that returns the opposite values of an AND gate.",
+        "Create a NOR gate that returns the opposite values of an OR gate."
+    ],
+    "components": [
+        {"type": "Input", "position": [0,1], "immovable": true, "label": "A"},
+        {"type": "Input", "position": [0,3], "immovable": true, "label": "B"}, 
+        {"type": "Input", "position": [0,6], "immovable": true, "label": "C"},
+        {"type": "Input", "position": [0,8], "immovable": true, "label": "D"}, 
+        {"type": "Output", "position": [6,2], "immovable": true},
+        {"type": "Output", "position": [6,7], "immovable": true}    
+    ],
+    "available_components": [
+        {"type": "And"},
+        {"type": "Or"},
+        {"type": "Not"}
+    ],
+    "hints": [
+        "The NAND gate should be built using the top 2 inputs.",
+        "The NOT gate should come after the regular gates."
+    ],
+    "tests": [
+        {"inputs": [[0,1],[0,1],[0,1],[0,1]], "expected_output": [[1,1],[1,1]]},
+        {"inputs": [[0,1],[0,1],[1,1],[0,1]], "expected_output": [[1,1],[0,1]]},
+        {"inputs": [[0,1],[0,1],[0,1],[1,1]], "expected_output": [[1,1],[0,1]]},
+        {"inputs": [[0,1],[0,1],[1,1],[1,1]], "expected_output": [[1,1],[0,1]]},
+        {"inputs": [[0,1],[1,1],[0,1],[0,1]], "expected_output": [[1,1],[1,1]]},
+        {"inputs": [[0,1],[1,1],[1,1],[0,1]], "expected_output": [[1,1],[0,1]]},
+        {"inputs": [[0,1],[1,1],[0,1],[1,1]], "expected_output": [[1,1],[0,1]]},
+        {"inputs": [[0,1],[1,1],[1,1],[1,1]], "expected_output": [[1,1],[0,1]]},
+        {"inputs": [[1,1],[0,1],[0,1],[0,1]], "expected_output": [[1,1],[1,1]]},
+        {"inputs": [[1,1],[0,1],[1,1],[0,1]], "expected_output": [[1,1],[0,1]]},
+        {"inputs": [[1,1],[0,1],[0,1],[1,1]], "expected_output": [[1,1],[0,1]]},
+        {"inputs": [[1,1],[0,1],[1,1],[1,1]], "expected_output": [[1,1],[0,1]]},
+        {"inputs": [[1,1],[1,1],[0,1],[0,1]], "expected_output": [[0,1],[1,1]]},
+        {"inputs": [[1,1],[1,1],[1,1],[0,1]], "expected_output": [[0,1],[0,1]]},
+        {"inputs": [[1,1],[1,1],[0,1],[1,1]], "expected_output": [[0,1],[0,1]]},
+        {"inputs": [[1,1],[1,1],[1,1],[1,1]], "expected_output": [[0,1],[0,1]]}
+    ]
+}

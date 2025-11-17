@@ -3,6 +3,7 @@
     "name": "dummy Level and gate",
     "description": "This is a dummy level for testing purposes.",
     "difficulty": "Easy",
+    "usesOutputPredictions": true,
     "objectives": [
         "build and gate",
         "Do something else"
@@ -10,7 +11,7 @@
     "components": [
         {"type": "Input", "position": [0,1], "immovable": true},
         {"type": "Input", "position": [0,3], "immovable": true},
-        {"type": "Output", "position": [4,2], "immovable": true},
+        {"type": "Output", "position": [4,2], "immovable": true, "label": "TestOutput"},
         {"type": "And", "position": [2,2], "immovable": false}
         
     ],

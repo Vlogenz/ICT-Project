@@ -96,28 +96,30 @@ class CustomComponentController:
         # Create empty list to for custom components
         customComponentList: List[CustomLogicComponentData] = []
 
-        # Iterate subfolders of components directory
-        for entry in COMPONENT_DIRECTORY.iterdir():
-            if entry.is_dir():
-                # Try loading the JSON file
-                try:
-                    filePath = entry / f"{entry.name}.json"
-                    with open(filePath, "r") as f:
-                        componentJson = json.load(f)
-                        newComponent = CustomLogicComponentData(
-                            componentJson["name"],
-                            componentJson["inputMap"],
-                            componentJson["outputMap"],
-                            componentJson["components"],
-                            componentJson["connections"]
-                        )
-                        customComponentList.append(newComponent)
+        # If component directory exists...
+        if COMPONENT_DIRECTORY.exists():
+            # Iterate subfolders of components directory
+            for entry in COMPONENT_DIRECTORY.iterdir():
+                if entry.is_dir():
+                    # Try loading the JSON file
+                    try:
+                        filePath = entry / f"{entry.name}.json"
+                        with open(filePath, "r") as f:
+                            componentJson = json.load(f)
+                            newComponent = CustomLogicComponentData(
+                                componentJson["name"],
+                                componentJson["inputMap"],
+                                componentJson["outputMap"],
+                                componentJson["components"],
+                                componentJson["connections"]
+                            )
+                            customComponentList.append(newComponent)
 
-                # Catch possible exceptions
-                except JSONDecodeError as e:
-                    print(f"Error decoding JSON files: {e}")
-                except KeyError as e:
-                    print(f"Key error reading custom component data: {e}")
-                except Exception as e:
-                    print(f"Uncaught error loading custom components: {e}")
+                    # Catch possible exceptions
+                    except JSONDecodeError as e:
+                        print(f"Error decoding JSON files: {e}")
+                    except KeyError as e:
+                        print(f"Key error reading custom component data: {e}")
+                    except Exception as e:
+                        print(f"Uncaught error loading custom components: {e}")
         return customComponentList

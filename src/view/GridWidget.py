@@ -1,4 +1,3 @@
-
 from PySide6 import QtCore, QtGui, QtWidgets
 from PySide6.QtCore import QPoint
 from PySide6.QtGui import QPainterPath, QPainterPathStroker
@@ -30,7 +29,7 @@ class GridWidget(QtWidgets.QWidget):
         self.draggingLine: DraggingLine = None
         self.draggingItem: GridItem = None
         self.tempPos = None
-        #self.setMinimumSize(int(cols * CELL_SIZE * self.scale_factor), int(rows * CELL_SIZE * self.scale_factor))
+        self.setMinimumSize(int(cols * CELL_SIZE * self.scale_factor), int(rows * CELL_SIZE * self.scale_factor))
 
         #Initialize event bus
         self.eventBus = getBus()

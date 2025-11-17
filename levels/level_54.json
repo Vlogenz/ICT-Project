@@ -18,7 +18,7 @@
         {"type": "And", "position": [11,2], "immovable":false},
         {"type": "Or", "position": [11,4], "immovable":false},
         {"type": "Multiplexer4Inp", "position": [14,3], "immovable":false},
-        {"type": "Output", "position": [16,3], "immovable": false, "label": "OUT"},
+        {"type": "Output", "position": [16,3], "immovable": false, "label": "OUT1"},
         {"type": "Not","position":[5,3], "immovable": false, "label": "NotBinvert"},
         {"type": "Multiplexer2Inp", "position": [6,3], "immovable": false, "label": "MUXbinvert"},
         {"type": "Input", "position": [3,6], "immovable": false, "label": "ainvert"},
@@ -33,7 +33,7 @@
         {"type": "Or", "position": [11,12], "immovable":false},
         {"type": "Multiplexer4Inp", "position": [14,11], "immovable":false},
         {"type": "Output", "position": [13,9], "immovable": false, "label": "Carry_out"},
-        {"type": "Output", "position": [16,11], "immovable": false, "label": "OUT"},
+        {"type": "Output", "position": [16,11], "immovable": false, "label": "OUT2"},
         {"type": "Not","position":[5,11], "immovable": false, "label": "NotBinvert"},
         {"type": "Multiplexer2Inp", "position": [6,11], "immovable": false, "label": "MUXbinvert"},
         {"type": "Not", "position": [3,9], "immovable": false, "label": "NotAinvert"},
@@ -327,18 +327,19 @@
     "solution": "",
 
     "tests": [
-
+        
+      
         {
-            "inputs": [[0,1], [0,1], [0,1], [0,1], [0,1],[0,1], [0,1], [0,1]],
-            "expected_output": [[0,1],[0,1],[0,1],[1,1]]
+            "inputs": [[0,1], [0,1], [0,1], [1,1], [1,1],[0,1], [0,1], [0,1]],
+            "expected_output": [[0,1],[1,1],[0,1],[1,1]]
         },
          {
-            "inputs": [[1,1], [1,1], [0,1], [0,1], [0,1],[0,1], [0,1], [0,1]],
-            "expected_output": [[1,1],[0,1],[0,1],[1,1]]
+            "inputs": [[1,1], [1,1], [0,1], [1,1], [1,1],[0,1], [0,1], [0,1]],
+            "expected_output": [[0,1],[1,1],[0,1],[1,1]]
         },
           {
-            "inputs": [[1,1], [1,1], [1,1], [1,1], [0,1],[0,1], [0,1], [0,1]],
-            "expected_output": [[0,1],[1,1],[1,1],[1,1]]
+            "inputs": [[1,1], [0,1], [0,1], [1,1], [1,1],[0,1], [0,1], [0,1]],
+            "expected_output": [[1,1],[1,1],[0,1],[0,1]]
         }
 
 

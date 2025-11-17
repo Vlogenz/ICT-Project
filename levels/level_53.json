@@ -1,0 +1,166 @@
+{
+    "level_id": 53,
+    "name": "Adding NOR",
+    "description": "we also want our ALU to also handle NOR operation. Again, we don’t need to implement a differentGate but can rather alter the signal to achieve the same result. Remember:A NOR B = NOT (A OR B) = NOT(A) AND NOT(B). This level adds a separate control signal `ainvert` to enable NOR operation.",
+    "difficulty": "Medium",
+    "objectives": [
+        "expand the previous processor to also handle NOR. Use the separate control signal: ainvert",
+        "Use a separate control input `ainvert` so that when `ainvert`=1 and op selects the OR operation, the circuit computes A NOR B."
+    ],
+
+   "components": [
+        {"type": "Input", "position": [0,5], "immovable": false, "label": "A"},
+        {"type": "Input", "position": [0,7], "immovable": false, "label": "B"},
+        {"type": "Input", "position": [12,10], "immovable": false, "label": "op0"},
+        {"type": "Input", "position": [12,11], "immovable": false, "label": "op1"},
+        {"type": "Input", "position": [6,11], "immovable": false, "label": "binvert"},
+        {"type": "Collector1to2", "position": [13,10], "immovable": false},
+        {"type": "FullAdder", "position": [11,2], "immovable":false},
+        {"type": "And", "position": [11,5], "immovable":false},
+        {"type": "Or", "position": [11,8], "immovable":false},
+        {"type": "Multiplexer4Inp", "position": [14,5], "immovable":false},
+        {"type": "Output", "position": [13,3], "immovable": false, "label": "Carry_out"},
+        {"type": "Output", "position": [16,5], "immovable": false, "label": "OUT"},
+        {"type": "Not","position":[5,7], "immovable": false, "label": "NotBinvert"},
+        {"type": "Multiplexer2Inp", "position": [6,7], "immovable": false, "label": "MUXbinvert"},
+        {"type": "Input", "position": [3,11], "immovable": false, "label": "ainvert"}
+       
+    ],
+
+    "connections": [
+        {
+            "origin": 4,
+            "originKey": "outValue",
+            "destination": 6,
+            "destinationKey": "inputCin"
+        },
+        
+        {
+            "origin": 4,
+            "originKey": "outValue",
+            "destination": 13,
+            "destinationKey": "selection"
+        },
+        {
+            "origin": 1,
+            "originKey": "outValue",
+            "destination": 13,
+            "destinationKey": "input1"
+        },
+        {
+            "origin": 12,
+            "originKey": "outValue",
+            "destination": 13,
+            "destinationKey": "input2"
+        },
+        {
+            "origin": 1,
+            "originKey": "outValue",
+            "destination": 12,
+            "destinationKey": "input"
+        },
+        
+         {
+            "origin": 2,
+            "originKey": "outValue",
+            "destination": 5,
+            "destinationKey": "input1"
+        },
+        {
+            "origin": 3,
+            "originKey": "outValue",
+            "destination": 5,
+            "destinationKey": "input2"
+        },
+                {
+            "origin": 13,
+            "originKey": "outputValue",
+            "destination": 8,
+            "destinationKey": "input2"
+        },
+        {
+            "origin": 13,
+            "originKey": "outputValue",
+            "destination": 7,
+            "destinationKey": "input2"
+        },
+        {
+            "origin": 13,
+            "originKey": "outputValue",
+            "destination": 6,
+            "destinationKey": "inputB"
+        },     
+        {
+            "origin": 5,
+            "originKey": "outValue",
+            "destination": 9,
+            "destinationKey": "selection"
+        },
+        {
+            "origin": 7,
+            "originKey": "outValue",
+            "destination": 9,
+            "destinationKey": "input1"
+        },
+        {
+            "origin": 8,
+            "originKey": "outValue",
+            "destination": 9,
+            "destinationKey": "input2"
+        },
+        {
+            "origin": 6,
+            "originKey": "outSum",
+            "destination": 9,
+            "destinationKey": "input3"
+        },
+        {
+            "origin": 6,
+            "originKey": "cOut",
+            "destination": 10,
+            "destinationKey": "input"
+        },
+        {
+            "origin": 9,
+            "originKey": "outputValue",
+            "destination": 11,
+            "destinationKey": "input"
+        }
+    ],
+
+    "available_components": [
+        {"type": "Not"},
+        {"type": "Multiplexer2Inp"}
+    ],
+
+    "hints": [
+        "Subtraction is implemented by inverting B when `binvert`=1 and adding 1 into the adder (carry-in). Use NOT gates to conditionally invert B.",
+        "Route `binvert` so it controls a NOT on B (i.e. NOT(B) when binvert=1, B when binvert=0). You can achieve this by using a MUX that selects between B and NOT(B) under `binvert` as selector, or by wiring logic that only places a NOT when binvert is active.",
+        "Feed the resulting (possibly inverted) B into the FullAdder. Also feed `binvert` as the carry-in (1 when subtracting) so the adder computes A + NOT(B) + 1 when `binvert`=1.",
+        "Keep the ALU selection mapping the same as before: selector 00 => AND, 01 => OR, 10 => ADD/SUB (use binvert to switch between add and subtract). The selector 11 is unused for this level."    
+    ],
+
+    "solution": "",
+
+    "tests": [
+
+        {
+            "inputs": [[0,1], [0,1], [0,1], [0,1], [1,1],[1,1]],
+            "expected_output": [[1,1],[1,1]]
+        },
+        {
+            "inputs": [[0,1], [1,1], [0,1], [0,1], [1,1],[1,1]],
+            "expected_output": [[1,1],[0,1]]
+        },
+        {
+            "inputs": [[1,1], [0,1], [0,1], [0,1], [1,1],[1,1]],
+            "expected_output": [[1,1],[0,1]]
+        },
+        {
+            "inputs": [[1,1], [1,1], [0,1], [0,1], [1,1],[1,1]],
+            "expected_output": [[0,1],[0,1]]
+        }
+
+
+    ]
+}

@@ -1,0 +1,147 @@
+{
+    "level_id": 52,
+    "name": "Adding Subtraction",
+    "description": "Of course we want our ALU to also handle subtractions. We don’t add a different Adder, but rather reuse the same Adder. Remember: A - B = A + (NOT B) + 1. This level adds a separate control signal `binvert` to enable subtracting B. Also Note that the CarryIn Input you had in the last level is not needed here anymore",
+    "difficulty": "Medium",
+    "objectives": [
+        "Expand the previous 1-bit ALU so it can perform subtraction as well.",
+        "Use a separate control input `binvert` so that when `binvert`=1 and op selects the addition operation, the circuit computes A - B (via A + NOT(B) + 1)."
+    ],
+
+   "components": [
+        {"type": "Input", "position": [0,5], "immovable": false, "label": "A"},
+        {"type": "Input", "position": [0,7], "immovable": false, "label": "B"},
+        {"type": "Input", "position": [12,10], "immovable": false, "label": "op0"},
+        {"type": "Input", "position": [12,11], "immovable": false, "label": "op1"},
+        {"type": "Input", "position": [6,11], "immovable": false, "label": "binvert"},
+        {"type": "Collector1to2", "position": [13,10], "immovable": false},
+        {"type": "FullAdder", "position": [11,2], "immovable":false},
+        {"type": "And", "position": [11,5], "immovable":false},
+        {"type": "Or", "position": [11,8], "immovable":false},
+        {"type": "Multiplexer4Inp", "position": [14,5], "immovable":false},
+        {"type": "Output", "position": [13,3], "immovable": false, "label": "Carry_out"},
+        {"type": "Output", "position": [16,5], "immovable": false, "label": "OUT"}
+       
+    ],
+
+    "connections": [
+         {
+            "origin": 0,
+            "originKey": "outValue",
+            "destination": 6,
+            "destinationKey": "inputA"
+        },
+         {
+            "origin": 2,
+            "originKey": "outValue",
+            "destination": 5,
+            "destinationKey": "input1"
+        },
+         {
+            "origin": 3,
+            "originKey": "outValue",
+            "destination": 5,
+            "destinationKey": "input2"
+        },
+        
+        {
+            "origin": 0,
+            "originKey": "outValue",
+            "destination": 8,
+            "destinationKey": "input1"
+        },
+        {
+            "origin": 0,
+            "originKey": "outValue",
+            "destination": 7,
+            "destinationKey": "input1"
+        },
+       
+        {
+            "origin": 5,
+            "originKey": "outValue",
+            "destination": 9,
+            "destinationKey": "selection"
+        },
+        {
+            "origin": 7,
+            "originKey": "outValue",
+            "destination": 9,
+            "destinationKey": "input1"
+        },
+        {
+            "origin": 8,
+            "originKey": "outValue",
+            "destination": 9,
+            "destinationKey": "input2"
+        },
+        {
+            "origin": 6,
+            "originKey": "outSum",
+            "destination": 9,
+            "destinationKey": "input3"
+        },
+        {
+            "origin": 6,
+            "originKey": "cOut",
+            "destination": 10,
+            "destinationKey": "input"
+        },
+        {
+            "origin": 9,
+            "originKey": "outputValue",
+            "destination": 11,
+            "destinationKey": "input"
+        }
+    ],
+
+    "available_components": [
+        {"type": "Not"},
+        {"type": "Multiplexer2Inp"}
+    ],
+
+    "hints": [
+        "Subtraction is implemented by inverting B when `binvert`=1 and adding 1 into the adder (carry-in). Use NOT gates to conditionally invert B.",
+        "Route `binvert` so it controls a NOT on B (i.e. NOT(B) when binvert=1, B when binvert=0). You can achieve this by using a MUX that selects between B and NOT(B) under `binvert` as selector, or by wiring logic that only places a NOT when binvert is active.",
+        "Feed the resulting (possibly inverted) B into the FullAdder. Also feed `binvert` as the carry-in (1 when subtracting) so the adder computes A + NOT(B) + 1 when `binvert`=1.",
+        "Keep the ALU selection mapping the same as before: selector 00 => AND, 01 => OR, 10 => ADD/SUB (use binvert to switch between add and subtract). The selector 11 is unused for this level."    
+    ],
+
+    "solution": "",
+
+    "tests": [
+       
+        {
+            "inputs": [[1,1], [1,1], [0,1], [1,1], [1,1]],
+            "expected_output": [[1,1],[0,1]]
+        },
+        {
+            "inputs": [[1,1], [0,1], [0,1], [1,1], [1,1]],
+            "expected_output": [[1,1],[1,1]]
+        },
+        {
+            "inputs": [[0,1], [1,1], [0,1], [1,1], [1,1]],
+            "expected_output": [[0,1],[1,1]]
+        },
+        {
+            "inputs": [[0,1], [0,1], [0,1], [1,1], [1,1]],
+            "expected_output": [[1,1],[0,1]]
+        },
+        {
+            "inputs": [[0,1], [0,1], [0,1], [1,1], [0,1]],
+            "expected_output": [[0,1],[0,1]]
+        },
+        {
+            "inputs": [[1,1], [0,1], [0,1], [1,1], [0,1]],
+            "expected_output": [[0,1],[1,1]]
+        },
+        {
+            "inputs": [[0,1], [1,1], [0,1], [1,1], [0,1]],
+            "expected_output": [[0,1],[1,1]]
+        },
+        {
+            "inputs": [[1,1], [1,1], [0,1], [1,1], [0,1]],
+            "expected_output": [[1,1],[0,1]]
+        }
+    ]
+}

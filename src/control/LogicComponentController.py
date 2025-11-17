@@ -193,6 +193,7 @@ class LogicComponentController:
                 return True
             return False
         else:
+            print("Bitwidth was incompatible")
             return False
         
         

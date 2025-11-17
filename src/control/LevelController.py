@@ -79,12 +79,13 @@ class LevelController:
             components = self.logicComponentController.getComponents()
             for connection in connections:
                 try:
-                    self.logicComponentController.addConnection(
+                    if not self.logicComponentController.addConnection(
                         components[connection["origin"]],
                         connection["originKey"],
                         components[connection["destination"]],
                         connection["destinationKey"]
-                    )
+                    ):
+                        print("addConnection returned false")
                 except KeyError as e:
                     print(f"Error adding connection: {e}")
         self.eventBus.emit("view:rebuild_circuit", componentInfo)

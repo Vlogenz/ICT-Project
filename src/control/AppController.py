@@ -1,5 +1,3 @@
-
-
 from PySide6 import QtWidgets
 import sys
 from src.infrastructure.eventBus import getBus
@@ -67,5 +65,4 @@ class AppController():
         
     def _cleanup(self):
         """Called automatically before the app quits"""
-        #TODO call methods for data saving and cleanup
-        print("Cleanup: Saving data and cleaning up resources...")  # Optional: für Debugging
+        pass

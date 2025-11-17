@@ -7,9 +7,7 @@ from src.model.CustomLogicComponentData import CustomLogicComponentData
 from src.model.Output import Output
 from src.model.LogicComponent import LogicComponent
 from src.model.Input import Input
-from src.constants import MAX_EVAL_CYCLES
 from src.infrastructure.eventBus import getBus
-from src.model.Register import Register
 from src.model.RegisterBlock import RegisterBlock
 from PySide6.QtCore import QTimer, QEventLoop
 
@@ -31,7 +29,7 @@ class LogicComponentController:
         self.dataMemory = None
     
     
-    def updateComponents(self, **tickList):
+    def updateComponents(self, **tickList) -> None:
         """updates all or selected components
         
         optional Arguments:
@@ -41,16 +39,16 @@ class LogicComponentController:
         if len(componentsToUpdate) == 0:
             componentsToUpdate = self.components
         self.bus.emit("view:components_updated", componentsToUpdate)
-    
-    def _waitWithEventLoop(self):
+
+    def _waitWithEventLoop(self) -> None:
         """Wait for the amount of seconds specified by self.tickLength while processing Qt events to keep GUI responsive"""
         if self.tickLength > 0:
             loop = QEventLoop()
             QTimer.singleShot(int(self.tickLength * 1000), loop.quit)
             loop.exec()
-            
-                        
-    def eval(self):
+
+
+    def eval(self) -> bool:
         """Evaluates all the components in order.
         
         Returns:
@@ -71,16 +69,16 @@ class LogicComponentController:
             return True
         else:
             return False
-        
-        
-    def getInputs(self):
+
+
+    def getInputs(self) -> typing.List[Input]:
         return self.inputs
-    
-    def getOutputs(self):
+
+    def getOutputs(self) -> typing.List[LogicComponent]:
         return self.outputs
     
     T = typing.TypeVar("T",bound=LogicComponent)
-    def addLogicComponent(self, component: typing.Type[T]):
+    def addLogicComponent(self, component: typing.Type[T]) -> T:
         """creates a new component of given type
 
         Args:
@@ -114,7 +112,7 @@ class LogicComponentController:
         
         return comp
 
-    def addCustomLogicComponent(self, componentData: CustomLogicComponentData):
+    def addCustomLogicComponent(self, componentData: CustomLogicComponentData) -> LogicComponent:
         """Adds a custom logic component by adding all native subcomponents.
 
         Returns:
@@ -123,9 +121,9 @@ class LogicComponentController:
         comp = CustomLogicComponent(componentData)
         self.components.append(comp)
         return comp
-    
-    
-    def removeLogicComponent(self, component:LogicComponent):
+
+
+    def removeLogicComponent(self, component:LogicComponent) -> None:
         """removes a component from controller
 
         Args:
@@ -163,20 +161,20 @@ class LogicComponentController:
                 self.bus.unsubscribe("logic:instruction_count", component.onInstructionCount)
         else:
             raise ReferenceError("Can't remove non existent component from controller")
-        
-        
-    def getComponents(self):
+
+
+    def getComponents(self) -> typing.List[LogicComponent]:
         return self.components
-    
-    def onModelInputUpdate(self, model: LogicComponent):
+
+    def onModelInputUpdate(self, model: LogicComponent) -> None:
         """uses the eventdriveneval to update starting from a changed component
 
         Args:
             model (LogicComponent): changed component
         """
         Algorithms.eventDrivenEval(self.inputs, self.components, self.updateComponents, self._waitWithEventLoop, startingComponents=[model])
-    
-    def setTickLength(self, length: float):
+
+    def setTickLength(self, length: float) -> None:
         """sets the tick length for evaulation in seconds
 
         Args:
@@ -204,9 +202,9 @@ class LogicComponentController:
         else:
             print("Bitwidth was incompatible")
             return False
-        
-        
-    def removeConnection(self, origin: "LogicComponent", originKey: str, target: "LogicComponent", targetKey: str):
+
+
+    def removeConnection(self, origin: "LogicComponent", originKey: str, target: "LogicComponent", targetKey: str) -> None:
         """
         Removes a connection from the origin component to the target component.
         Args:
@@ -217,9 +215,9 @@ class LogicComponentController:
         """
         origin.removeOutput(target, targetKey)
         target.removeInput(origin, originKey, targetKey)
-        
-    
-    def updateRegisters(self):
+
+
+    def updateRegisters(self) -> None:
         """ Updates all registers and evaluates the circuit starting from the outputs of the registers.
         """
         componentsToUpdate = []
@@ -235,7 +233,7 @@ class LogicComponentController:
         componentsToUpdate = list(set(componentsToUpdate))
         Algorithms.eventDrivenEval(self.inputs, self.components, self.updateComponents, self._waitWithEventLoop, startingComponents=componentsToUpdate)
 
-    def clearComponents(self):
+    def clearComponents(self) -> None:
         """Removes all components from the controller
         """
         self.components.clear()

@@ -4,7 +4,7 @@ from src.model.LogicComponent import LogicComponent
 from src.infrastructure.eventBus import getBus
 from src.constants import COMPONENT_MAP
 
-from typing import List, TypeVar, Type, Tuple
+from typing import List, TypeVar, Type
 
 class LevelController:
 
@@ -15,19 +15,19 @@ class LevelController:
         self.currentLevel = None
         self.outputPredictions = []
 
-    def setLevel(self, levelData):
+    def setLevel(self, levelData)-> None:
         """Sets the current level data"""
         self.levelData = levelData
 
-    def getLevel(self):
+    def getLevel(self) -> dict:
         """Returns the current level data"""
         return self.levelData
 
-    def setGrid(self, grid):
+    def setGrid(self, grid) -> None:
         """Sets the grid to build the level on"""
         self.grid = grid
 
-    def buildLevel(self):
+    def buildLevel(self) -> None:
         """Builds the level using level data and emits an event so that the frontend updates as well."""
         self.currentLevel = self.levelData["level_id"]
         components = self.levelData["components"]
@@ -120,18 +120,18 @@ class LevelController:
                     return False
         return True
     
-    def resetLevel(self):
+    def resetLevel(self)-> None:
         """Resets the level to its initial state"""
         self.logicComponentController.clearComponents()
         self.buildLevel()
-        
-    def quitLevel(self):
+
+    def quitLevel(self) -> None:
         """Cleans up the level when quitting"""
         self.logicComponentController.clearComponents()
         self.currentLevel = None
         self.eventBus.emit("goToLevelSelection")
-        
-    def getComponentMap(self):
+
+    def getComponentMap(self) -> dict:
         """Returns the connection map of the current level"""
         return COMPONENT_MAP
 
@@ -149,7 +149,7 @@ class LevelController:
                 print(f"Invalid levelData: {e}")
         return availableClasses
     
-    def getHints(self):
+    def getHints(self)-> List[str]:
         """Returns the hints for the current level"""
         if self.levelData is not None and "hints" in self.levelData:
             return self.levelData["hints"]
@@ -165,5 +165,5 @@ class LevelController:
             return False
         return self.levelData.get("usesOutputPredictions", False)
 
-    def getOutputs(self):
+    def getOutputs(self)-> List[LogicComponent]:
         return self.logicComponentController.outputs

@@ -18,7 +18,8 @@ class ProgramCounter(LogicComponent):
 
     def onInstructionCount(self, count: int):
         """Handle the instruction count event."""
-        self.maxValue = count*4
+        if count > 5:
+            self.maxValue = count*4
 
     def eval(self) -> bool:
         """Evaluate the program counter state based on the input state.

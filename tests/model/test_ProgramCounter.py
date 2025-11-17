@@ -11,6 +11,7 @@ def test_program_counter_initial_state():
 def test_program_counter_value_change():
     getBus().setManual()
     pc = ProgramCounter()
+    pc.maxValue = 4000  # Set maxValue high enough for testing
     input_signal = DummyInput(10, bitwidth=32)  
     pc.addInput(input_signal, "outValue", "input")
     

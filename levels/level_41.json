@@ -15,7 +15,13 @@
     {"type":  "HalfAdder"},
     {"type": "Or"}
   ],
-  "hints": [],
+  "hints": [
+    "A Full Adder needs to add three bits: A, B, and CarryIn",
+    "Use the first Half Adder to add A and B together",
+    "Use the second Half Adder to add the Sum from the first adder with CarryIn",
+    "If either Half Adder produces a carry, the final CarryOut should be 1",
+    "Connect the carry outputs from both Half Adders to an OR gate"
+  ],
   "solution": "",
   "tests": [
       {"inputs": [[0,1],[0,1],[0,1]], "expected_output": [[0,1],[0,1]]},

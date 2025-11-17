@@ -15,7 +15,13 @@
     {"type":  "FullAdder"},
     {"type": "Not"}
   ],
-  "hints": [],
+  "hints": [
+    "Subtraction A - B is the same as A + (-B) in two's complement",
+    "To get -B (negative B), invert all bits of B and add 1",
+    "Use a NOT gate to invert B before feeding it to the Full Adder",
+    "Setting CarryIn to 1 adds the '+1' needed for two's complement",
+    "Connect A directly, NOT(B) as the second input, and set CarryIn=1"
+  ],
   "solution": "",
   "tests": [
       {"inputs": [[0,1],[0,1],[0,1]], "expected_output": [[1,1],[0,1]]},

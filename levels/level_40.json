@@ -14,7 +14,12 @@
     {"type":  "Xor"},
     {"type": "And"}
   ],
-  "hints": [],
+  "hints": [
+    "Think about binary addition: 0+0=0, 0+1=1, 1+0=1, 1+1=10 (that's 0 with a carry of 1)",
+    "The Sum output should be 1 only when A and B are different",
+    "The CarryOut should be 1 only when both A and B are 1",
+    "XOR gives 1 when inputs differ, AND gives 1 when both inputs are 1"
+  ],
   "solution": "",
   "tests": [
       {"inputs": [[0,1],[0,1]], "expected_output": [[0,1],[0,1]]},

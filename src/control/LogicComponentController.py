@@ -1,6 +1,7 @@
 import typing
 
 from src.Algorithms import Algorithms
+from src.model import DataMemory, InstructionMemory
 from src.model.CustomLogicComponent import CustomLogicComponent
 from src.model.CustomLogicComponentData import CustomLogicComponentData
 from src.model.Output import Output
@@ -25,6 +26,9 @@ class LogicComponentController:
         # Registrierung: ab jetzt wird der Handler automatisch aufgerufen
         self.bus.subscribe("model:input_changed", self.onModelInputUpdate)
         self.bus.subscribe("newCycle", self.updateRegisters)
+        self.registerBlock = None
+        self.instructionMemory = None
+        self.dataMemory = None
     
     
     def updateComponents(self, **tickList):
@@ -57,9 +61,11 @@ class LogicComponentController:
         # I just left it commented out so we can use it just in case.
         #getBus().setManual()
         if Algorithms.khanFrontierEval(self.inputs, self.components, self.updateComponents, self._waitWithEventLoop):
+            self.updateRegisters()
             getBus().setAuto()
             return True
         elif Algorithms.eventDrivenEval(self.inputs, self.components, self.updateComponents, self._waitWithEventLoop):
+            self.updateRegisters()
             getBus().setAuto()
             return True
         else:
@@ -88,6 +94,22 @@ class LogicComponentController:
             self.inputs.append(comp)
         if type(comp) == Output:
             self.outputs.append(comp)
+        if type(comp) == RegisterBlock:
+            if self.registerBlock is None:
+                self.registerBlock = comp
+            else:
+                return None
+        if type(comp) == InstructionMemory:
+            if self.instructionMemory is None:
+                self.instructionMemory = comp
+            else:
+                return None
+        if type(comp) == DataMemory:
+            if self.dataMemory is None:
+                self.dataMemory = comp
+            else:
+                return None
+            
         
         return comp
 
@@ -210,4 +232,7 @@ class LogicComponentController:
         self.inputs.clear()
         self.outputs.clear()
         self.updateInTick.clear()
+        self.registerBlock = None
+        self.instructionMemory = None
+        self.dataMemory = None
         self.bus.emit("view:components_cleared")

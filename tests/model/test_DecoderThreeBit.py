@@ -3,7 +3,7 @@ from src.model.DecoderThreeBit import DecoderThreeBit
 from .DummyInput import DummyInput
 from src.infrastructure.eventBus import getBus
 
-@pytest.mark.parametrize("a, b, c,excepted", [
+@pytest.mark.parametrize("c, b, a,excepted", [
     (False,False,False,1),
     (False,False,True,2),
     (False,True,False,3),
@@ -13,7 +13,7 @@ from src.infrastructure.eventBus import getBus
     (True,True,False,7),
     (True,True,True,8),
 ])
-def test_decoder_three_bit_logic_state_and_change(a, b,c,excepted):
+def test_decoder_three_bit_logic_state_and_change(c, b,a,excepted):
     getBus().setManual()
     decoder = DecoderThreeBit()
     decoder.addInput(DummyInput(a),"outValue","input1")

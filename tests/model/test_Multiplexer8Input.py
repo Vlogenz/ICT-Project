@@ -65,7 +65,7 @@ def test_8i1b_multiplexer_selects_correct_output():
 
 def test_8i8b_multiplexer_selects_correct_output():
     eight_input_multiplexer = Multiplexer8Inp()
-    eight_input_multiplexer.addInput(DummyInput(5, 8),"outValue","selection")
+    eight_input_multiplexer.addInput(DummyInput(5, 3),"outValue","selection")
     eight_input_multiplexer.addInput(DummyInput(2, 8),"outValue","input1")
     eight_input_multiplexer.addInput(DummyInput(19, 8),"outValue","input2")
     eight_input_multiplexer.addInput(DummyInput(0, 8),"outValue","input3")

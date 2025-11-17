@@ -1,0 +1,30 @@
+{
+    "level_id": 15,
+    "name": "XOR Gate",
+    "description": "The \"Exlusive OR\" gate, or XOR gate, is a variation of the OR gate that returns 0 if both inputs are 1.",
+    "difficulty": "Medium",
+    "objectives": [
+        "Create a gate that returns 1 if exactly one of A or B is true."
+    ],
+    "components": [
+        {"type": "Input", "position": [0,1], "immovable": true, "label": "A"},
+        {"type": "Input", "position": [0,3], "immovable": true, "label": "B"}, 
+        {"type": "Output", "position": [6,2], "immovable": true}    
+    ],
+    "available_components": [
+        {"type": "And"},
+        {"type": "Or"},
+        {"type": "Not"}
+    ],
+    "hints": [
+        "You can make multiple connections from a single output gate.",
+        "You should use all available gates."
+        
+    ],
+    "tests": [
+        {"inputs": [[0,1],[0,1]], "expected_output": [[0,1]]},
+        {"inputs": [[1,1],[0,1]], "expected_output": [[1,1]]},
+        {"inputs": [[0,1],[1,1]], "expected_output": [[1,1]]},
+        {"inputs": [[1,1],[1,1]], "expected_output": [[0,1]]}
+    ]
+}

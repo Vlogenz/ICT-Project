@@ -1,0 +1,23 @@
+{
+    "level_id": 13,
+    "name": "NOT Gate",
+    "description": "The NOT gate simply inverts the given input.  If it recieves a 1 it will return 0, and vice versa.",
+    "difficulty": "Easy",
+    "objectives": [
+        "Connect the input to the NOT gate. Then connect the NOT gate to the Output"
+    ],
+    "components": [
+        {"type": "Input", "position": [0,1], "immovable": true, "label": "A"},
+        {"type": "Output", "position": [4,1], "immovable": true}    
+    ],
+    "available_components": [
+        {"type": "Not"}
+    ],
+    "hints": [
+        "The NOT gate is very useful when combined with other gates"
+    ],
+    "tests": [
+        {"inputs": [[0,1]], "expected_output": [[1,1]]},
+        {"inputs": [[1,1]], "expected_output": [[0,1]]}
+    ]
+}

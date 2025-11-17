@@ -18,6 +18,16 @@ class DataMemory(LogicComponent):
         Returns:
             bool: True if the output state has changed, False otherwise.
         """
+        if self.inputs["memWrite"] is not None:
+            memWrite = self.inputs["memWrite"][0].getState()[self.inputs["memWrite"][1]][0]
+        else:
+            memWrite = 0  # Default to no write if no component is connected
+        if self.inputs["memRead"] is not None:
+            memRead = self.inputs["memRead"][0].getState()[self.inputs["memRead"][1]][0]
+        else:
+            memRead = 0  # Default to no read if no component is connected
+        if memRead and memWrite:
+            raise ValueError("DataMemory cannot read and write at the same time.")
         if self.inputs["address"] is None: # set input to zero if no component is connected
             address = 0
         else:
@@ -25,16 +35,30 @@ class DataMemory(LogicComponent):
             # gets the component out of the first tuple in self.inputs and then
             #   uses the key from that tuple to access the right output from the
             #   components state
-
         address = address // 4  # Convert byte address to word address
-        if address < len(self.dataList):
-            data = self.dataList[address]
-        else:
-            data = 0  # Default data if address is out of range
-        self.state = {
-            "readData": (data, 32)
-        }
-        return True
+        if memWrite:
+            if self.inputs["writeData"] is None: # set input to zero if no component is connected
+                writeData = 0
+            else:
+                writeData = self.inputs["writeData"][0].getState()[self.inputs["writeData"][1]][0]
+                # gets the component out of the first tuple in self.inputs and then
+                #   uses the key from that tuple to access the right output from the
+                #   components state
+            # Write data to memory
+            if address < len(self.dataList) and address >= 0:
+                self.dataList[address] = writeData
+            return False  # No output change on write
+        
+
+        if memRead:
+            if address < len(self.dataList) and address >= 0:
+                data = self.dataList[address]
+            else:
+                data = 0  # Default data if address is out of range
+            self.state = {
+                "readData": (data, 32)
+            }
+            return True
 
     def loadData(self, data: typing.List[int]) -> None:
         """Load a list of data into the data memory.

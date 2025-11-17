@@ -34,6 +34,8 @@ COMPONENT_MAP = {
     "Multiplexer4Inp": Multiplexer4Inp,
     "Multiplexer8Inp": Multiplexer8Inp,
     "Collector1to8": Collector1to8,
+    "Collector1to3": Collector1to3,
+    "Collector1to2": Collector1to2,
     "Collector8to32": Collector8to32,
     "Splitter8to1": Splitter8to1,
     "Splitter32to8": Splitter32to8,
@@ -42,5 +44,9 @@ COMPONENT_MAP = {
     "SignExtend": SignExtend,
     "ShiftLeft2": ShiftLeft2,
     "DecoderThreeBit": DecoderThreeBit,
-    "Register": Register
+    "Register": Register,
+    "DataMemory": DataMemory,
+    "InstructionMemory": InstructionMemory,
+    "ProgramCounter": ProgramCounter,
+    "RegisterBlock": RegisterBlock
     }

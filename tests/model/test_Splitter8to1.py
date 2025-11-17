@@ -18,15 +18,15 @@ class TestSplitter8to1:
         assert self.splitter.inputs["input1"] is None
         assert self.splitter.inputBitwidths["input1"] == 8
         # Check all 8 outputs are initialized to (0,1)
-        for i in range(1, 9):
-            assert self.splitter.state[f"outValue{i}"] == (0, 1)
+        for i in range(8):
+            assert self.splitter.state[f"outValue{2**i}"] == (0, 1)
 
     def test_splitter_no_input_connected(self):
         """Test splitter behavior when no input is connected."""
         changed = self.splitter.eval()
         # All outputs should be (0,1)
-        for i in range(1, 9):
-            assert self.splitter.state[f"outValue{i}"] == (0, 1)
+        for i in range(8):
+            assert self.splitter.state[f"outValue{2**i}"] == (0, 1)
         assert changed is False  # No change from initial state
 
     def test_splitter_single_bit_values(self):
@@ -38,11 +38,11 @@ class TestSplitter8to1:
             changed = splitter.eval()
             
             # Check that only the corresponding output is high
-            for i in range(1, 9):
-                if i == bit_position + 1:  # bit_position is 0-indexed, outputs are 1-indexed
-                    assert splitter.state[f"outValue{i}"] == (1, 1)
+            for i in range(8):
+                if i == bit_position:  # bit_position is 0-indexed, outputs are powers of two
+                    assert splitter.state[f"outValue{2**i}"] == (1, 1)
                 else:
-                    assert splitter.state[f"outValue{i}"] == (0, 1)
+                    assert splitter.state[f"outValue{2**i}"] == (0, 1)
             assert changed is True
 
     def test_splitter_all_outputs_high(self):
@@ -52,8 +52,8 @@ class TestSplitter8to1:
         
         changed = self.splitter.eval()
         # All outputs should be (1,1)
-        for i in range(1, 9):
-            assert self.splitter.state[f"outValue{i}"] == (1, 1)
+        for i in range(8):
+            assert self.splitter.state[f"outValue{2**i}"] == (1, 1)
         assert changed is True
 
     def test_splitter_all_outputs_low(self):
@@ -63,8 +63,8 @@ class TestSplitter8to1:
         
         changed = self.splitter.eval()
         # All outputs should be (0,1)
-        for i in range(1, 9):
-            assert self.splitter.state[f"outValue{i}"] == (0, 1)
+        for i in range(8):
+            assert self.splitter.state[f"outValue{2**i}"] == (0, 1)
         assert changed is False  # No change from initial state
 
     @pytest.mark.parametrize("pattern", [
@@ -87,10 +87,10 @@ class TestSplitter8to1:
         changed = splitter.eval()
         
         # Check each output matches the corresponding bit in the pattern
-        for i in range(1, 9):
-            expected_bit = (pattern >> (i - 1)) & 1
+        for i in range(8):
+            expected_bit = (pattern >> i) & 1
             expected_output = (expected_bit, 1)
-            assert splitter.state[f"outValue{i}"] == expected_output
+            assert splitter.state[f"outValue{2**i}"] == expected_output
         assert changed is True
 
     def test_splitter_partial_bit_pattern(self):
@@ -107,8 +107,8 @@ class TestSplitter8to1:
             5: (0, 1), 6: (1, 1), 7: (0, 1), 8: (1, 1)
         }
         
-        for i in range(1, 9):
-            assert self.splitter.state[f"outValue{i}"] == expected_outputs[i]
+        for i in range(8):
+            assert self.splitter.state[f"outValue{2**i}"] == expected_outputs[i+1]
         assert changed is True
 
     def test_splitter_state_change_detection(self):
@@ -122,8 +122,8 @@ class TestSplitter8to1:
         changed = self.splitter.eval()
         assert changed is True
         assert self.splitter.state["outValue1"] == (1, 1)
-        for i in range(2, 9):
-            assert self.splitter.state[f"outValue{i}"] == (0, 1)
+        for i in range(1,8):
+            assert self.splitter.state[f"outValue{2**i}"] == (0, 1)
         
         # Evaluate again without changes
         changed = self.splitter.eval()
@@ -145,8 +145,8 @@ class TestSplitter8to1:
         # Verify original input is still connected
         self.splitter.eval()
         assert self.splitter.state["outValue1"] == (1, 1)
-        for i in range(2, 9):
-            assert self.splitter.state[f"outValue{i}"] == (0, 1)
+        for i in range(1,8):
+            assert self.splitter.state[f"outValue{2**i}"] == (0, 1)
 
     def test_splitter_invalid_input_keys(self):
         """Test splitter behavior with invalid input keys."""

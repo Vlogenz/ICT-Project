@@ -6,6 +6,7 @@ from src.model.Or import Or
 from src.model.Output import Output
 from src.model.Not import Not
 from src.model.Nor import Nor
+from tests.model.DummyInput import DummyInput
 
 
 def test_khanFrontierEval_simple():
@@ -205,4 +206,140 @@ def test_eventDrivenEval_circular_good_dependency(a, b, expected):
     assert Algorithms.eventDrivenEval(inputs, components) == True
     assert q.getState()["outValue"] == (expected, 1)
     assert notQ.getState()["outValue"] == (1 - expected, 1)
+    
+    
+def test_eventDrivenEval_no_starting_components():
+    """Test eventDrivenEval without starting components (should start from Inputs)"""
+    in1 = Input()
+    in2 = Input()
+    and1 = And()
+    out1 = Output()
 
+    in1.addOutput(and1, "input1")
+    in2.addOutput(and1, "input2")
+    and1.addInput(in1, "outValue", "input1")
+    and1.addInput(in2, "outValue", "input2")
+
+    and1.addOutput(out1, "input")
+    out1.addInput(and1, "outValue", "input")
+
+    in1.setState((1, 1))
+    in2.setState((1, 1))
+
+    inputs = [in1, in2]
+    components = [in1, in2, and1, out1]
+
+    assert Algorithms.eventDrivenEval(inputs, components) == True
+    assert and1.getState()["outValue"] == (1, 1)
+    assert out1.getState()["outValue"] == (1, 1)
+
+
+def test_eventDrivenEval_no_inputs_and_no_starting_components():
+    """Test eventDrivenEval without inputs and starting components (should not evaluate anything)"""
+    and1 = And()
+    out1 = Output()
+
+    assert Algorithms.eventDrivenEval([], [and1, out1]) == False
+    assert and1.getState()["outValue"] == (0, 1)
+    assert out1.getState()["outValue"] == (0, 0)
+    
+def test_eventDrivenEval_with_kw_starting_components():
+    """Test eventDrivenEval with starting components provided via kwarg"""
+    in1 = Input()
+    in2 = Input()
+    and1 = And()
+    out1 = Output()
+
+    in1.addOutput(and1, "input1")
+    in2.addOutput(and1, "input2")
+    and1.addInput(in1, "outValue", "input1")
+    and1.addInput(in2, "outValue", "input2")
+
+    and1.addOutput(out1, "input")
+    out1.addInput(and1, "outValue", "input")
+
+    in1.setState((1, 1))
+    in2.setState((1, 1))
+
+    inputs = [in1, in2]
+    components = [in1, in2, and1, out1]
+
+    assert Algorithms.eventDrivenEval(inputs, components, startingComponents=[and1]) == True
+    assert and1.getState()["outValue"] == (1, 1)
+    assert out1.getState()["outValue"] == (1, 1)
+    
+def test_eventDrivenEval_with_ProgramCounter_start():
+    """Test eventDrivenEval starting from ProgramCounter components when no startingComponents are provided"""
+    from src.model.ProgramCounter import ProgramCounter
+
+    pc = ProgramCounter()
+    out1 = Output()
+
+    pc.addInput(DummyInput(8, 32), "outValue", "input")
+    pc.addOutput(out1, "outValue")
+    out1.addInput(pc, "outValue", "input")
+
+
+    inputs = []
+    components = [pc, out1]
+
+    assert Algorithms.eventDrivenEval(inputs, components) == True
+    assert pc.getState()["outValue"] == (8, 32)
+    assert out1.getState()["outValue"] == (8, 32)
+    
+    
+def test_eventDrivenEval_with_PC_and_instruction_memory():
+    """Test eventDrivenEval with ProgramCounter and InstructionMemory components"""
+    from src.model.ProgramCounter import ProgramCounter
+    from src.model.InstructionMemory import InstructionMemory
+
+    pc = ProgramCounter()
+    im = InstructionMemory()
+
+    pc.addInput(im, "instruction", "input")
+    im.addOutput(pc, "input")
+    
+    im.addInput(pc, "outValue", "readAddress")
+    pc.addOutput(im, "readAddress")
+
+    im.loadInstructions([4,8,12,16,20,24,28,32,32]) # Sample instructions
+
+    inputs = []
+    components = [pc, im]
+    im.eval()
+    assert pc.getState()["outValue"] == (0, 32)
+    assert im.getState()["instruction"] == (4, 32)
+    
+    assert Algorithms.eventDrivenEval(inputs, components)
+    assert pc.getState()["outValue"] == (32, 32)
+    assert im.getState()["instruction"] == (32, 32)
+
+
+def test_eventDrivenEval_with_PC_and_instruction_memory_many_instructions():
+    """Test eventDrivenEval with ProgramCounter and InstructionMemory components"""
+    from src.model.ProgramCounter import ProgramCounter
+    from src.model.InstructionMemory import InstructionMemory
+
+    pc = ProgramCounter()
+    im = InstructionMemory()
+
+    pc.addInput(im, "instruction", "input")
+    im.addOutput(pc, "input")
+    
+    im.addInput(pc, "outValue", "readAddress")
+    pc.addOutput(im, "readAddress")
+    
+    
+    instructions = [i for i in range(4, 1000, 4)] + [996,996]
+    im.loadInstructions(instructions) # Sample instructions
+
+    inputs = []
+    components = [pc, im]
+    im.eval()
+    assert pc.getState()["outValue"] == (0, 32)
+    assert im.getState()["instruction"] == (4, 32)
+    
+    assert Algorithms.eventDrivenEval(inputs, components)
+    assert pc.getState()["outValue"] == (996, 32)
+    assert im.getState()["instruction"] == (996, 32)
+    

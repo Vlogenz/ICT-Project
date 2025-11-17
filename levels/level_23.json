@@ -1,0 +1,49 @@
+	{
+	"level_id": 9,
+	"name": "Decoder",
+	"description": "A decoder translates a 3-bit wire into 8 single-bit outputs. Each output corresponds to one of the possible values of the 3-bit input (except in this level the 000 case should produce all zeros).",
+	"difficulty": "Medium",
+	"objectives": [
+		"Build a decoder that maps a 3-bit input to 8 outputs as follows:",
+		"[0,0,0] => all outputs are 0",
+		"[0,0,1] => output 1 is 1, everything else 0",
+		"[0,1,0] => output 2 is 1, everything else 0",
+		"[0,1,1] => output 3 is 1, everything else 0",
+		"...",
+		"[1,1,1] => output 7 is 1, everything else 0"
+	],
+	"components": [
+		{"type": "Input", "position": [0,1], "immovable": true, "label": "B2"},
+		{"type": "Input", "position": [0,3], "immovable": true, "label": "B1"},
+		{"type": "Input", "position": [0,5], "immovable": true, "label": "B0"},
+		{"type": "Output", "position": [12,0], "immovable": true, "label": "O0"},
+		{"type": "Output", "position": [12,2], "immovable": true, "label": "O1"},
+		{"type": "Output", "position": [12,4], "immovable": true, "label": "O2"},
+		{"type": "Output", "position": [12,6], "immovable": true, "label": "O3"},
+		{"type": "Output", "position": [12,8], "immovable": true, "label": "O4"},
+		{"type": "Output", "position": [12,10], "immovable": true, "label": "O5"},
+		{"type": "Output", "position": [12,12], "immovable": true, "label": "O6"},
+		{"type": "Output", "position": [12,14], "immovable": true, "label": "O7"}
+	],
+
+	"available_components": [
+		{"type": "And"},
+		{"type": "Not"}
+	],
+	"hints": [
+		"Use NOT gates to invert bits that should be 0 for a given output, then AND the three (or fewer) signals together to generate the correct output line.",
+		"For example, to generate output 3 (binary 011) you need B2=0, B1=1, B0=1 -> use NOT(B2) AND B1 AND B0.",
+		"This level intentionally requires you to handle the special case: input 000 must produce all-zero outputs (no active line)."
+	],
+	"solution": "",
+	"tests": [
+		{"inputs": [[0,1],[0,1],[0,1]], "expected_output": [[1,1],[0,1],[0,1],[0,1],[0,1],[0,1],[0,1],[0,1]]},
+		{"inputs": [[0,1],[0,1],[1,1]], "expected_output": [[0,1],[1,1],[0,1],[0,1],[0,1],[0,1],[0,1],[0,1]]},
+		{"inputs": [[0,1],[1,1],[0,1]], "expected_output": [[0,1],[0,1],[1,1],[0,1],[0,1],[0,1],[0,1],[0,1]]},
+		{"inputs": [[0,1],[1,1],[1,1]], "expected_output": [[0,1],[0,1],[0,1],[1,1],[0,1],[0,1],[0,1],[0,1]]},
+		{"inputs": [[1,1],[0,1],[0,1]], "expected_output": [[0,1],[0,1],[0,1],[0,1],[1,1],[0,1],[0,1],[0,1]]},
+		{"inputs": [[1,1],[0,1],[1,1]], "expected_output": [[0,1],[0,1],[0,1],[0,1],[0,1],[1,1],[0,1],[0,1]]},
+		{"inputs": [[1,1],[1,1],[0,1]], "expected_output": [[0,1],[0,1],[0,1],[0,1],[0,1],[0,1],[1,1],[0,1]]},
+		{"inputs": [[1,1],[1,1],[1,1]], "expected_output": [[0,1],[0,1],[0,1],[0,1],[0,1],[0,1],[0,1],[1,1]]}
+	]
+	}

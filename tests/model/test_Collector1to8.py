@@ -15,8 +15,8 @@ class TestCollector1to8:
     def test_collector_initialization(self):
         """Test that Collector1to8 initializes correctly."""
         assert len(self.collector.inputs) == 8
-        assert all(self.collector.inputs[f"input{i}"] is None for i in range(1, 9))
-        assert all(self.collector.inputBitwidths[f"input{i}"] == 1 for i in range(1, 9))
+        assert all(self.collector.inputs[f"input{2**i}"] is None for i in range(8))
+        assert all(self.collector.inputBitwidths[f"input{2**i}"] == 1 for i in range(8))
         assert self.collector.state["outValue"] == (0, 8)
 
     def test_collector_no_inputs_connected(self):
@@ -27,18 +27,18 @@ class TestCollector1to8:
 
     def test_collector_single_input_connected(self):
         """Test collector with only one input connected."""
-        for i in range(1, 9):
+        for i in range(8):
             collector = Collector1to8()
-            collector.addInput(DummyInput(1), "outValue", f"input{i}")
+            collector.addInput(DummyInput(1), "outValue", f"input{2**i}")
             changed = collector.eval()
-            expected_value = 1 << (i - 1)  # Bit position i-1
+            expected_value = 1 << (i)  # Bit position i-1
             assert collector.state["outValue"] == (expected_value, 8)
             assert changed is True
 
     def test_collector_all_inputs_high(self):
         """Test collector when all inputs are high (1)."""
-        for i in range(1, 9):
-            self.collector.addInput(DummyInput(1), "outValue", f"input{i}")
+        for i in range(8):
+            self.collector.addInput(DummyInput(1), "outValue", f"input{2**i}")
         
         changed = self.collector.eval()
         expected_value = 0b11111111  # All 8 bits set
@@ -47,8 +47,8 @@ class TestCollector1to8:
 
     def test_collector_all_inputs_low(self):
         """Test collector when all inputs are low (0)."""
-        for i in range(1, 9):
-            self.collector.addInput(DummyInput(0), "outValue", f"input{i}")
+        for i in range(8):
+            self.collector.addInput(DummyInput(0), "outValue", f"input{2**i}")
         
         changed = self.collector.eval()
         assert self.collector.state["outValue"] == (0, 8)
@@ -73,7 +73,7 @@ class TestCollector1to8:
         # Connect inputs according to the bit pattern
         for i in range(8):
             bit_value = (pattern >> i) & 1
-            collector.addInput(DummyInput(bit_value), "outValue", f"input{i+1}")
+            collector.addInput(DummyInput(bit_value), "outValue", f"input{2**i}")
         
         changed = collector.eval()
         assert collector.state["outValue"] == (pattern, 8)
@@ -82,8 +82,8 @@ class TestCollector1to8:
     def test_collector_mixed_connected_disconnected_inputs(self):
         """Test collector with some inputs connected and others disconnected."""
         # Connect only even-numbered inputs with value 1
-        for i in range(2, 9, 2):  # inputs 2, 4, 6, 8
-            self.collector.addInput(DummyInput(1), "outValue", f"input{i}")
+        for i in range(1,8,2):  # inputs 2, 4, 6, 8
+            self.collector.addInput(DummyInput(1), "outValue", f"input{2**i}")
         
         changed = self.collector.eval()
         expected_value = 0b10101010  # Bits 1, 3, 5, 7 set (0-indexed)

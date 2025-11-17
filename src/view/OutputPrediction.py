@@ -10,9 +10,13 @@ class OutputPrediction(QtWidgets.QFrame):
 
         self.layout = QtWidgets.QGridLayout(self)
         self.layout.addWidget(QtWidgets.QLabel("<h2>Output predictions:</h2>"), 0, 0)
-        for i, prediction in enumerate(self.levelController.outputPredictions):
-            value, bitwidth = prediction
-            predictionLabel = QtWidgets.QLabel(f"Output {i+1} (Bitwidth: {bitwidth})")
+        for i, output in enumerate(self.levelController.getOutputs()):
+            value, bitwidth = output.getState()["outValue"]
+            if output.getLabel() != "":
+                labelText = output.getLabel()
+            else:
+                labelText = f"Output {i+1}"
+            predictionLabel = QtWidgets.QLabel(f"{labelText} (Bitwidth: {bitwidth})")
             predictionInput = QtWidgets.QLineEdit(str(value))
             predictionInput.editingFinished.connect(lambda: self.enterPrediction(predictionInput, bitwidth, i))
             self.layout.addWidget(predictionLabel, i+1, 0)

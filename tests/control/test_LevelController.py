@@ -709,15 +709,15 @@ def test_output_predictions_with_different_bitwidths(logic_controller):
             {"type": "Output", "position": [5, 4], "immovable": True},
         ],
         "connections": [
-            # Connect inputs to collector
+            # Connect inputs to collector (using correct bit-position names)
             {"origin": 0, "originKey": "outValue", "destination": 8, "destinationKey": "input1"},
             {"origin": 1, "originKey": "outValue", "destination": 8, "destinationKey": "input2"},
-            {"origin": 2, "originKey": "outValue", "destination": 8, "destinationKey": "input3"},
-            {"origin": 3, "originKey": "outValue", "destination": 8, "destinationKey": "input4"},
-            {"origin": 4, "originKey": "outValue", "destination": 8, "destinationKey": "input5"},
-            {"origin": 5, "originKey": "outValue", "destination": 8, "destinationKey": "input6"},
-            {"origin": 6, "originKey": "outValue", "destination": 8, "destinationKey": "input7"},
-            {"origin": 7, "originKey": "outValue", "destination": 8, "destinationKey": "input8"},
+            {"origin": 2, "originKey": "outValue", "destination": 8, "destinationKey": "input4"},
+            {"origin": 3, "originKey": "outValue", "destination": 8, "destinationKey": "input8"},
+            {"origin": 4, "originKey": "outValue", "destination": 8, "destinationKey": "input16"},
+            {"origin": 5, "originKey": "outValue", "destination": 8, "destinationKey": "input32"},
+            {"origin": 6, "originKey": "outValue", "destination": 8, "destinationKey": "input64"},
+            {"origin": 7, "originKey": "outValue", "destination": 8, "destinationKey": "input128"},
             # Connect first input directly to 1-bit output
             {"origin": 0, "originKey": "outValue", "destination": 9, "destinationKey": "input"},
             # Connect collector to 8-bit output

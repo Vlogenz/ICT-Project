@@ -28,9 +28,20 @@ class GridItem(QtWidgets.QFrame):
         
         self.image_path = self.getImagePath()
 
-        self.nameLabel = QtWidgets.QLabel(self.getName())
+        self.nameLabel = QtWidgets.QTextEdit(self.getName())
         self.nameLabel.setAlignment(QtCore.Qt.AlignCenter)
-        self.nameLabel.setStyleSheet("color: black;")
+        self.nameLabel.setStyleSheet("color: black; background-color: transparent; border: none; padding-left: 20%; padding-right: 20%")
+        self.nameLabel.setReadOnly(True)
+        self.nameLabel.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.nameLabel.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.nameLabel.setLineWrapMode(QtWidgets.QTextEdit.WidgetWidth)
+        self.nameLabel.setWordWrapMode(QtGui.QTextOption.WrapAnywhere)
+        self.nameLabel.setContextMenuPolicy(QtCore.Qt.NoContextMenu)
+        self.nameLabel.setAttribute(QtCore.Qt.WA_TransparentForMouseEvents)
+        # Adjust height to content
+        doc = self.nameLabel.document()
+        doc.setTextWidth(int(base_width * self.scale_factor))
+        self.nameLabel.setFixedHeight(int(doc.size().height()))
 
         self.pixmap = QtGui.QPixmap(self.image_path)
         if self.pixmap.isNull():
@@ -243,7 +254,12 @@ class GridItem(QtWidgets.QFrame):
         text, ok = QInputDialog.getText(self, "Rename component", "Enter a label:")
         if ok and text:
             self.logicComponent.setLabel(text)
-            self.nameLabel.setText(self.logicComponent.getLabel())
+            self.nameLabel.setPlainText(self.logicComponent.getLabel())
+            # Adjust height to content
+            doc = self.nameLabel.document()
+            base_width = CELL_SIZE - 8
+            doc.setTextWidth(int(base_width * self.scale_factor))
+            self.nameLabel.setFixedHeight(int(doc.size().height()))
 
     def showComponentTooltip(self):
         self.setToolTip(f"{self.getName()} ({self.logicComponent.__class__.__name__})")

@@ -48,5 +48,6 @@ COMPONENT_MAP = {
     "DataMemory": DataMemory,
     "InstructionMemory": InstructionMemory,
     "ProgramCounter": ProgramCounter,
-    "RegisterBlock": RegisterBlock
+    "RegisterBlock": RegisterBlock,
+    "Adder32bit": Adder32bit
     }

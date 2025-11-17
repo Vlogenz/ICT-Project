@@ -42,6 +42,7 @@ class LogicComponent(ABC):
             self.bus.emit("model:input_changed",self)
             return True
         elif internalKey in self.inputs and self.inputs[internalKey] is not None:
+            print("Input was occupied")
             return False
         else:
             raise KeyError(f"Key {internalKey} not found in inputs")  

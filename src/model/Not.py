@@ -2,6 +2,7 @@ import typing
 from .LogicComponent import LogicComponent
 
 class Not(LogicComponent):
+    """ NOT gate component with one input and one output. """
     
     def __init__(self):
         super().__init__()
@@ -20,9 +21,9 @@ class Not(LogicComponent):
         
         oldState = self.state.copy()
         if self.inputs["input"] is None: # set input to false if no component ist connected
-            a = False
+            a: int = 0
         else:
-            a = self.inputs["input"][0].getState()[self.inputs["input"][1]][0]
+            a: int = self.inputs["input"][0].getState()[self.inputs["input"][1]][0]
             # gets the component out of the first tuple in self.inputs and then 
             #   uses the key from that tuple to access the right output from the 
             #   components state

@@ -17,7 +17,7 @@ class Collector1to2(LogicComponent):
         # Output stored as (value, bitwidth)
         self.state: dict = {"outValue": (0, 2)}
 
-    def eval(self):
+    def eval(self) -> bool:
         """Evaluate the Collector, and return True if the Output has changed.
 
         The two inputs are read; if an input is not connected it is treated as 0.
@@ -25,16 +25,19 @@ class Collector1to2(LogicComponent):
         (value, 2).
         """
         oldState = self.state.copy()
-        outValue = 0
-        for i in range(1, 3):
-            key = f"input{i}"
-            if self.inputs[key] is None:
-                bit = 0
+        outValue: int = 0
+        for i,value in enumerate(self.inputs.values()):
+            if value is None: # set input to false if no component is connected
+                bit: int = 0
             else:
-                # self.inputs[key] is expected to be (component, output_key)
-                comp, out_key = self.inputs[key]
-                bit = comp.getState()[out_key][0]
-            outValue |= (bit << (i - 1))
-
+                bit: int = value[0].getState()[value[1]][0]
+                # gets the component out of the tuple in self.inputs and then 
+                #   uses the key from that tuple to access the right output from the 
+                #   components state
+            # shift the bit into the correct position and combine
+            outValue |= (bit << (i))
         self.state["outValue"] = (outValue, 2)
-        return self.state != oldState
+        if self.state != oldState:
+            return True
+        else:
+            return False

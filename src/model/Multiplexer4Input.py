@@ -2,6 +2,7 @@ import  typing
 from .LogicComponent import LogicComponent
 
 class Multiplexer4Inp(LogicComponent):
+    """ 4-input Multiplexer that selects one of the four inputs based on a 2-bit selection input. """
 
     def __init__(self):
         super().__init__()
@@ -38,7 +39,7 @@ class Multiplexer4Inp(LogicComponent):
 
         return outputs[0][0].getBitwidth(outputs[0][1])
     
-    def addInput(self, input: "LogicComponent", key: str, internalKey: str):
+    def addInput(self, input: "LogicComponent", key: str, internalKey: str)-> bool:
         """
         Add an input connection to this component and lock input bidwidth if not already done.
         Args:
@@ -109,8 +110,8 @@ class Multiplexer4Inp(LogicComponent):
                 "input4": bitwidth}
         
         return True
-    
-    def removeInput(self, input: "LogicComponent", key:str, internalKey: str):
+
+    def removeInput(self, input: "LogicComponent", key:str, internalKey: str) -> bool:
         """
         Remove an input connection from this component, resets input bitwidth if all inputs are disconnected.
         Args:
@@ -145,7 +146,7 @@ class Multiplexer4Inp(LogicComponent):
         
         return True
     
-    def removeOutput(self, output: "LogicComponent", key: str):
+    def removeOutput(self, output: "LogicComponent", key: str)-> bool:
         """
         Remove an output connection from this component, resets all bitwidths if nothing is connected.
         Args:

@@ -3,7 +3,7 @@ from .LogicComponent import LogicComponent
 
 
 class Collector1to3(LogicComponent):
-    """Collector that combines two 1-bit inputs into one 2-bit output.
+    """Collector that combines three 1-bit inputs into one 3-bit output.
 
     Outputs `outValue` as a tuple (value:int, bitwidth:int) where bit 0 is from
     `input1` and bit 1 is from `input2` , bit 2 is from `input3` (i.e. input1 -> LSB, input3 -> MSB).
@@ -17,22 +17,23 @@ class Collector1to3(LogicComponent):
         # Output stored as (value, bitwidth)
         self.state: dict = {"outValue": (0, 3)}
 
-    def eval(self):
+    def eval(self) -> bool:
         """Evaluate the Collector, and return if the Output has changed.
 
         Returns:
             bool: True if the output state has changed, False otherwise.
         """
         oldState = self.state.copy()
-        outValue = 0
+        outValue: int = 0
         for i,value in enumerate(self.inputs.values()):
             if value is None: # set input to false if no component is connected
-                bit = 0
+                bit: int = 0
             else:
-                bit = value[0].getState()[value[1]][0]
+                bit: int = value[0].getState()[value[1]][0]
                 # gets the component out of the tuple in self.inputs and then 
                 #   uses the key from that tuple to access the right output from the 
                 #   components state
+            # shift the bit into the correct position and combine
             outValue |= (bit << (i))
         self.state["outValue"] = (outValue, 3)
         if self.state != oldState:

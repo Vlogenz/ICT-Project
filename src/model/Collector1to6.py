@@ -2,6 +2,7 @@ import  typing
 from .LogicComponent import LogicComponent
 
 class Collector1to6(LogicComponent):
+    """ Collector that collects six 1-bit inputs into a single 6-bit output. """
     
     def __init__(self):
         super().__init__()
@@ -13,7 +14,7 @@ class Collector1to6(LogicComponent):
         #   (Tuples of component and output key of that component)
         self.state: dict = {"outValue": (0,6)}
         
-    def eval(self):
+    def eval(self) -> bool:
         """Evaluate the Collector, and return if the Output has changed.
 
         Returns:

@@ -1,5 +1,6 @@
 import pytest
 from src.Algorithms import Algorithms
+from src.infrastructure.eventBus import getBus
 from src.model.Input import Input
 from src.model.And import And
 from src.model.Or import Or
@@ -295,6 +296,7 @@ def test_eventDrivenEval_with_PC_and_instruction_memory():
 
     pc = ProgramCounter()
     im = InstructionMemory()
+    pc.maxValue = 4000  # Ensure maxValue is high enough
 
     pc.addInput(im, "instruction", "input")
     im.addOutput(pc, "input")
@@ -319,7 +321,7 @@ def test_eventDrivenEval_with_PC_and_instruction_memory_many_instructions():
     """Test eventDrivenEval with ProgramCounter and InstructionMemory components"""
     from src.model.ProgramCounter import ProgramCounter
     from src.model.InstructionMemory import InstructionMemory
-
+    getBus().setManual()
     pc = ProgramCounter()
     im = InstructionMemory()
 
@@ -336,6 +338,7 @@ def test_eventDrivenEval_with_PC_and_instruction_memory_many_instructions():
     inputs = []
     components = [pc, im]
     im.eval()
+    pc.maxValue = 4000  # Ensure maxValue is high enough
     assert pc.getState()["outValue"] == (0, 32)
     assert im.getState()["instruction"] == (4, 32)
     

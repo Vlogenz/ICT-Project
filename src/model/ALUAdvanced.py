@@ -1,7 +1,8 @@
 import  typing
 from .LogicComponent import LogicComponent
 
-class ALUAdvanced(LogicComponent):  # A simple 32-bit ALU 
+class ALUAdvanced(LogicComponent):  # A advanced 32-bit ALU 
+    """ A 32-bit ALU that supports AND, OR, ADD, SUB, and SLT operations with input inversion and negation."""
     
     def __init__(self):
         super().__init__()
@@ -36,38 +37,38 @@ class ALUAdvanced(LogicComponent):  # A simple 32-bit ALU
         """
         oldState = self.state.copy()
         if self.inputs["input1"] is None: # set input to 0 if no component is connected
-            a = 0
+            a: int = 0
         else:
-            a = self.inputs["input1"][0].getState()[self.inputs["input1"][1]][0]
+            a: int = self.inputs["input1"][0].getState()[self.inputs["input1"][1]][0]
             # gets the component out of the first tuple in self.inputs and then 
             #   uses the key from that tuple to access the right output from the 
             #   components state
         if self.inputs["input2"] is None: # set input to 0 if no component is connected
-            b = 0
+            b: int = 0
         else:
-            b = self.inputs["input2"][0].getState()[self.inputs["input2"][1]][0]
+            b: int = self.inputs["input2"][0].getState()[self.inputs["input2"][1]][0]
             # gets the component out of the second tuple in self.inputs and then 
             #   uses the key from that tuple to access the right output from the 
             #   components state
         if self.inputs["OP"] is None: # set input to 0 if no component is connected
-            op = 0
+            op: int = 0
         else:
-            op = self.inputs["OP"][0].getState()[self.inputs["OP"][1]][0]
+            op: int = self.inputs["OP"][0].getState()[self.inputs["OP"][1]][0]
             # gets the component out of the third tuple in self.inputs and then 
             #   uses the key from that tuple to access the right output from the 
             #   components state
         
         # Handle Ainvert input
         if self.inputs["Ainvert"] is None:
-            ainvert = 0
+            ainvert: int = 0
         else:
-            ainvert = self.inputs["Ainvert"][0].getState()[self.inputs["Ainvert"][1]][0]
-        
+            ainvert: int = self.inputs["Ainvert"][0].getState()[self.inputs["Ainvert"][1]][0]
+
         # Handle Bnegate input
         if self.inputs["Bnegate"] is None:
-            bnegate = 0
+            bnegate: int = 0
         else:
-            bnegate = self.inputs["Bnegate"][0].getState()[self.inputs["Bnegate"][1]][0]
+            bnegate: int = self.inputs["Bnegate"][0].getState()[self.inputs["Bnegate"][1]][0]
         
         # Apply inversion if needed
         if ainvert == 1:

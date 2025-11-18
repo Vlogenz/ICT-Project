@@ -2,6 +2,8 @@ import typing
 from .LogicComponent import LogicComponent
 
 class SignExtend(LogicComponent):
+    """ SignExtend Logic Component
+    Sign-extends a 16-bit input to a 32-bit output."""
 
     def __init__(self):
         super().__init__()
@@ -18,7 +20,7 @@ class SignExtend(LogicComponent):
 		"""
         oldState = self.state.copy()
         if self.inputs["input1"] is None: # set input to false if no component is connected
-            a = False
+            a: int = 0
         else:
             a = self.inputs["input1"][0].getState()[self.inputs["input1"][1]][0]
             # gets the component out of the first tuple in self.inputs and then 

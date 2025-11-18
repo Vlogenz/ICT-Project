@@ -84,12 +84,16 @@ class Algorithms:
         # - otherwise start from inputs (copy)
         # - if inputs are empty, fall back to any ProgramCounter components
         startingComponents = kw.get("startingComponents", None)
-        if startingComponents is None:
-            startingComponents = inputs.copy()
-
-        # If still empty, try to start from ProgramCounter components
+        # If empty, try to start from ProgramCounter components
+        
         if startingComponents is None or len(startingComponents) == 0:
             startingComponents = [comp for comp in components if type(comp) == ProgramCounter]
+        # if still empty, use inputs
+        if startingComponents is None or len(startingComponents) == 0:
+            startingComponents = inputs.copy()
+        
+
+        
 
         if startingComponents is None or len(startingComponents) == 0:
             return False  # nothing to start from

@@ -2,6 +2,8 @@ import typing
 from .LogicComponent import LogicComponent
 
 class ShiftLeft2(LogicComponent):
+    """ ShiftLeft2 component with one input and one output. Shifts the input value left by 2 bits.
+    """
 
     def __init__(self):
         super().__init__()
@@ -19,11 +21,11 @@ class ShiftLeft2(LogicComponent):
 		"""
         oldState = self.state.copy()
         if self.inputs["input1"] is None: # set input to false if no component is connected
-            a = False
+            a:int = 0
             # If no input connected, keep the configured bitwidth or default to 0
             outputBitwidth = self.inputBitwidths["input1"]
         else:
-            a = self.inputs["input1"][0].getState()[self.inputs["input1"][1]][0]
+            a: int = self.inputs["input1"][0].getState()[self.inputs["input1"][1]][0]
             # gets the component out of the first tuple in self.inputs and then 
             #   uses the key from that tuple to access the right output from the 
             #   components state
@@ -42,7 +44,7 @@ class ShiftLeft2(LogicComponent):
         else:
             return False
         
-    def addInput(self, input: "LogicComponent", key: str, internalKey: str):
+    def addInput(self, input: "LogicComponent", key: str, internalKey: str)-> bool:
         ret = super().addInput(input,key,internalKey)
         if ret:  # Input was successfully added to an empty slot
             bit = input.getState()[key][1]  # Get bitwidth from the output state
@@ -59,7 +61,7 @@ class ShiftLeft2(LogicComponent):
                     self.state["outValue"] = (self.state["outValue"][0], bit)
         return ret
         
-    def removeInput(self, input: "LogicComponent", key: str, internalKey: str):
+    def removeInput(self, input: "LogicComponent", key: str, internalKey: str)-> None:
         """Remove an input connection and reset input bitwidths to default values.
         
         Args:
@@ -73,7 +75,7 @@ class ShiftLeft2(LogicComponent):
             self.inputBitwidths["input1"] = 0
             self.state["outValue"] = (0, 0)  # Reset output state to default when input is removed
 
-    def addOutput(self, output: "LogicComponent", key: str):
+    def addOutput(self, output: "LogicComponent", key: str)-> None:
         """Add an output connection and update input bitwidth accordingly.
         
         Args:
@@ -87,7 +89,7 @@ class ShiftLeft2(LogicComponent):
             self.inputBitwidths["input1"] = output.inputBitwidths[key]
             self.state["outValue"] = (0, output.inputBitwidths[key])
 
-    def removeOutput(self, output: "LogicComponent", key: str):
+    def removeOutput(self, output: "LogicComponent", key: str)-> None:
         """Remove an output connection and update bitwidths if no outputs remain.
         
         Args:

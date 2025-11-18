@@ -2,6 +2,8 @@ import typing
 from .LogicComponent import LogicComponent
 
 class Register(LogicComponent):
+    """ Register component with one input and one clock input. """
+
     def __init__(self):
         super().__init__()
         self.inputs: typing.Dict = {"input": None, "clk": None} 
@@ -20,11 +22,11 @@ class Register(LogicComponent):
         """
         if self.inputs["clk"] is not None and self.inputs["clk"][0].getState()[self.inputs["clk"][1]][0] == 1:
             if self.inputs["input"] is None: # set input to zero if no component is connected
-                value = 0
+                value: int = 0
             else:
-                value = self.inputs["input"][0].getState()[self.inputs["input"][1]][0]
-                # gets the component out of the first tuple in self.inputs and then 
-                #   uses the key from that tuple to access the right output from the 
+                value: int = self.inputs["input"][0].getState()[self.inputs["input"][1]][0]
+                # gets the component out of the first tuple in self.inputs and then
+                #   uses the key from that tuple to access the right output from the
                 #   components state
             self.nextState = (value, 32)
             self.needNewState = True

@@ -2,6 +2,7 @@ import typing
 from .LogicComponent import LogicComponent
 
 class RegisterBlock(LogicComponent):
+    """ Register Block component with read and write capabilities. """
 
     def __init__(self):
         super().__init__()
@@ -20,25 +21,24 @@ class RegisterBlock(LogicComponent):
         Returns:
             bool: True if the output state has changed, False otherwise.
         """
-        oldState = self.state.copy()
         
         # Read register addresses
         if self.inputs["readReg1"] is None:
-            readReg1 = 0
+            readReg1: int = 0
         else:
-            readReg1 = self.inputs["readReg1"][0].getState()[self.inputs["readReg1"][1]][0]
+            readReg1:int = self.inputs["readReg1"][0].getState()[self.inputs["readReg1"][1]][0]
         
         if self.inputs["readReg2"] is None:
-            readReg2 = 0
+            readReg2: int = 0
         else:
-            readReg2 = self.inputs["readReg2"][0].getState()[self.inputs["readReg2"][1]][0]
+            readReg2: int = self.inputs["readReg2"][0].getState()[self.inputs["readReg2"][1]][0]
         
         
         
         # Read data from registers
-        readData1 = self.registers[readReg1] if readReg1 < len(self.registers) else 0
-        readData2 = self.registers[readReg2] if readReg2 < len(self.registers) else 0
-        
+        readData1: int = self.registers[readReg1] if readReg1 < len(self.registers) else 0
+        readData2: int = self.registers[readReg2] if readReg2 < len(self.registers) else 0
+
         self.state = {
             "readData1": (readData1, 32),
             "readData2": (readData2, 32)

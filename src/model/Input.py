@@ -2,6 +2,7 @@ import typing
 from .LogicComponent import LogicComponent
 
 class Input(LogicComponent):
+    """ Input component that provides a user-defined value as output. 1-bit, 8-bit, or 32-bit. """
 
     def __init__(self):
         super().__init__()
@@ -18,7 +19,8 @@ class Input(LogicComponent):
     def eval(self) -> bool:
         return True
 
-    def cycleBitwidth(self):
+    def cycleBitwidth(self) -> None:
+        """ Cycle the output bitwidth between 1, 8, and 32 bits. """
         switch={
             1: 8,
             8: 32,
@@ -28,21 +30,25 @@ class Input(LogicComponent):
         # Resetting the value is handled in InputGridItem
         self.state["outValue"] = [0, switch.get(self.state["outValue"][1])]
 
-    def toggleState(self):
+    def toggleState(self) -> None:
+        """ Toggle the output state between 0 and 1 for 1-bit inputs. """
         if self.state["outValue"] == (0,1):
             self.state["outValue"] = (1,1)
         else:
             self.state["outValue"] = (0,1)
 
-    def enteredState(self, inputInt: int):
+    def enteredState(self, inputInt: int) -> None:
+        """ Set the output state to the given integer value, respecting the current bitwidth."""
         if self.state["outValue"][1] == 8 and inputInt > 255:
             inputInt = 255
 
         outWidth = self.state["outValue"][1]
         self.setState((inputInt, outWidth))
 
-    def setState(self, state: tuple):
+    def setState(self, state: tuple) -> None:
+        """ Set the output state to the given (value, bitwidth) tuple. """
         self.state["outValue"] = state
         
     def getState(self) -> dict:
+        """ Get the current state of the Input component. """
         return self.state

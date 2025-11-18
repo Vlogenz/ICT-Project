@@ -8,7 +8,7 @@ class LevelFileController:
         self.currentLevel = None
         
         
-    def loadLevel(self, levelNumber: int):
+    def loadLevel(self, levelNumber: int)-> dict:
         """Loads level data from file or database"""
         levelFile = Path(self.path) / f"level_{levelNumber}.json"
         if levelFile.exists():
@@ -18,7 +18,7 @@ class LevelFileController:
         else:
             raise FileNotFoundError(f"Level file {levelFile} not found.")
         
-    def loadMetaFile(self):
+    def loadMetaFile(self)-> dict:
         """Loads the meta file, if existing. Otherwise, it will create a new one."""
         metaFile = Path(self.path) / "meta.json"
         if metaFile.exists():
@@ -33,7 +33,7 @@ class LevelFileController:
                 json.dump(metaJson, f, indent=4)
             return metaJson
         
-    def getAvailableLevels(self):
+    def getAvailableLevels(self)-> List[int]:
         """Returns a list of numbers of available levels by scanning the levels directory"""
         levelFiles = Path(self.path).glob("level_*.json")
         levelNumbers = []
@@ -49,7 +49,7 @@ class LevelFileController:
         metaJson = self.loadMetaFile()
         return metaJson["completed_levels"]
     
-    def updateCompletedLevels(self, levelId: int):
+    def updateCompletedLevels(self, levelId: int)-> None:
         """Updates the list of completed levels in the meta json file"""
         metaFile = Path(self.path) / "meta.json"
         with open(metaFile, 'r') as f:
@@ -65,7 +65,7 @@ class LevelFileController:
         metaJson = self.loadMetaFile()
         return metaJson["all_levels_unlocked"]
 
-    def setAllLevelsUnlocked(self, value: bool):
+    def setAllLevelsUnlocked(self, value: bool)-> None:
         """Returns the value of the all_components_unlocked entry in the meta json file."""
         metaFile = Path(self.path) / "meta.json"
         with open(metaFile, 'r') as f:

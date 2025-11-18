@@ -313,7 +313,8 @@
     ],
 
     "available_components": [
-
+        {"type": "Or"},
+        {"type": "Not"}
     ],
 
     "hints": [
@@ -326,8 +327,7 @@
     "solution": "",
 
     "tests": [
-        
-      
+
         {
             "inputs": [[0,1], [0,1], [0,1], [1,1], [1,1],[0,1], [0,1], [0,1]],
             "expected_output": [[0,1],[1,1],[0,1],[1,1]]

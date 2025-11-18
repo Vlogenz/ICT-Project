@@ -34,7 +34,7 @@ class DecoderThreeBit(LogicComponent):
             a = self.inputs["input3"][0].getState()[self.inputs["input3"][1]][0]
         
         # calculate the binary value from the three inputs (abc)
-        value: int =(a<<2) + (b<<1) + c
+        value: int = (a<<2) + (b<<1) + c
         
         # Reset all outputs to 0
         for key in self.state.keys():

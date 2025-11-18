@@ -10,6 +10,103 @@ from src.constants import CELL_SIZE, MIME_TYPE
 from src.infrastructure.eventBus import getBus
 
 
+class WrapAnywhereLabel(QtWidgets.QWidget):
+    """A custom widget that wraps text anywhere, not just at word boundaries."""
+
+    def __init__(self, text="", parent=None):
+        super().__init__(parent)
+        self._text = text
+        self._alignment = QtCore.Qt.AlignCenter
+        self._scale_factor = 1.0
+
+    def setText(self, text):
+        """Set the text to display."""
+        self._text = text
+        self.update()
+
+    def text(self):
+        """Get the current text."""
+        return self._text
+
+    def setAlignment(self, alignment):
+        """Set the text alignment."""
+        self._alignment = alignment
+        self.update()
+
+    def setScaleFactor(self, scale_factor):
+        """Set the scale factor for font size adjustment."""
+        self._scale_factor = scale_factor
+        self.update()
+
+    def paintEvent(self, event):
+        """Custom paint event that wraps text anywhere."""
+        super().paintEvent(event)
+
+        if not self._text:
+            return
+
+        painter = QtGui.QPainter(self)
+
+        # Adjust font size based on scale factor (only shrink when scale < 1.0)
+        font = painter.font()
+        if self._scale_factor < 1.0:
+            base_size = font.pointSize() if font.pointSize() > 0 else 12
+            font.setPointSizeF(base_size * self._scale_factor)
+            painter.setFont(font)
+
+        painter.setPen(QtGui.QColor("black"))
+
+        # Get font metrics
+        font_metrics = painter.fontMetrics()
+
+        # Available width for text
+        width = self.width()
+        height = self.height()
+
+        # Wrap text character by character if needed
+        lines = []
+        current_line = ""
+
+        for char in self._text:
+            test_line = current_line + char
+            if font_metrics.horizontalAdvance(test_line) <= width:
+                current_line = test_line
+            else:
+                if current_line:
+                    lines.append(current_line)
+                current_line = char
+
+        if current_line:
+            lines.append(current_line)
+
+        # Calculate total text height
+        line_height = font_metrics.height()
+        total_height = len(lines) * line_height
+
+        # Calculate starting Y position based on alignment
+        if self._alignment & QtCore.Qt.AlignVCenter:
+            y_start = (height - total_height) // 2
+        elif self._alignment & QtCore.Qt.AlignBottom:
+            y_start = height - total_height
+        else:
+            y_start = 0
+
+        # Draw each line
+        y = y_start + font_metrics.ascent()
+        for line in lines:
+            # Calculate X position based on alignment
+            line_width = font_metrics.horizontalAdvance(line)
+            if self._alignment & QtCore.Qt.AlignHCenter:
+                x = (width - line_width) // 2
+            elif self._alignment & QtCore.Qt.AlignRight:
+                x = width - line_width
+            else:
+                x = 0
+
+            painter.drawText(x, y, line)
+            y += line_height
+
+
 class GridItem(QtWidgets.QFrame):
     """An Element in the grid with inputs and outputs"""
 
@@ -28,25 +125,25 @@ class GridItem(QtWidgets.QFrame):
         
         self.image_path = self.getImagePath()
 
-        self.nameLabel = QtWidgets.QTextEdit(self.getName())
+        # Create nameLabel - we'll use a custom widget for wrap-anywhere behavior
+        self.nameLabel = WrapAnywhereLabel(self.getName(), self)
         self.nameLabel.setAlignment(QtCore.Qt.AlignCenter)
-        self.nameLabel.setStyleSheet("color: black; background-color: transparent; border: none; padding-left: 20%; padding-right: 20%")
-        self.nameLabel.setReadOnly(True)
-        self.nameLabel.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
-        self.nameLabel.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
-        self.nameLabel.setLineWrapMode(QtWidgets.QTextEdit.WidgetWidth)
-        self.nameLabel.setWordWrapMode(QtGui.QTextOption.WrapAnywhere)
+        self.nameLabel.setStyleSheet("color: black; background-color: transparent;")
         self.nameLabel.setContextMenuPolicy(QtCore.Qt.NoContextMenu)
         self.nameLabel.setAttribute(QtCore.Qt.WA_TransparentForMouseEvents)
-        # Adjust height to content
-        doc = self.nameLabel.document()
-        doc.setTextWidth(int(base_width * self.scale_factor))
-        self.nameLabel.setFixedHeight(int(doc.size().height()))
+
+        self.nameLabelContainer = None  # Initialize to None
 
         self.pixmap = QtGui.QPixmap(self.image_path)
         if self.pixmap.isNull():
-            self.layout.addWidget(self.nameLabel)
+            # No image available, add nameLabel to layout with margins
+            # Create a container layout with margins to keep text away from port labels
+            self.nameLabelContainer = QtWidgets.QHBoxLayout()
+            self.nameLabelContainer.setContentsMargins(int(16 * self.scale_factor), 0, int(16 * self.scale_factor), 0)
+            self.nameLabelContainer.addWidget(self.nameLabel)
+            self.layout.addLayout(self.nameLabelContainer)
         else:
+            # Image available, hide the nameLabel
             self.nameLabel.hide()
 
         # Define ports dynamically based on what the LogicComponent has
@@ -222,12 +319,19 @@ class GridItem(QtWidgets.QFrame):
     def updateRects(self):
         """Update the geometry of labels based on scale_factor."""
         scale = self.scale_factor
+
+        # Update the scale factor for font size adjustment
+        self.nameLabel.setScaleFactor(scale)
+
+        # Update port labels
         for key, rect in self.outputs.items():
             scaled_rect = QtCore.QRectF(rect.x() * scale, rect.y() * scale, rect.width() * scale, rect.height() * scale)
             self.outputLabels[key].setGeometry(scaled_rect.toRect())
         for key, rect in self.inputs.items():
             scaled_rect = QtCore.QRectF(rect.x() * scale, rect.y() * scale, rect.width() * scale, rect.height() * scale)
             self.inputLabels[key].setGeometry(scaled_rect.toRect())
+        if self.nameLabelContainer is not None:
+            self.nameLabelContainer.setContentsMargins(16*self.scale_factor, 0, 16*self.scale_factor, 0)
 
     def onComponentUpdated(self, compList):
         """Event handler for the view:components_updated event. Updated port labels."""
@@ -254,12 +358,7 @@ class GridItem(QtWidgets.QFrame):
         text, ok = QInputDialog.getText(self, "Rename component", "Enter a label:")
         if ok and text:
             self.logicComponent.setLabel(text)
-            self.nameLabel.setPlainText(self.logicComponent.getLabel())
-            # Adjust height to content
-            doc = self.nameLabel.document()
-            base_width = CELL_SIZE - 8
-            doc.setTextWidth(int(base_width * self.scale_factor))
-            self.nameLabel.setFixedHeight(int(doc.size().height()))
+            self.nameLabel.setText(self.getName())
 
     def showComponentTooltip(self):
         self.setToolTip(f"{self.getName()} ({self.logicComponent.__class__.__name__})")

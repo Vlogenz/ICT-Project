@@ -326,7 +326,7 @@
     "How SLT works (concept): To determine whether A is less than B, compute A minus B using two's-complement arithmetic. If the result is negative, then A is less than B. In a multi-bit ALU, the sign is simply the most-significant bit of the subtraction result.",
     "MIPS detail (small summary): The standard MIPS approach performs A minus B and checks the sign bit; it writes a 1 into the destination register if A is less than B, otherwise 0. Although a normal ALU produces a full multi-bit result, SLT only encodes the comparison in the least-significant bit. We mimic that behavior on this 2-bit ALU.",
     "Implementation hint (slice-level): Perform the subtraction across the two ALU slices by enabling binvert and setting carry-in to 1 on the least-significant slice. Capture the MSB from the top slice after subtraction, because that bit indicates whether A minus B is negative. When the opcode is 11, use that sign bit to produce the SLT output: zero on all bits except the LSB, which carries the comparison bit.",
-    "scince this ALU is only 2 bits wide, we can an overflow relatively easy. This Level is only here to show you the priciple, when we extend the ALU to more bits, you have to take care of the overflow."
+    "Since this ALU is only 2 bits wide, we can an overflow relatively easy. This Level is only here to show you the principle, when we extend the ALU to more bits, you have to take care of the overflow."
 ],
 
 

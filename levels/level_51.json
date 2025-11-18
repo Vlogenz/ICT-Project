@@ -31,7 +31,6 @@
     ],
 
     "hints": [
-        "Use the Collector1to2 to pack the two op inputs (op0 = LSB, op1 = MSB) into a 2-bit selector for the 4-input multiplexer.",
         "Create three candidate signals: A AND B, A OR B, and the sum bit from a FullAdder (ignore carry). Feed these as three data inputs to the MUX.",
         "Map the MUX data inputs so that selector 00 -> AND, 01 -> OR, 10 -> SUM. The unused selector (11) can be tied to 0 or any value (tests do not use it)."
     ],

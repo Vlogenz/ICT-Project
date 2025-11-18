@@ -1,0 +1,43 @@
+{
+    "level_id": 30,
+    "name": "RS-FLipflop",
+    "description": "An RS-Flipflop stores 1-Bit by storing the last value of the input and returning it on the next clock cycle. \nS (Set) forces the output to 1, R (Reset) forces it to **0`.\nIf both inputs are 0, the circuit keeps its previous value due to feedback.\nThis is the fundamental memory element showing how state is preserved.",
+    "difficulty": "Middle",
+    "objectives": [
+        "Build an RS flip-flop using two NOR gates."," Ensure that:"," \nS = 1 → Q = 1 ","\nR = 1 → Q = 0 ","\nS = 0 and R = 0 → Q keeps its old value ","\nNote: S = 1 and R = 1 is invalid (undefined state)"
+    ],
+    "components": [
+        {"type": "Input", "position": [0,1], "immovable": true},
+        {"type": "Input", "position": [0,5], "immovable": true},
+        {"type": "Output", "position": [7,1], "immovable": true},
+        {"type":  "Output", "position": [7,5], "immovable": true}
+
+    ],
+    "available_components": [
+        {"type": "Nor"}
+    ],
+    "hints": [
+        "Try connecting outputs of the NOR gates with inputs of the NOR gates.",
+        "Each of the given inputs, has to be connected to exactly one NOR Gate.",
+        "Connect the outputs of the NOR Gates with the remaining input on the other NOR-Gate"
+    ],
+    "tests": [
+        {
+            "inputs": [[1,1], [0,1]],
+            "expected_output": [[0,1], [1,1]]
+        },
+        {
+            "inputs": [[0,1], [0,1]],
+            "expected_output": [[0,1], [1,1]]
+        },
+        {
+            "inputs": [[0,1], [1,1]],
+            "expected_output": [[1,1], [0,1]]
+        },
+        {
+            "inputs": [[0,1], [0,1]],
+            "expected_output": [[1,1], [0,1]]
+        }
+    ]
+
+}

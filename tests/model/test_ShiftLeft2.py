@@ -18,9 +18,9 @@ def test_shiftleft2_no_input_connected():
     getBus().setManual()
     shift_left = ShiftLeft2()
     changed = shift_left.eval()
-    # Should output (False << 2, 0 + 2) = (0, 2) when no input is connected
-    assert shift_left.state["outValue"] == (0, 2)
-    assert changed is True  # state changed from default (0, 0) to (0, 2)
+    # Should output (0, 0) when no input is connected (bitwidth stays 0)
+    assert shift_left.state["outValue"] == (0, 0)
+    assert changed is False  # state doesn't change from default (0, 0)
     
     # Second evaluation should not change state
     changed = shift_left.eval()
@@ -28,16 +28,20 @@ def test_shiftleft2_no_input_connected():
 
 
 @pytest.mark.parametrize("input_value, input_bitwidth, expected_value, expected_bitwidth", [
-    # Test various input values and bitwidths
-    (0, 1, 0, 3),           # 0 << 2 = 0, bitwidth 1 + 2 = 3
-    (1, 1, 4, 3),           # 1 << 2 = 4, bitwidth 1 + 2 = 3
-    (2, 2, 8, 4),           # 2 << 2 = 8, bitwidth 2 + 2 = 4
-    (3, 2, 12, 4),          # 3 << 2 = 12, bitwidth 2 + 2 = 4
-    (5, 3, 20, 5),          # 5 << 2 = 20, bitwidth 3 + 2 = 5
-    (7, 3, 28, 5),          # 7 << 2 = 28, bitwidth 3 + 2 = 5
-    (15, 4, 60, 6),         # 15 << 2 = 60, bitwidth 4 + 2 = 6
-    (255, 8, 1020, 10),     # 255 << 2 = 1020, bitwidth 8 + 2 = 10
-    (1023, 10, 4092, 12),   # 1023 << 2 = 4092, bitwidth 10 + 2 = 12
+    # Test various input values and bitwidths - now bitwidth stays the same
+    # The shift left by 2 cuts off the top 2 bits
+    (0, 1, 0, 1),           # 0 << 2 = 0, masked to 1 bit = 0, bitwidth stays 1
+    (1, 1, 0, 1),           # 1 << 2 = 4 (100 in binary), masked to 1 bit = 0, bitwidth stays 1
+    (0, 2, 0, 2),           # 0 << 2 = 0, masked to 2 bits = 0, bitwidth stays 2
+    (1, 2, 0, 2),           # 1 << 2 = 4 (100), masked to 2 bits = 0, bitwidth stays 2
+    (2, 2, 0, 2),           # 2 << 2 = 8 (1000), masked to 2 bits = 0, bitwidth stays 2
+    (3, 2, 0, 2),           # 3 << 2 = 12 (1100), masked to 2 bits = 0, bitwidth stays 2
+    (5, 3, 4, 3),           # 5 (101) << 2 = 20 (10100), masked to 3 bits = 4 (100), bitwidth stays 3
+    (7, 3, 4, 3),           # 7 (111) << 2 = 28 (11100), masked to 3 bits = 4 (100), bitwidth stays 3
+    (10, 4, 8, 4),          # 10 (1010) << 2 = 40 (101000), masked to 4 bits = 8 (1000), bitwidth stays 4
+    (15, 4, 12, 4),         # 15 (1111) << 2 = 60 (111100), masked to 4 bits = 12 (1100), bitwidth stays 4
+    (255, 8, 252, 8),       # 255 << 2 = 1020, masked to 8 bits = 252, bitwidth stays 8
+    (1023, 10, 1020, 10),   # 1023 << 2 = 4092, masked to 10 bits = 1020, bitwidth stays 10
 ])
 def test_shiftleft2_with_various_inputs(input_value, input_bitwidth, expected_value, expected_bitwidth):
     """Test ShiftLeft2 with various input values and bitwidths."""
@@ -52,12 +56,13 @@ def test_shiftleft2_with_various_inputs(input_value, input_bitwidth, expected_va
     changed = shift_left.eval()
     assert shift_left.state["outValue"] == (expected_value, expected_bitwidth)
     
-    # For input_value 0: addInput sets state to (0, bitwidth+2), eval calculates 0<<2=0 with same bitwidth
-    # So state doesn't change during eval(), hence changed should be False
-    if input_value == 0:
-        assert changed is False  # state doesn't change during eval for zero input
+    # addInput sets state to (0, bitwidth) initially (keeps existing value which is 0)
+    # eval calculates (input_value<<2)&mask
+    # So state changes only if the result is different from 0
+    if expected_value == 0:
+        assert changed is False  # state stays (0, bitwidth)
     else:
-        assert changed is True   # state should change from addInput state to eval result
+        assert changed is True   # state changes from (0, bitwidth) to (expected_value, bitwidth)
     
     # Second evaluation should not change state
     changed = shift_left.eval()
@@ -69,12 +74,12 @@ def test_shiftleft2_bitwidth_handling():
     getBus().setManual()
     shift_left = ShiftLeft2()
     
-    # Test with different bitwidths
+    # Test with different bitwidths - output bitwidth should equal input bitwidth
     test_cases = [
-        (1, 1),    # 1-bit input should result in 3-bit output
-        (8, 8),    # 8-bit input should result in 10-bit output
-        (16, 16),  # 16-bit input should result in 18-bit output
-        (32, 32),  # 32-bit input should result in 34-bit output
+        (1, 1),    # 1-bit input should result in 1-bit output
+        (8, 8),    # 8-bit input should result in 8-bit output
+        (16, 16),  # 16-bit input should result in 16-bit output
+        (32, 32),  # 32-bit input should result in 32-bit output
     ]
     
     for bitwidth, input_value in test_cases:
@@ -85,9 +90,9 @@ def test_shiftleft2_bitwidth_handling():
         # Check that input bitwidth is set correctly
         assert shift_left.inputBitwidths["input1"] == bitwidth
         
-        # Check that output bitwidth is input bitwidth + 2
+        # Check that output bitwidth equals input bitwidth (no extension)
         shift_left.eval()
-        assert shift_left.state["outValue"][1] == bitwidth + 2
+        assert shift_left.state["outValue"][1] == bitwidth
 
 
 def test_shiftleft2_addInput_updates_bitwidth():
@@ -101,8 +106,8 @@ def test_shiftleft2_addInput_updates_bitwidth():
     dummy_input = DummyInput(42, 8)
     shift_left.addInput(dummy_input, "outValue", "input1")
     
-    # State bitwidth should be updated to 8 + 2 = 10
-    assert shift_left.state["outValue"][1] == 10
+    # State bitwidth should remain 8 (not extended)
+    assert shift_left.state["outValue"][1] == 8
     assert shift_left.inputBitwidths["input1"] == 8
 
 
@@ -113,27 +118,28 @@ def test_shiftleft2_state_changes_with_input_changes():
     dummy_input = DummyInput(3, 4)  # 3 with 4-bit width
     shift_left.addInput(dummy_input, "outValue", "input1")
     
-    # First evaluation: 3 << 2 = 12
+    # First evaluation: 3 (0011) << 2 = 12 (1100), masked to 4 bits = 12
     changed = shift_left.eval()
-    assert shift_left.state["outValue"] == (12, 6)  # value=12, bitwidth=4+2=6
+    assert shift_left.state["outValue"] == (12, 4)  # value=12, bitwidth=4
     assert changed is True
     
-    # Change input value: 5 << 2 = 20
+    # Change input value: 5 (0101) << 2 = 20 (10100), masked to 4 bits = 4 (0100)
     dummy_input.setValue(5, 4)
     changed = shift_left.eval()
-    assert shift_left.state["outValue"] == (20, 6)  # value=20, bitwidth=6
+    assert shift_left.state["outValue"] == (4, 4)  # value=4, bitwidth=4
     assert changed is True
     
-    # Change input value: 1 << 2 = 4
+    # Change input value: 1 (0001) << 2 = 4 (0100), masked to 4 bits = 4
     dummy_input.setValue(1, 4)
     changed = shift_left.eval()
-    assert shift_left.state["outValue"] == (4, 6)  # value=4, bitwidth=6
-    assert changed is True
+    assert shift_left.state["outValue"] == (4, 4)  # value=4, bitwidth=4
+    assert changed is False  # No change because result is still 4
     
-    # Set same value again - should not change
-    dummy_input.setValue(1, 4)
+    # Set different value: 2 (0010) << 2 = 8 (1000), masked to 4 bits = 8
+    dummy_input.setValue(2, 4)
     changed = shift_left.eval()
-    assert changed is False
+    assert shift_left.state["outValue"] == (8, 4)  # value=8, bitwidth=4
+    assert changed is True
 
 
 def test_shiftleft2_edge_cases():
@@ -145,16 +151,17 @@ def test_shiftleft2_edge_cases():
     
     # Test with zero
     changed = shift_left.eval()
-    assert shift_left.state["outValue"] == (0, 3)  # 0 << 2 = 0, bitwidth = 1 + 2 = 3
-    # For zero input, addInput already sets (0, 3), eval calculates 0<<2=0 with bitwidth 3, no change
+    assert shift_left.state["outValue"] == (0, 1)  # 0 << 2 = 0, bitwidth stays 1
+    # For zero input, addInput already sets (0, 1), eval calculates 0<<2=0 with bitwidth 1, no change
     assert changed is False  
     
     # Test with maximum value for given bitwidth
-    # For 3-bit input, maximum value is 7
+    # For 3-bit input, maximum value is 7 (111)
     dummy_input.setValue(7, 3)
     shift_left.addInput(dummy_input, "outValue", "input1")  # Update bitwidth
     changed = shift_left.eval()
-    assert shift_left.state["outValue"] == (28, 5)  # 7 << 2 = 28, bitwidth = 3 + 2 = 5
+    # 7 (111) << 2 = 28 (11100), masked to 3 bits = 4 (100)
+    assert shift_left.state["outValue"] == (4, 3)  # bitwidth stays 3
     assert changed is True
 
 
@@ -166,15 +173,16 @@ def test_shiftleft2_multiple_evaluations_same_input():
     shift_left.addInput(dummy_input, "outValue", "input1")
     
     # First evaluation should change state
+    # 6 (0110) << 2 = 24 (11000), masked to 4 bits = 8 (1000)
     changed = shift_left.eval()
     assert changed is True
-    assert shift_left.state["outValue"] == (24, 6)  # 6 << 2 = 24, bitwidth = 4 + 2 = 6
+    assert shift_left.state["outValue"] == (8, 4)  # value=8, bitwidth stays 4
     
     # Subsequent evaluations should not change state
     for _ in range(3):
         changed = shift_left.eval()
         assert changed is False
-        assert shift_left.state["outValue"] == (24, 6)
+        assert shift_left.state["outValue"] == (8, 4)
 
 
 def test_shiftleft2_input_disconnection():
@@ -184,42 +192,41 @@ def test_shiftleft2_input_disconnection():
     dummy_input = DummyInput(10, 5)
     shift_left.addInput(dummy_input, "outValue", "input1")
     
-    # With input connected: 10 << 2 = 40
+    # With input connected: 10 (01010) << 2 = 40 (101000), masked to 5 bits = 8 (01000)
     shift_left.eval()
-    assert shift_left.state["outValue"] == (40, 7)  # bitwidth = 5 + 2 = 7
+    assert shift_left.state["outValue"] == (8, 5)  # bitwidth stays 5
     
     # Simulate input disconnection
     shift_left.inputs["input1"] = None
     changed = shift_left.eval()
-    # Should shift False (0) by 2: 0 << 2 = 0, but bitwidth stays as it was set by addInput
-    assert shift_left.state["outValue"] == (0, 7)
+    # Should shift False (0) by 2: 0 << 2 = 0, bitwidth stays as it was set by addInput
+    assert shift_left.state["outValue"] == (0, 5)
     assert changed is True  # state changed
 
 
 def test_shiftleft2_preserves_shift_operation():
-    """Test that ShiftLeft2 correctly performs left shift by 2 operation."""
+    """Test that ShiftLeft2 correctly performs left shift by 2 operation with masking."""
     getBus().setManual()
     
-    # Test cases: (input, expected_output_after_shift_left_2)
+    # Test cases: (input, bitwidth, expected_output_after_shift_and_mask)
+    # Now we need to consider that the output is masked to the original bitwidth
     test_cases = [
-        (1, 4),     # 1 << 2 = 4
-        (2, 8),     # 2 << 2 = 8
-        (3, 12),    # 3 << 2 = 12
-        (4, 16),    # 4 << 2 = 16
-        (10, 40),   # 10 << 2 = 40
-        (15, 60),   # 15 << 2 = 60
+        (1, 4, 4),      # 1 (0001) << 2 = 4 (0100), masked to 4 bits = 4
+        (2, 4, 8),      # 2 (0010) << 2 = 8 (1000), masked to 4 bits = 8
+        (3, 4, 12),     # 3 (0011) << 2 = 12 (1100), masked to 4 bits = 12
+        (4, 4, 0),      # 4 (0100) << 2 = 16 (10000), masked to 4 bits = 0
+        (10, 5, 8),     # 10 (01010) << 2 = 40 (101000), masked to 5 bits = 8 (01000)
+        (15, 5, 28),    # 15 (01111) << 2 = 60 (111100), masked to 5 bits = 28 (11100)
     ]
     
-    for input_val, expected_output in test_cases:
+    for input_val, bitwidth, expected_output in test_cases:
         shift_left = ShiftLeft2()
-        # Use appropriate bitwidth to fit the input value
-        bitwidth = max(1, input_val.bit_length())
         dummy_input = DummyInput(input_val, bitwidth)
         shift_left.addInput(dummy_input, "outValue", "input1")
         
         shift_left.eval()
         actual_output = shift_left.state["outValue"][0]
-        assert actual_output == expected_output, f"Input {input_val} should produce {expected_output}, got {actual_output}"
+        assert actual_output == expected_output, f"Input {input_val} (bitwidth {bitwidth}) should produce {expected_output}, got {actual_output}"
 
 
 def test_shiftleft2_bitwidth_consistency():
@@ -234,14 +241,15 @@ def test_shiftleft2_bitwidth_consistency():
     # Input bitwidth should be 4
     assert shift_left.inputBitwidths["input1"] == 4
     
-    # Output bitwidth should be 4 + 2 = 6
+    # Output bitwidth should stay 4
     shift_left.eval()
-    assert shift_left.state["outValue"][1] == 6
+    assert shift_left.state["outValue"][1] == 4
     
     # Change value but keep same bitwidth
     dummy_input.setValue(3, 4)
     shift_left.eval()
-    assert shift_left.state["outValue"] == (12, 6)  # 3 << 2 = 12, bitwidth still 6
+    # 3 (0011) << 2 = 12 (1100), masked to 4 bits = 12
+    assert shift_left.state["outValue"] == (12, 4)  # 3 << 2 = 12, bitwidth still 4
     assert shift_left.inputBitwidths["input1"] == 4  # Input bitwidth unchanged
 
 
@@ -255,7 +263,8 @@ def test_shiftleft2_removeInput_resets_bitwidths():
     shift_left.addInput(dummy_input, "outValue", "input1")
     assert shift_left.inputBitwidths["input1"] == 8
     shift_left.eval()
-    assert shift_left.state["outValue"] == (40, 10)  # 10 << 2 = 40, bitwidth = 8 + 2 = 10
+    # 10 (00001010) << 2 = 40 (00101000), masked to 8 bits = 40
+    assert shift_left.state["outValue"] == (40, 8)  # 10 << 2 = 40, bitwidth stays 8
     
     # Remove the input
     shift_left.removeInput(dummy_input, "outValue", "input1")
@@ -264,9 +273,9 @@ def test_shiftleft2_removeInput_resets_bitwidths():
     assert shift_left.inputBitwidths["input1"] == 0  # Reset to default
     assert shift_left.inputs["input1"] is None       # Input should be None
     
-    # After eval(), state should be calculated as: (False<<2, 0+2) = (0, 2)
+    # After eval(), state should be calculated as: (False<<2, 0) = (0, 0)
     shift_left.eval()
-    assert shift_left.state["outValue"] == (0, 2)    # State calculated by eval()
+    assert shift_left.state["outValue"] == (0, 0)    # State calculated by eval()
 
 
 def test_shiftleft2_removeInput_then_addInput():
@@ -278,21 +287,23 @@ def test_shiftleft2_removeInput_then_addInput():
     dummy_input1 = DummyInput(5, 4)
     shift_left.addInput(dummy_input1, "outValue", "input1")
     shift_left.eval()
-    assert shift_left.state["outValue"] == (20, 6)  # 5 << 2 = 20, bitwidth = 4 + 2 = 6
+    # 5 (0101) << 2 = 20 (10100), masked to 4 bits = 4 (0100)
+    assert shift_left.state["outValue"] == (4, 4)  # value=4, bitwidth stays 4
     
     # Remove first input
     shift_left.removeInput(dummy_input1, "outValue", "input1")
     assert shift_left.inputBitwidths["input1"] == 0
-    # After eval, state should be (0, 2) since no input connected
+    # After eval, state should be (0, 0) since no input connected
     shift_left.eval()
-    assert shift_left.state["outValue"] == (0, 2)
+    assert shift_left.state["outValue"] == (0, 0)
     
     # Add second input with different bitwidth
     dummy_input2 = DummyInput(3, 2)
     shift_left.addInput(dummy_input2, "outValue", "input1")
     assert shift_left.inputBitwidths["input1"] == 2
     shift_left.eval()
-    assert shift_left.state["outValue"] == (12, 4)  # 3 << 2 = 12, bitwidth = 2 + 2 = 4
+    # 3 (11) << 2 = 12 (1100), masked to 2 bits = 0 (00)
+    assert shift_left.state["outValue"] == (0, 2)  # value=0, bitwidth stays 2
 
 
 def test_shiftleft2_removeInput_error_handling():

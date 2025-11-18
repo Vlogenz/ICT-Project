@@ -38,6 +38,7 @@ COMPONENT_MAP = {
     "Collector1to5": Collector1to5,
     "Collector1to3": Collector1to3,
     "Collector1to2": Collector1to2,
+    "Collector8to16": Collector8to16,
     "Collector8to32": Collector8to32,
     "Splitter8to1": Splitter8to1,
     "Splitter32to8": Splitter32to8,
@@ -51,6 +52,8 @@ COMPONENT_MAP = {
     "InstructionMemory": InstructionMemory,
     "ProgramCounter": ProgramCounter,
     "RegisterBlock": RegisterBlock,
-    "Adder32bit": Adder32bit
+    "Adder32bit": Adder32bit,
+    "ControlUnit": ControlUnit,
+    "ALUControl": ALUControl
     
     }

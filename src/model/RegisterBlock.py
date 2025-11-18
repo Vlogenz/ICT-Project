@@ -7,7 +7,7 @@ class RegisterBlock(LogicComponent):
     def __init__(self):
         super().__init__()
         self.inputs = {"readReg1": None,"readReg2": None,"writeReg": None,"writeData": None,"regWrite": None} 
-        self.inputBitwidths: typing.Dict = {"readReg1": 32, "readReg2": 32, "writeReg": 32, "writeData": 32, "regWrite": 1}
+        self.inputBitwidths: typing.Dict = {"readReg1": 5, "readReg2": 5, "writeReg": 5 , "writeData": 32, "regWrite": 1}
         # Half Adder has exactly two inputs
         #   (Tuples of component and output key of that component)
         self.state: dict = {"readData1": (0,32), "readData2": (0,32)}  

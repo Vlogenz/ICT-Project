@@ -38,6 +38,9 @@ from .Collector1to3 import Collector1to3
 from .Adder32bit import Adder32bit
 from .Collector1to6 import Collector1to6
 from .Collector1to5 import Collector1to5
+from .Collector8to16 import Collector8to16
+from .ALUControl import ALUControl
+from .ControlUnit import ControlUnit
 
 
 

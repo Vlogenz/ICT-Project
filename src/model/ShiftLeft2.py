@@ -2,7 +2,8 @@ import typing
 from .LogicComponent import LogicComponent
 
 class ShiftLeft2(LogicComponent):
-    """ ShiftLeft2 component that shifts input value left by 2 bits. """
+    """ ShiftLeft2 component with one input and one output. Shifts the input value left by 2 bits.
+    """
 
     def __init__(self):
         super().__init__()
@@ -20,7 +21,7 @@ class ShiftLeft2(LogicComponent):
 		"""
         oldState = self.state.copy()
         if self.inputs["input1"] is None: # set input to false if no component is connected
-            a: int = 0
+            a:int = 0
             # If no input connected, keep the configured bitwidth or default to 0
             outputBitwidth = self.inputBitwidths["input1"]
         else:
@@ -43,9 +44,9 @@ class ShiftLeft2(LogicComponent):
         else:
             return False
         
-    def addInput(self, input: "LogicComponent", key: str, internalKey: str):
-        success = super().addInput(input,key,internalKey)
-        if success:  # Input was successfully added to an empty slot
+    def addInput(self, input: "LogicComponent", key: str, internalKey: str)-> bool:
+        ret = super().addInput(input,key,internalKey)
+        if ret:  # Input was successfully added to an empty slot
             bit = input.getState()[key][1]  # Get bitwidth from the output state
             self.inputBitwidths["input1"] = bit
             self.state["outValue"] = (self.state["outValue"][0], bit)

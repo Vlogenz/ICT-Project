@@ -1,6 +1,8 @@
 
 from PySide6 import QtWidgets, QtCore
 from PySide6.QtWidgets import QPushButton
+
+from src.constants import APP_NAME
 from src.infrastructure.eventBus import getBus
 import pyfiglet
 
@@ -18,7 +20,7 @@ class MainScene(QtWidgets.QMainWindow):
 
         # ASCII Art Überschrift
         fig = pyfiglet.Figlet(font='slant')  # oder 'banner', 'big', 'block', etc.
-        ascii_art = fig.renderText("Gated Neighbourhood")
+        ascii_art = fig.renderText(APP_NAME)
 
         titleLabel = QtWidgets.QLabel(ascii_art)
         titleLabel.setStyleSheet("font-family: 'Courier'; font-size: 25px;")

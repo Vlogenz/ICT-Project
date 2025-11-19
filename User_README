@@ -1,0 +1,29 @@
+All commands should be run in a terminal
+
+===================== LINUX =====================
+Step 1: Set up and enter the python environment
+    python3.13 -m venv env
+    source env/bin/activate
+
+Step 2: Install potentially missing packages
+    pip install -r requirements.txt
+
+Step 3: Run
+    python3 -m src.main
+
+==================== WINDOWS ====================
+Step 0: If errors are coming from execution policies, run 
+    Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Scope Process
+
+Step 1: Set up and enter the python environment
+    python3.13 -m venv env
+    & "./env/Scripts/Activate.ps1"
+
+Step 2: Install potentially missing packages
+    pip install -r requirements.txt
+
+Step 3: Run
+    python3 -m src.main
+
+====================== MAC ======================
+             [Lorenz do stuff here]

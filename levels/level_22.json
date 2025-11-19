@@ -1,0 +1,92 @@
+{
+	"level_id": 8,
+	"name": "8bit Collector, and bigger MUX",
+	"description":"What if we want to select from more than 2 input values with a MUX? This cannot be done with a 0 or 1 control signal. Collectors allow you to combine several inputs to a signal with a larger bit width. For example, combining 2 inputs gives a 2-bit selector which can choose among 2^2 = 4 values in a 4-input MUX.",
+	"difficulty": "Medium",
+	"objectives": [
+		"Combine single-bit Inputs to make a 2-bit selector compatible with a 4-input Multiplexer (Multiplexer4Inp)."
+	],
+	"components": [
+		{"type": "Input", "position": [0,1], "immovable": true, "label": "S0"},
+		{"type": "Input", "position": [0,3], "immovable": true, "label": "S1"},
+        {"type": "Input", "position": [0,5], "immovable": true, "label": "A"},
+        {"type": "Input", "position": [0,7], "immovable": true, "label": "B"},
+        {"type": "Input", "position": [0,9], "immovable": true, "label": "C"},
+        {"type": "Input", "position": [0,11], "immovable": true, "label": "D"},
+        {"type": "Output", "position": [10,6], "immovable": true}
+    ],
+
+	"available_components": [
+		{"type": "Collector1to2"},
+		{"type": "Multiplexer4Inp"}
+	],
+	"hints": [
+		"Use 4 of the inputs as the data inputs (A,B,C,D) for the 4-input MUX and combine the remaining 2 inputs with the Collector to form a 2-bit selector.",
+		"A typical mapping: Inputs 0-3 = data inputs A..D, Inputs 4-5 = selector bits S0 (LSB), S1 (MSB).",
+		"The collector will pack the two selector bits into a 2-bit control signal for the 4-input MUX."
+	],
+	"solution": "",
+	"tests": [
+		{"inputs": [[0,1],[0,1],[0,1],[0,1],[0,1],[0,1]], "expected_output": [[0,1]]},
+        {"inputs": [[0,1],[0,1],[0,1],[0,1],[0,1],[1,1]], "expected_output": [[0,1]]},
+        {"inputs": [[0,1],[0,1],[0,1],[0,1],[1,1],[0,1]], "expected_output": [[0,1]]},
+        {"inputs": [[0,1],[0,1],[0,1],[0,1],[1,1],[1,1]], "expected_output": [[0,1]]},
+        {"inputs": [[0,1],[0,1],[0,1],[1,1],[0,1],[0,1]], "expected_output": [[0,1]]},
+        {"inputs": [[0,1],[0,1],[0,1],[1,1],[0,1],[1,1]], "expected_output": [[0,1]]},
+        {"inputs": [[0,1],[0,1],[0,1],[1,1],[1,1],[1,1]], "expected_output": [[0,1]]},
+        {"inputs": [[0,1],[0,1],[1,1],[0,1],[0,1],[0,1]], "expected_output": [[1,1]]},
+        {"inputs": [[0,1],[0,1],[1,1],[0,1],[0,1],[1,1]], "expected_output": [[1,1]]},
+        {"inputs": [[0,1],[0,1],[1,1],[0,1],[1,1],[0,1]], "expected_output": [[1,1]]},
+        {"inputs": [[0,1],[0,1],[1,1],[0,1],[1,1],[1,1]], "expected_output": [[1,1]]},
+        {"inputs": [[0,1],[0,1],[1,1],[1,1],[0,1],[0,1]], "expected_output": [[1,1]]},
+        {"inputs": [[0,1],[0,1],[1,1],[1,1],[0,1],[1,1]], "expected_output": [[1,1]]},
+        {"inputs": [[0,1],[0,1],[1,1],[1,1],[1,1],[1,1]], "expected_output": [[1,1]]},
+
+        {"inputs": [[0,1],[1,1],[0,1],[0,1],[0,1],[0,1]], "expected_output": [[0,1]]},
+        {"inputs": [[0,1],[1,1],[0,1],[0,1],[0,1],[1,1]], "expected_output": [[0,1]]},
+        {"inputs": [[0,1],[1,1],[0,1],[0,1],[1,1],[0,1]], "expected_output": [[0,1]]},
+        {"inputs": [[0,1],[1,1],[0,1],[0,1],[1,1],[1,1]], "expected_output": [[0,1]]},
+        {"inputs": [[0,1],[1,1],[0,1],[1,1],[0,1],[0,1]], "expected_output": [[1,1]]},
+        {"inputs": [[0,1],[1,1],[0,1],[1,1],[0,1],[1,1]], "expected_output": [[1,1]]},
+        {"inputs": [[0,1],[1,1],[0,1],[1,1],[1,1],[1,1]], "expected_output": [[1,1]]},
+        {"inputs": [[0,1],[1,1],[1,1],[0,1],[0,1],[0,1]], "expected_output": [[0,1]]},
+        {"inputs": [[0,1],[1,1],[1,1],[0,1],[0,1],[1,1]], "expected_output": [[0,1]]},
+        {"inputs": [[0,1],[1,1],[1,1],[0,1],[1,1],[0,1]], "expected_output": [[0,1]]},
+        {"inputs": [[0,1],[1,1],[1,1],[0,1],[1,1],[1,1]], "expected_output": [[0,1]]},
+        {"inputs": [[0,1],[1,1],[1,1],[1,1],[0,1],[0,1]], "expected_output": [[1,1]]},
+        {"inputs": [[0,1],[1,1],[1,1],[1,1],[0,1],[1,1]], "expected_output": [[1,1]]},
+        {"inputs": [[0,1],[1,1],[1,1],[1,1],[1,1],[1,1]], "expected_output": [[1,1]]},
+
+        {"inputs": [[1,1],[0,1],[0,1],[0,1],[0,1],[0,1]], "expected_output": [[0,1]]},
+        {"inputs": [[1,1],[0,1],[0,1],[0,1],[0,1],[1,1]], "expected_output": [[0,1]]},
+        {"inputs": [[1,1],[0,1],[0,1],[0,1],[1,1],[0,1]], "expected_output": [[1,1]]},
+        {"inputs": [[1,1],[0,1],[0,1],[0,1],[1,1],[1,1]], "expected_output": [[1,1]]},
+        {"inputs": [[1,1],[0,1],[0,1],[1,1],[0,1],[0,1]], "expected_output": [[0,1]]},
+        {"inputs": [[1,1],[0,1],[0,1],[1,1],[0,1],[1,1]], "expected_output": [[0,1]]},
+        {"inputs": [[1,1],[0,1],[0,1],[1,1],[1,1],[1,1]], "expected_output": [[1,1]]},
+        {"inputs": [[1,1],[0,1],[1,1],[0,1],[0,1],[0,1]], "expected_output": [[0,1]]},
+        {"inputs": [[1,1],[0,1],[1,1],[0,1],[0,1],[1,1]], "expected_output": [[0,1]]},
+        {"inputs": [[1,1],[0,1],[1,1],[0,1],[1,1],[0,1]], "expected_output": [[1,1]]},
+        {"inputs": [[1,1],[0,1],[1,1],[0,1],[1,1],[1,1]], "expected_output": [[1,1]]},
+        {"inputs": [[1,1],[0,1],[1,1],[1,1],[0,1],[0,1]], "expected_output": [[0,1]]},
+        {"inputs": [[1,1],[0,1],[1,1],[1,1],[0,1],[1,1]], "expected_output": [[0,1]]},
+        {"inputs": [[1,1],[0,1],[1,1],[1,1],[1,1],[1,1]], "expected_output": [[1,1]]},
+
+        {"inputs": [[1,1],[1,1],[0,1],[0,1],[0,1],[0,1]], "expected_output": [[0,1]]},
+        {"inputs": [[1,1],[1,1],[0,1],[0,1],[0,1],[1,1]], "expected_output": [[1,1]]},
+        {"inputs": [[1,1],[1,1],[0,1],[0,1],[1,1],[0,1]], "expected_output": [[0,1]]},
+        {"inputs": [[1,1],[1,1],[0,1],[0,1],[1,1],[1,1]], "expected_output": [[1,1]]},
+        {"inputs": [[1,1],[1,1],[0,1],[1,1],[0,1],[0,1]], "expected_output": [[0,1]]},
+        {"inputs": [[1,1],[1,1],[0,1],[1,1],[0,1],[1,1]], "expected_output": [[1,1]]},
+        {"inputs": [[1,1],[1,1],[0,1],[1,1],[1,1],[1,1]], "expected_output": [[1,1]]},
+        {"inputs": [[1,1],[1,1],[1,1],[0,1],[0,1],[0,1]], "expected_output": [[0,1]]},
+        {"inputs": [[1,1],[1,1],[1,1],[0,1],[0,1],[1,1]], "expected_output": [[1,1]]},
+        {"inputs": [[1,1],[1,1],[1,1],[0,1],[1,1],[0,1]], "expected_output": [[0,1]]},
+        {"inputs": [[1,1],[1,1],[1,1],[0,1],[1,1],[1,1]], "expected_output": [[1,1]]},
+        {"inputs": [[1,1],[1,1],[1,1],[1,1],[0,1],[0,1]], "expected_output": [[0,1]]},
+        {"inputs": [[1,1],[1,1],[1,1],[1,1],[0,1],[1,1]], "expected_output": [[1,1]]},
+        {"inputs": [[1,1],[1,1],[1,1],[1,1],[1,1],[1,1]], "expected_output": [[1,1]]}
+    
+
+	]
+}

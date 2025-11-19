@@ -1,0 +1,345 @@
+{
+    "level_id": 55,
+    "name": "SLT (Set-Less-Than)",
+    "description": "SLT (Set-Less-Than) performs a signed comparison: it yields true when A is strictly less than B and false otherwise. In two’s-complement arithmetic this comparison is done by computing A minus B and checking the sign (the most-significant bit) of that subtraction result — a value of 1 in the MSB means the result is negative and therefore A is less than B. In this tiny 2-bit ALU, the SLT operation must produce an output that is zero on all bits except the least-significant one, which should hold the sign of A minus B (1 when A is less than B, otherwise 0). To integrate SLT into the existing two 1-bit ALU slices, perform subtraction by enabling binvert on B and using carry-in equals 1 on the least-significant slice; then capture the MSB from the top slice as the comparison result. When the opcode is “11”, use the ALU’s multiplexers to output only that comparison bit in the LSB and force all other bits to zero; for all other opcodes keep the existing mapping (00 = AND, 01 = OR, 10 = ADD or SUB).",
+    "difficulty": "Hard",
+    "objectives": [
+        "Extend the existing 2-bit ALU so that selector `11` implements SLT.",
+        "Use subtraction (A + NOT(B) + 1) to compute A - B and determine its sign (MSB).",
+        "When op = 11, produce an ALU output that is zero on all ALU result bits except the least-significant output which should be 1 when A < B, otherwise 0.",
+        "Keep the previous operation mapping intact: 00 -> AND, 01 -> OR, 10 -> ADD/SUB (use `binvert` to select subtract)."
+    ],
+
+   "components": [
+        {"type": "Input", "position": [0,1], "immovable": false, "label": "A1"},
+        {"type": "Input", "position": [0,3], "immovable": false, "label": "B1"},
+        {"type": "Input", "position": [12,5], "immovable": false, "label": "op0"},
+        {"type": "Input", "position": [12,6], "immovable": false, "label": "op1"},
+        {"type": "Input", "position": [5,6], "immovable": false, "label": "binvert"},
+        {"type": "Collector1to2", "position": [13,5], "immovable": false},
+        {"type": "FullAdder", "position": [11,0], "immovable":false},
+        {"type": "And", "position": [11,2], "immovable":false},
+        {"type": "Or", "position": [11,4], "immovable":false},
+        {"type": "Multiplexer4Inp", "position": [14,3], "immovable":false},
+        {"type": "Output", "position": [16,3], "immovable": false, "label": "OUT"},
+        {"type": "Not","position":[5,3], "immovable": false, "label": "NotBinvert"},
+        {"type": "Multiplexer2Inp", "position": [6,3], "immovable": false, "label": "MUXbinvert"},
+        {"type": "Input", "position": [3,6], "immovable": false, "label": "ainvert"},
+        {"type": "Not", "position": [3,1], "immovable": false, "label": "NotAinvert"},
+        {"type": "Multiplexer2Inp", "position": [4,1], "immovable": false, "label": "ainvertMux"},
+
+
+        {"type": "Input", "position": [0,9], "immovable": false, "label": "A2"},
+        {"type": "Input", "position": [0,11], "immovable": false, "label": "B2"},
+        {"type": "FullAdder", "position": [11,8], "immovable":false},
+        {"type": "And", "position": [11,10], "immovable":false},
+        {"type": "Or", "position": [11,12], "immovable":false},
+        {"type": "Multiplexer4Inp", "position": [14,11], "immovable":false},
+        {"type": "Output", "position": [13,9], "immovable": false, "label": "Carry_out"},
+        {"type": "Output", "position": [16,11], "immovable": false, "label": "OUT"},
+        {"type": "Not","position":[5,11], "immovable": false, "label": "NotBinvert"},
+        {"type": "Multiplexer2Inp", "position": [6,11], "immovable": false, "label": "MUXbinvert"},
+        {"type": "Not", "position": [3,9], "immovable": false, "label": "NotAinvert"},
+        {"type": "Multiplexer2Inp", "position": [4,9], "immovable": false, "label": "ainvertMux"},
+
+        {"type": "Input", "position": [0,13], "immovable": true, "label": "InputConstant0SLT"}
+
+       
+    ],
+
+    "connections": [
+        {
+            "origin": 0,
+            "originKey": "outValue",
+            "destination": 15,
+            "destinationKey": "input1"
+        },
+        {
+            "origin": 14,
+            "originKey": "outValue",
+            "destination": 15,
+            "destinationKey": "input2"
+        },
+        {
+            "origin": 13,
+            "originKey": "outValue",
+            "destination": 15,
+            "destinationKey": "selection"
+        },
+        {
+            "origin": 0,
+            "originKey": "outValue",
+            "destination": 14,
+            "destinationKey": "input"
+        },
+                {
+            "origin": 15,
+            "originKey": "outputValue",
+            "destination": 6,
+            "destinationKey": "input1"
+        },
+        {
+            "origin": 15,
+            "originKey": "outputValue",
+            "destination": 7,
+            "destinationKey": "input1"
+        },
+        {
+            "origin": 15,
+            "originKey": "outputValue",
+            "destination": 8,
+            "destinationKey": "input1"
+        },
+        {
+            "origin": 4,
+            "originKey": "outValue",
+            "destination": 6,
+            "destinationKey": "inputCin"
+        },
+        {
+            "origin": 4,
+            "originKey": "outValue",
+            "destination": 12,
+            "destinationKey": "selection"
+        },
+        {
+            "origin": 1,
+            "originKey": "outValue",
+            "destination": 12,
+            "destinationKey": "input1"
+        },
+        {
+            "origin": 11,
+            "originKey": "outValue",
+            "destination": 12,
+            "destinationKey": "input2"
+        },
+        {
+            "origin": 1,
+            "originKey": "outValue",
+            "destination": 11,
+            "destinationKey": "input"
+        },
+        
+         {
+            "origin": 2,
+            "originKey": "outValue",
+            "destination": 5,
+            "destinationKey": "input1"
+        },
+        {
+            "origin": 3,
+            "originKey": "outValue",
+            "destination": 5,
+            "destinationKey": "input2"
+        },
+                {
+            "origin": 12,
+            "originKey": "outputValue",
+            "destination": 8,
+            "destinationKey": "input2"
+        },
+        {
+            "origin": 12,
+            "originKey": "outputValue",
+            "destination": 7,
+            "destinationKey": "input2"
+        },
+        {
+            "origin": 12,
+            "originKey": "outputValue",
+            "destination": 6,
+            "destinationKey": "inputB"
+        },     
+        {
+            "origin": 15,
+            "originKey": "outputValue",
+            "destination": 6,
+            "destinationKey": "inputA"
+        }, 
+        {
+            "origin": 5,
+            "originKey": "outValue",
+            "destination": 9,
+            "destinationKey": "selection"
+        },
+        {
+            "origin": 7,
+            "originKey": "outValue",
+            "destination": 9,
+            "destinationKey": "input1"
+        },
+        {
+            "origin": 8,
+            "originKey": "outValue",
+            "destination": 9,
+            "destinationKey": "input2"
+        },
+        {
+            "origin": 6,
+            "originKey": "outSum",
+            "destination": 9,
+            "destinationKey": "input3"
+        },
+        {
+            "origin": 9,
+            "originKey": "outputValue",
+            "destination": 10,
+            "destinationKey": "input"
+        },
+        {
+            "origin": 16,
+            "originKey": "outValue",
+            "destination": 26,
+            "destinationKey": "input"
+        },
+         {
+            "origin": 16 ,
+            "originKey": "outValue",
+            "destination":27 ,
+            "destinationKey": "input1"
+        },
+         {
+            "origin":26 ,
+            "originKey": "outValue",
+            "destination": 27,
+            "destinationKey": "input2"
+        },
+        {
+            "origin": 13,
+            "originKey": "outValue",
+            "destination": 27,
+            "destinationKey": "selection"
+        },
+         {
+            "origin": 17,
+            "originKey": "outValue",
+            "destination": 24,
+            "destinationKey": "input"
+        },
+         {
+            "origin": 17 ,
+            "originKey": "outValue",
+            "destination":25 ,
+            "destinationKey": "input1"
+        },
+         {
+            "origin":24 ,
+            "originKey": "outValue",
+            "destination": 25,
+            "destinationKey": "input2"
+        },
+        {
+            "origin": 4,
+            "originKey": "outValue",
+            "destination": 25,
+            "destinationKey": "selection"
+        },  
+        {
+            "origin": 27,
+            "originKey": "outputValue",
+            "destination": 18,
+            "destinationKey": "inputA"
+        }, 
+        {
+            "origin": 27,
+            "originKey": "outputValue",
+            "destination": 19,
+            "destinationKey": "input1"
+        },    
+        {
+            "origin": 27,
+            "originKey": "outputValue",
+            "destination": 20,
+            "destinationKey": "input1"
+        },
+        {
+            "origin": 25,
+            "originKey": "outputValue",
+            "destination": 18,
+            "destinationKey": "inputB"
+        }, 
+        {
+            "origin": 25,
+            "originKey": "outputValue",
+            "destination": 19,
+            "destinationKey": "input2"
+        },    
+        {
+            "origin": 25,
+            "originKey": "outputValue",
+            "destination": 20,
+            "destinationKey": "input2"
+        },
+        {
+            "origin": 6,
+            "originKey": "cOut",
+            "destination": 18,
+            "destinationKey": "inputCin"
+        },
+        {
+            "origin": 18,
+            "originKey": "cOut",
+            "destination": 22,
+            "destinationKey": "input"
+        },
+        {
+            "origin": 18,
+            "originKey": "outSum",
+            "destination": 21,
+            "destinationKey": "input3"
+        },
+        {
+            "origin": 19,
+            "originKey": "outValue",
+            "destination": 21,
+            "destinationKey": "input1"
+        },
+        {
+            "origin": 20,
+            "originKey": "outValue",
+            "destination": 21,
+            "destinationKey": "input2"
+        },
+        {
+            "origin": 5,
+            "originKey": "outValue",
+            "destination": 21,
+            "destinationKey": "selection"
+        },
+        {
+            "origin": 21,
+            "originKey": "outputValue",
+            "destination": 23,
+            "destinationKey": "input"
+        }
+         
+    ],
+
+    "available_components": [
+        {"type": "Or"},
+        {"type": "Not"}
+    ],
+
+    "hints": [
+        
+    "How SLT works (concept): To determine whether A is less than B, compute A minus B using two's-complement arithmetic. If the result is negative, then A is less than B. In a multi-bit ALU, the sign is simply the most-significant bit of the subtraction result.",
+    "MIPS detail (small summary): The standard MIPS approach performs A minus B and checks the sign bit; it writes a 1 into the destination register if A is less than B, otherwise 0. Although a normal ALU produces a full multi-bit result, SLT only encodes the comparison in the least-significant bit. We mimic that behavior on this 2-bit ALU.",
+    "Implementation hint (slice-level): Perform the subtraction across the two ALU slices by enabling binvert and setting carry-in to 1 on the least-significant slice. Capture the MSB from the top slice after subtraction, because that bit indicates whether A minus B is negative. When the opcode is 11, use that sign bit to produce the SLT output: zero on all bits except the LSB, which carries the comparison bit.",
+    "Since this ALU is only 2 bits wide, we can an overflow relatively easy. This Level is only here to show you the principle, when we extend the ALU to more bits, you have to take care of the overflow."
+],
+
+
+    "solution": "",
+
+    "tests": [
+        {
+            "inputs": [[0,1], [0,1], [1,1], [1,1], [1,1],[0,1], [0,1], [0,1],[0,1]],
+            "expected_output": [[0,1],[1,1],[0,1]]
+        },
+        {
+            "inputs": [[0,1], [0,1], [1,1], [1,1], [1,1],[0,1], [0,1], [1,1],[0,1]],
+            "expected_output": [[1,1],[0,1],[0,1]]
+        }
+    ]
+}

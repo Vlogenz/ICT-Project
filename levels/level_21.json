@@ -1,0 +1,35 @@
+{
+    "level_id": 7,
+    "name": "Multiplexer",
+    "description": "A Multiplexer selects one of two inputs (A or B) based on a control input S and forwards it to the output.",
+    "difficulty": "Medium",
+    "objectives": [
+        "Given inputs A and B and control S, build a circuit so that:\n- if S=0 the Output equals A\n- if S=1 the Output equals B"
+    ],
+    "components": [
+        {"type": "Input", "position": [0,1], "immovable": true, "label": "S"},
+        {"type": "Input", "position": [0,3], "immovable": true, "label": "A"},
+        {"type": "Input", "position": [0,5], "immovable": true, "label": "B"}, 
+        {"type": "Output", "position": [8,3], "immovable": true}    
+    ],
+    "available_components": [
+        {"type": "Not"},
+        {"type": "And"},
+        {"type": "Or"}
+    ],
+    "hints": [
+        "S is the selector: use it to choose A or B.",
+        "A common construction: (A AND NOT S) OR (B AND S).",
+        "You can use NOT, AND and OR to implement that formula."
+    ],
+    "tests": [
+        {"inputs": [[0,1],[0,1],[0,1]], "expected_output": [[0,1]]},
+        {"inputs": [[0,1],[0,1],[1,1]], "expected_output": [[0,1]]},
+        {"inputs": [[0,1],[1,1],[0,1]], "expected_output": [[1,1]]},
+        {"inputs": [[0,1],[1,1],[1,1]], "expected_output": [[1,1]]},
+        {"inputs": [[1,1],[0,1],[0,1]], "expected_output": [[0,1]]},
+        {"inputs": [[1,1],[0,1],[1,1]], "expected_output": [[1,1]]},
+        {"inputs": [[1,1],[1,1],[0,1]], "expected_output": [[0,1]]},
+        {"inputs": [[1,1],[1,1],[1,1]], "expected_output": [[1,1]]}
+    ]
+}

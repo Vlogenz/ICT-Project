@@ -1,0 +1,23 @@
+{
+    "level_id": 71,
+    "name": "Loading Commands",
+    "description": "In the last Level of the Game you don't have to do anything, this is more to show you an example of how a complete Processor could look like. Note that the Control Unit here only handles a few instructions (lw, sw, beq and r-type), you could extend it to handle more instructions as an additional challenge.",
+    "difficulty": "Easy",
+    "objectives": [
+        "Understand how this processor functions as a whole."
+    ],
+    "components": [
+
+    ],
+    "connections": [
+    ],
+    "memoryContents": {
+        "instructionMemory": [
+        ],
+        "dataMemory": []
+    },
+    "available_components": [
+        {"type": "Adder32bit"}
+    ],
+    "hints": [    ]
+}

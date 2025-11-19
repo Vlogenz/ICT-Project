@@ -53,18 +53,29 @@ class LevelSelectionScene(QtWidgets.QWidget):
         unlocked = self.levelFileController.getAllLevelsUnlocked()
         max_completed = max(completed) if completed else -1
 
-        for i in levels:
-            button = QtWidgets.QPushButton()
-            text = f"Level {i}"
-            if i in completed:
-                text += " (Done)"
-            elif not unlocked and i > max_completed + 1:
-                text += " (Locked)"
-            button.setText(text)
-            if not (not unlocked and i > max_completed + 1):
-                button.clicked.connect(lambda checked=False, lvl=i: self.onLevelClicked(lvl))
-            self.grid.addWidget(button, i//COLUMNS, i%COLUMNS)
-            self.levelButtons.append(button)
+        row: int = 0
+        for blockTitle, blockLevels in levels.items():
+            blockTitleLabel = QtWidgets.QLabel(blockTitle)
+            self.grid.addWidget(blockTitleLabel, row, 0, 1, COLUMNS)
+            row += 1
+
+            col: int = 0
+            for levelId, levelName in blockLevels.items():
+
+                button = QtWidgets.QPushButton()
+                text = f"Level {levelId}"
+                if levelId in completed:
+                    text += " (Done)"
+                elif not unlocked and levelId > max_completed + 1:
+                    text += " (Locked)"
+                button.setText(text)
+                if not (not unlocked and levelId > max_completed + 1):
+                    button.clicked.connect(lambda checked=False, lvl=levelId: self.onLevelClicked(lvl))
+                self.grid.addWidget(button, row, col%COLUMNS)
+                self.levelButtons.append(button)
+                col += 1
+
+            row += 1
 
     def onLevelClicked(self, level_number: int):
         """User clicks on a level"""

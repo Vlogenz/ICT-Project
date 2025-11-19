@@ -21,11 +21,11 @@ class MainScene(QtWidgets.QMainWindow):
         self.setCentralWidget(central)
         self.setStyleSheet(f"background-color: rgb{BG_COLOR};")
 
-        # layout rows: top spacer, logo row, small spacer, buttons row
+
         layout.setRowStretch(0, 2)   # top area
-        layout.setRowStretch(1, 5)   # logo / middle area
+        layout.setRowStretch(1, 5)   # logo
         layout.setRowStretch(2, 1)   # spacer
-        layout.setRowStretch(3, 2)   # buttons (lower third)
+        layout.setRowStretch(3, 2)   # buttons
 
         # ensure 3 equal columns for button alignment
         layout.setColumnStretch(0, 1)
@@ -37,15 +37,11 @@ class MainScene(QtWidgets.QMainWindow):
         logo_label = QLabel(self)
         logo_label.setAlignment(QtCore.Qt.AlignCenter)
 
-        if image_path.exists():
-            pixmap = QtGui.QPixmap(str(image_path))
-            # Scale pixmap to a fixed size, keeping aspect ratio
-            scaled_pixmap = pixmap.scaled(450, 450, QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation)
-            logo_label.setPixmap(scaled_pixmap)
-        else:
-            # fallback: show text if image is missing
-            logo_label.setText(APP_NAME)
-            logo_label.setStyleSheet("font-family: 'Courier'; font-size: 36px; color: white;")
+
+        pixmap = QtGui.QPixmap(str(image_path))
+        scaled_pixmap = pixmap.scaled(450, 450, QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation)
+        logo_label.setPixmap(scaled_pixmap)
+
 
         layout.addWidget(logo_label, 1, 0, 1, 3, alignment=QtCore.Qt.AlignCenter)
 

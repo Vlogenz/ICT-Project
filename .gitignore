@@ -25,3 +25,8 @@ meta.json
 
 # Ignore coverage file
 .coverage
+
+# exclude build stuff
+build
+dist
+**.spec

@@ -14,5 +14,5 @@ class Multiplexer8InpGridItem(GridItem):
         self.inputs["input6"].moveTo(0, 6 * size / 9 - 8)
         self.inputs["input7"].moveTo(0, 7 * size / 9 - 8)
         self.inputs["input8"].moveTo(0, 8 * size / 9 - 8)
-        self.inputs["selection"].moveTo(size / 2 - 8, size - 16)
+        self.inputs["selection"].moveTo(size / 2 + 12, size - 16)
         self.updateRects()

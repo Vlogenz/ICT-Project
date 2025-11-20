@@ -9,6 +9,9 @@ PALETTE_COLS = 3
 MIME_TYPE = "application/x-qt-grid-item"
 MAX_EVAL_CYCLES: int = 5
 APP_NAME = "CircuitQuest"
+BG_COLOR = (36,38,106)
+PR_COLOR_1 = (42,114,255)
+PR_COLOR_2 = (255,131,0)
 
 class Scene(Enum):
     MAIN = 0

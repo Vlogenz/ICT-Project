@@ -1,26 +1,348 @@
 {
     "level_id": 17,
-    "name": "Functional Completeness 1",
-    "description": "Fun fact: Theoretically any function can be created using only NOR gates!",
-    "difficulty": "Easy",
+    "name": "Zero flag logic",
+    "description": "Processors often need to know if the ALU result is zero (this is used to detect if two values are the same,x-x=0). This level adds zero-detection logic. Untill now we only used 1-bit ALUs, but now we want to expand to a 2-bit ALU.",
+    "difficulty": "Hard",
     "objectives": [
-        "Create a combination of NOR gates which is functionally identical to an OR gate."
+        "The zero output should be set to 1 when the 2-bit output is 00, and 0 otherwise."
     ],
-    "components": [
-        {"type": "Input", "position": [0,1], "immovable": true, "label": "A"},
-        {"type": "Input", "position": [0,3], "immovable": true, "label": "B"}, 
-        {"type": "Output", "position": [6,2], "immovable": true}    
+
+   "components": [
+        {"type": "Input", "position": [0,1], "immovable": false, "label": "A1"},
+        {"type": "Input", "position": [0,3], "immovable": false, "label": "B1"},
+        {"type": "Input", "position": [12,5], "immovable": false, "label": "op0"},
+        {"type": "Input", "position": [12,6], "immovable": false, "label": "op1"},
+        {"type": "Input", "position": [5,6], "immovable": false, "label": "binvert"},
+        {"type": "Collector1to2", "position": [13,5], "immovable": false},
+        {"type": "FullAdder", "position": [11,0], "immovable":false},
+        {"type": "And", "position": [11,2], "immovable":false},
+        {"type": "Or", "position": [11,4], "immovable":false},
+        {"type": "Multiplexer4Inp", "position": [14,3], "immovable":false},
+        {"type": "Output", "position": [16,3], "immovable": false, "label": "OUT1"},
+        {"type": "Not","position":[5,3], "immovable": false, "label": "NotBinvert"},
+        {"type": "Multiplexer2Inp", "position": [6,3], "immovable": false, "label": "MUXbinvert"},
+        {"type": "Input", "position": [3,6], "immovable": false, "label": "ainvert"},
+        {"type": "Not", "position": [3,1], "immovable": false, "label": "NotAinvert"},
+        {"type": "Multiplexer2Inp", "position": [4,1], "immovable": false, "label": "ainvertMux"},
+
+
+        {"type": "Input", "position": [0,9], "immovable": false, "label": "A2"},
+        {"type": "Input", "position": [0,11], "immovable": false, "label": "B2"},
+        {"type": "FullAdder", "position": [11,8], "immovable":false},
+        {"type": "And", "position": [11,10], "immovable":false},
+        {"type": "Or", "position": [11,12], "immovable":false},
+        {"type": "Multiplexer4Inp", "position": [14,11], "immovable":false},
+        {"type": "Output", "position": [13,9], "immovable": false, "label": "Carry_out"},
+        {"type": "Output", "position": [16,11], "immovable": false, "label": "OUT2"},
+        {"type": "Not","position":[5,11], "immovable": false, "label": "NotBinvert"},
+        {"type": "Multiplexer2Inp", "position": [6,11], "immovable": false, "label": "MUXbinvert"},
+        {"type": "Not", "position": [3,9], "immovable": false, "label": "NotAinvert"},
+        {"type": "Multiplexer2Inp", "position": [4,9], "immovable": false, "label": "ainvertMux"},
+
+        {"type": "Output", "position": [18,7], "immovable": false, "label": "Zero"}        
+       
     ],
+
+    "connections": [
+        {
+            "origin": 0,
+            "originKey": "outValue",
+            "destination": 15,
+            "destinationKey": "input1"
+        },
+        {
+            "origin": 14,
+            "originKey": "outValue",
+            "destination": 15,
+            "destinationKey": "input2"
+        },
+        {
+            "origin": 13,
+            "originKey": "outValue",
+            "destination": 15,
+            "destinationKey": "selection"
+        },
+        {
+            "origin": 0,
+            "originKey": "outValue",
+            "destination": 14,
+            "destinationKey": "input"
+        },
+                {
+            "origin": 15,
+            "originKey": "outputValue",
+            "destination": 6,
+            "destinationKey": "input1"
+        },
+        {
+            "origin": 15,
+            "originKey": "outputValue",
+            "destination": 7,
+            "destinationKey": "input1"
+        },
+        {
+            "origin": 15,
+            "originKey": "outputValue",
+            "destination": 8,
+            "destinationKey": "input1"
+        },
+        {
+            "origin": 4,
+            "originKey": "outValue",
+            "destination": 6,
+            "destinationKey": "inputCin"
+        },
+        {
+            "origin": 4,
+            "originKey": "outValue",
+            "destination": 12,
+            "destinationKey": "selection"
+        },
+        {
+            "origin": 1,
+            "originKey": "outValue",
+            "destination": 12,
+            "destinationKey": "input1"
+        },
+        {
+            "origin": 11,
+            "originKey": "outValue",
+            "destination": 12,
+            "destinationKey": "input2"
+        },
+        {
+            "origin": 1,
+            "originKey": "outValue",
+            "destination": 11,
+            "destinationKey": "input"
+        },
+        
+         {
+            "origin": 2,
+            "originKey": "outValue",
+            "destination": 5,
+            "destinationKey": "input1"
+        },
+        {
+            "origin": 3,
+            "originKey": "outValue",
+            "destination": 5,
+            "destinationKey": "input2"
+        },
+                {
+            "origin": 12,
+            "originKey": "outputValue",
+            "destination": 8,
+            "destinationKey": "input2"
+        },
+        {
+            "origin": 12,
+            "originKey": "outputValue",
+            "destination": 7,
+            "destinationKey": "input2"
+        },
+        {
+            "origin": 12,
+            "originKey": "outputValue",
+            "destination": 6,
+            "destinationKey": "inputB"
+        },     
+        {
+            "origin": 15,
+            "originKey": "outputValue",
+            "destination": 6,
+            "destinationKey": "inputA"
+        }, 
+        {
+            "origin": 5,
+            "originKey": "outValue",
+            "destination": 9,
+            "destinationKey": "selection"
+        },
+        {
+            "origin": 7,
+            "originKey": "outValue",
+            "destination": 9,
+            "destinationKey": "input1"
+        },
+        {
+            "origin": 8,
+            "originKey": "outValue",
+            "destination": 9,
+            "destinationKey": "input2"
+        },
+        {
+            "origin": 6,
+            "originKey": "outSum",
+            "destination": 9,
+            "destinationKey": "input3"
+        },
+        {
+            "origin": 9,
+            "originKey": "outputValue",
+            "destination": 10,
+            "destinationKey": "input"
+        },
+        {
+            "origin": 16,
+            "originKey": "outValue",
+            "destination": 26,
+            "destinationKey": "input"
+        },
+         {
+            "origin": 16 ,
+            "originKey": "outValue",
+            "destination":27 ,
+            "destinationKey": "input1"
+        },
+         {
+            "origin":26 ,
+            "originKey": "outValue",
+            "destination": 27,
+            "destinationKey": "input2"
+        },
+        {
+            "origin": 13,
+            "originKey": "outValue",
+            "destination": 27,
+            "destinationKey": "selection"
+        },
+         {
+            "origin": 17,
+            "originKey": "outValue",
+            "destination": 24,
+            "destinationKey": "input"
+        },
+         {
+            "origin": 17 ,
+            "originKey": "outValue",
+            "destination":25 ,
+            "destinationKey": "input1"
+        },
+         {
+            "origin":24 ,
+            "originKey": "outValue",
+            "destination": 25,
+            "destinationKey": "input2"
+        },
+        {
+            "origin": 4,
+            "originKey": "outValue",
+            "destination": 25,
+            "destinationKey": "selection"
+        },  
+        {
+            "origin": 27,
+            "originKey": "outputValue",
+            "destination": 18,
+            "destinationKey": "inputA"
+        }, 
+        {
+            "origin": 27,
+            "originKey": "outputValue",
+            "destination": 19,
+            "destinationKey": "input1"
+        },    
+        {
+            "origin": 27,
+            "originKey": "outputValue",
+            "destination": 20,
+            "destinationKey": "input1"
+        },
+        {
+            "origin": 25,
+            "originKey": "outputValue",
+            "destination": 18,
+            "destinationKey": "inputB"
+        }, 
+        {
+            "origin": 25,
+            "originKey": "outputValue",
+            "destination": 19,
+            "destinationKey": "input2"
+        },    
+        {
+            "origin": 25,
+            "originKey": "outputValue",
+            "destination": 20,
+            "destinationKey": "input2"
+        },
+        {
+            "origin": 6,
+            "originKey": "cOut",
+            "destination": 18,
+            "destinationKey": "inputCin"
+        },
+        {
+            "origin": 18,
+            "originKey": "cOut",
+            "destination": 22,
+            "destinationKey": "input"
+        },
+        {
+            "origin": 18,
+            "originKey": "outSum",
+            "destination": 21,
+            "destinationKey": "input3"
+        },
+        {
+            "origin": 19,
+            "originKey": "outValue",
+            "destination": 21,
+            "destinationKey": "input1"
+        },
+        {
+            "origin": 20,
+            "originKey": "outValue",
+            "destination": 21,
+            "destinationKey": "input2"
+        },
+        {
+            "origin": 5,
+            "originKey": "outValue",
+            "destination": 21,
+            "destinationKey": "selection"
+        },
+        {
+            "origin": 21,
+            "originKey": "outputValue",
+            "destination": 23,
+            "destinationKey": "input"
+        }
+         
+    ],
+
     "available_components": [
-        {"type": "Nor"}
+        {"type": "Or"},
+        {"type": "Not"}
     ],
+
     "hints": [
-        "Try making a NOT gate first."
+        "Remember: the Zero flag should be 1 exactly when the 2-bit ALU result is 00 (both bits are zero).",
+        "A simple implementation: OR the two output bits together and then invert the result with a NOT. If either bit is 1 the OR is 1 -> NOT gives 0; if both are 0 the OR is 0 -> NOT gives 1.",
+        "Wire the two OUT outputs from your two 1-bit ALUs into an OR gate (or chain ORs), then feed that OR output into a NOT and connect the NOT's output to the `Zero` output component."
+
     ],
+
+    "solution": "",
+
     "tests": [
-        {"inputs": [[0,1],[0,1]], "expected_output": [[0,1]]},
-        {"inputs": [[1,1],[0,1]], "expected_output": [[1,1]]},
-        {"inputs": [[0,1],[1,1]], "expected_output": [[1,1]]},
-        {"inputs": [[1,1],[1,1]], "expected_output": [[1,1]]}
+
+        {
+            "inputs": [[0,1], [0,1], [0,1], [1,1], [1,1],[0,1], [0,1], [0,1]],
+            "expected_output": [[0,1],[1,1],[0,1],[1,1]]
+        },
+         {
+            "inputs": [[1,1], [1,1], [0,1], [1,1], [1,1],[0,1], [0,1], [0,1]],
+            "expected_output": [[0,1],[1,1],[0,1],[1,1]]
+        },
+          {
+            "inputs": [[1,1], [0,1], [0,1], [1,1], [1,1],[0,1], [0,1], [0,1]],
+            "expected_output": [[1,1],[1,1],[0,1],[0,1]]
+        }
+
+
+
+
     ]
 }

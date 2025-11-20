@@ -17,7 +17,7 @@ class TestRegisterBlockRead:
         assert rb.state["readData2"] == (0, 32)
         
         # Check that all registers are initialized to 0
-        assert len(rb.registers) == 20
+        assert len(rb.registers) == 32
         assert all(reg == 0 for reg in rb.registers)
     
     def test_read_from_register_zero(self):
@@ -87,9 +87,9 @@ class TestRegisterBlockRead:
         getBus().setManual()
         rb = RegisterBlock()
         
-        # Try to read from register 25 (out of bounds - only 20 registers)
-        rb.addInput(DummyInput(25, 32), "outValue", "readReg1")
-        rb.addInput(DummyInput(30, 32), "outValue", "readReg2")
+        # Try to read from register 50 (out of bounds - only 32 registers)
+        rb.addInput(DummyInput(50, 32), "outValue", "readReg1")
+        rb.addInput(DummyInput(55, 32), "outValue", "readReg2")
         
         rb.eval()
         
@@ -155,14 +155,14 @@ class TestRegisterBlockWrite:
         getBus().setManual()
         rb = RegisterBlock()
         
-        rb.addInput(DummyInput(25, 32), "outValue", "writeReg")
+        rb.addInput(DummyInput(35, 32), "outValue", "writeReg")
         rb.addInput(DummyInput(123, 32), "outValue", "writeData")
         rb.addInput(DummyInput(1, 1), "outValue", "regWrite")
         
         # Should not crash
         rb.updateRegisterValues()
         
-        # All registers should still be 0
+        # All registers should still be 0 (write to index 35 should be ignored)
         assert all(reg == 0 for reg in rb.registers)
     
     def test_write_without_writereg_input(self):

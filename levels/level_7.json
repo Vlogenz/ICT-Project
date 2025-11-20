@@ -1,5 +1,5 @@
 {
-	"level_id": 8,
+	"level_id": 7,
 	"name": "8bit Collector, and bigger MUX",
 	"description":"What if we want to select from more than 2 input values with a MUX? This cannot be done with a 0 or 1 control signal. Collectors allow you to combine several inputs to a signal with a larger bit width. For example, combining 2 inputs gives a 2-bit selector which can choose among 2^2 = 4 values in a 4-input MUX.",
 	"difficulty": "Medium",

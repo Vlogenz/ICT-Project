@@ -1,35 +1,23 @@
 {
-    "level_id": 7,
-    "name": "Multiplexer",
-    "description": "A Multiplexer selects one of two inputs (A or B) based on a control input S and forwards it to the output.",
-    "difficulty": "Medium",
+    "level_id": 21,
+    "name": "Loading Commands",
+    "description": "In the last Level of the Game you don't have to do anything, this is more to show you an example of how a complete Processor could look like. Note that the Control Unit here only handles a few instructions (lw, sw, beq and r-type), you could extend it to handle more instructions as an additional challenge.",
+    "difficulty": "Easy",
     "objectives": [
-        "Given inputs A and B and control S, build a circuit so that:\n- if S=0 the Output equals A\n- if S=1 the Output equals B"
+        "Understand how this processor functions as a whole."
     ],
     "components": [
-        {"type": "Input", "position": [0,1], "immovable": true, "label": "S"},
-        {"type": "Input", "position": [0,3], "immovable": true, "label": "A"},
-        {"type": "Input", "position": [0,5], "immovable": true, "label": "B"}, 
-        {"type": "Output", "position": [8,3], "immovable": true}    
+
     ],
+    "connections": [
+    ],
+    "memoryContents": {
+        "instructionMemory": [
+        ],
+        "dataMemory": []
+    },
     "available_components": [
-        {"type": "Not"},
-        {"type": "And"},
-        {"type": "Or"}
+        {"type": "Adder32bit"}
     ],
-    "hints": [
-        "S is the selector: use it to choose A or B.",
-        "A common construction: (A AND NOT S) OR (B AND S).",
-        "You can use NOT, AND and OR to implement that formula."
-    ],
-    "tests": [
-        {"inputs": [[0,1],[0,1],[0,1]], "expected_output": [[0,1]]},
-        {"inputs": [[0,1],[0,1],[1,1]], "expected_output": [[0,1]]},
-        {"inputs": [[0,1],[1,1],[0,1]], "expected_output": [[1,1]]},
-        {"inputs": [[0,1],[1,1],[1,1]], "expected_output": [[1,1]]},
-        {"inputs": [[1,1],[0,1],[0,1]], "expected_output": [[0,1]]},
-        {"inputs": [[1,1],[0,1],[1,1]], "expected_output": [[1,1]]},
-        {"inputs": [[1,1],[1,1],[0,1]], "expected_output": [[0,1]]},
-        {"inputs": [[1,1],[1,1],[1,1]], "expected_output": [[1,1]]}
-    ]
+    "hints": [    ]
 }

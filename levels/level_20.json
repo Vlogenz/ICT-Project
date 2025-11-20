@@ -1,7 +1,7 @@
 {
-    "level_id": 62,
+    "level_id": 20,
     "name": "Adding the write option to register block",
-    "description": "Now we want to control how to read from and write to registers in the context of our processor.",
+    "description": "In the last level we built read functionality into the register block. We connected two big multiplexers with every single register and the outputs. The inputs 'read register 1' and 'read register 2' decide which register value should pass to the output. Now we want to control how to read from and write to registers in the context of our processor. We have three new inputs. 'regWrite' decides if we even want to write into a register or not. 'writeData' is the Data that should be written into the register if 'regWrite' is high. 'writeReg' defines which register we want to override.",
     "difficulty": "Easy",
     "objectives": [
         "If the regWrite input is high, the value on writeData should be written to the register selected by writeReg input.",
@@ -67,14 +67,9 @@
     "hints": [
         "The input of writeReg has to be converted to a single bit selection for each register.",
         "Use a splitter and then a decoder to achieve this.",
-        "Use AND gates to control the write enable of each register based on the regWrite input and the decoded writeReg signals.",
+        "Use AND gates to control  if each register should be written to, based on the regWrite input and the decoded writeReg signals.",
         "Connect the writeData input directly to the data input of each register."
     ],
-
-
-
-
-
 
     "tests": [
         {   "inputs": [[0,8], [0,8], [0,8], [999,32], [1,1]],"expected_output": []},

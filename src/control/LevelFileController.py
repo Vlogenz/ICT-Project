@@ -47,8 +47,11 @@ class LevelFileController:
     def getAvailableLevels(self) -> dict:
         """Returns the structured information about available levels from level_block.json"""
         levelBlockPath = Path(self.path) / "level_blocks.json"
-        with open(levelBlockPath, "r") as f:
-            return json.load(f)
+        try:
+            with open(levelBlockPath, "r") as f:
+                return json.load(f)
+        except FileNotFoundError as e:
+            return {}
 
     def getCompletedLevels(self) -> List[int]:
         """Returns the list of completed levels from the meta json file."""

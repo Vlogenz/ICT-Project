@@ -1,7 +1,133 @@
 % - Eventbus
 % - Algorithms
-% - CustonComponents
-
-
+% - Custom components are intentionally not described here
 
 \section{Backend - interesting stuff}
+
+\subsection{Algorithms}
+
+The project implements two complementary evaluation strategies for the logic model: a
+topological (Kahn-style) frontier evaluation and an event-driven propagation. Both
+algorithms are implemented in `\texttt{src/Algorithms.py}` and are used depending on the
+structure and requirements of the circuit under simulation.
+
+\paragraph{Kahn / frontier evaluation}
+The `\texttt{khanFrontierEval}` method performs a topological traversal of the component
+graph. It constructs an indegree map for all components (excluding pure `\texttt{Input}`
+components and ignoring `\texttt{Register}` instances when building dependencies). The
+algorithm proceeds tick-by-tick: first it places all input components into the
+initial frontier, then repeatedly removes nodes whose indegree becomes zero and
+collects them into the next tick's frontier. After building the per-tick frontier
+schedule it evaluates components tick-by-tick, calling `\texttt{eval()}` on each component
+and triggering optional `\texttt{updateFunction}` / `\texttt{waitFunction}` hooks for UI updates or
+stepped execution.\\
+Key implementation details:
+\begin{itemize}
+	\item The indegree for each component is computed from its input connections,
+		counting unique source components so that multiple wires from the same source
+		are not over-counted.
+	\item `\texttt{Register}` components are intentionally excluded when computing indegree
+		because they represent state boundaries — they break combinational cycles and
+		introduce clocked behaviour that the topological ordering should not attempt
+		to resolve as a purely combinational dependency.
+	\item If after the initial ordering there remain nodes with indegree $>0$, the
+		algorithm concludes that a circular dependency exists and returns \texttt{False}
+		rather than attempting to evaluate an undefined combinational loop.
+\end{itemize}
+\Fig[1]{./assets/ActivityKhanFrontier.pdf}{Activity Diagramm of KhanFrontier Evaluation}{act:khan}
+
+\paragraph{Event-driven evaluation}
+The `\texttt{eventDrivenEval}` method propagates changes starting from one or more
+``\texttt{starting components}'' (by default the inputs, or any `ProgramCounter` found in
+the component set). Each component is evaluated with `\texttt{eval(})` and, if its
+outputs changed, its connected targets are scheduled for the next wave. This
+approach naturally models ripple effects and is especially suitable for large
+circuits where only a small portion changes on each input update.\\
+Important safeguards and behaviours:
+\begin{itemize}
+	\item The method computes a conservative maximum number of evaluation cycles
+		and guards against infinite activity using a cap derived from the number of
+		components, augmented with the length of the instruction memory when present.
+		If propagation exceeds this bound (multiplied by a configured constant), the
+		function returns \texttt{False} to indicate a likely non-terminating cycle.
+	\item If no explicit starting components are given, the algorithm tries
+		`\texttt{ProgramCounter}` components first (to ensure instruction processing starts),
+		and then falls back to `\texttt{Input}` components. This makes it robust for both
+		combinational and sequential circuits.
+\end{itemize}
+\Fig[1]{./assets/ActivityEventdriven.pdf}{Activity Diagramm of Eventdriven Evaluation}{act:eventdriven}
+
+\paragraph{Difficulties with cycles}
+Circular dependencies (combinational loops) are one of the hardest problems in
+logic simulation. If a loop contains only combinational components there may be
+no stable fixed point and naive propagation either never terminates or produces
+indeterminate values. The implementation addresses this in two ways:
+\begin{itemize}
+	\item The topological (Kahn) evaluator detects cycles up-front (remaining
+		non-zero indegree) and refuses to evaluate a purely combinational loop.
+	\item The event-driven evaluator places an upper bound on ticks (using \texttt{MAX\_EVAL\_CYCLES}) so propagation that does not converge is
+		terminated and reported as failure. This enables the system to remain
+		responsive and to fail fast during tests or interactive sessions.
+\end{itemize}
+
+\text{Registers} and other stateful components are the intended mechanism to create
+timed cycles (feedback with storage). By treating registers as boundaries when
+building dependency graphs the topological algorithm avoids false-positive
+cycle detection for sequential circuits.
+
+\subsection{Event bus and MVC decoupling}
+
+The project includes a small, focused event bus implemented in
+`\texttt{src/infrastructure/eventBus.py}`. The bus is exposed via a lazy singleton
+(`\texttt{getBus()}`) so different parts of the application (model, controllers and
+views) can share a single messaging backbone without tight coupling.\\
+
+Main API and behaviour:
+\begin{itemize}
+	\item \texttt{subscribe(event, handler)} and \texttt{unsubscribe(event, handler)}
+		add and remove handlers for named events.
+	\item \texttt{emit(event, *args, **kwargs)} synchronously delivers the event
+		to the current subscribers (unless the bus is switched to manual mode).
+	\item A \emph{manual} mode exists (used for testing and step-by-step control)
+		where emissions are suppressed, allowing a test harness or debugger to
+		control when events are dispatched.
+\end{itemize}
+
+\textbf{Why the event bus matters for the MVC structure:}\\
+In a Model-View-Controller architecture it is important to keep the model
+independent from controllers and views. Without an intermediate event mechanism,
+a model would need to directly call controller methods to notify interested
+parties about changes. That direct coupling causes several problems:
+\begin{itemize}
+	\item Hard to test: model unit tests would need controller instances or
+		mocks injected.
+	\item Hard to evolve: changing controller APIs forces changes across the
+		model layer.
+	\item Tighter runtime coupling: the model must know about higher-level
+		application behaviour instead of focusing on domain logic.
+\end{itemize}
+
+Using the EventBus inverts this dependency: models emit domain events and any
+controller or view may subscribe. This yields loose coupling, simpler unit
+testing, and cleaner separation of concerns. In this project controllers emit
+events such as view rebuilds (for example `\texttt{view:rebuild\_circuit}`) and views
+subscribe to these events so UI updates happen independently from model logic.
+
+\textbf{Practical caveats}\\
+While the bus provides important decoupling, a few practical concerns should be
+kept in mind:
+\begin{itemize}
+	\item Memory and lifecycle: subscribers must unsubscribe (for example when a
+		view is destroyed) or the bus will keep references and prevent garbage
+		collection. Consider using weak references for handlers if lifecycle becomes
+		complex.
+	\item Ordering and synchronous delivery: the current implementation delivers
+		events synchronously and in subscription order. Long-running handlers will
+		block emitters; for heavy tasks consider offloading to a worker thread or
+		an asynchronous queue.
+	\item Deterministic stepping: the bus' manual mode is useful for tests and
+		deterministic stepping of the simulation — the test harness can switch to
+		manual and then dispatch events at controlled times.
+\end{itemize}
+
+% End of backend section

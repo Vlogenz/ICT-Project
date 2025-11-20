@@ -1,5 +1,5 @@
 {
-    "level_id": 51,
+    "level_id": 14,
     "name": "1bit ALU",
     "description": "We’re now in the process of putting together a processor. The actual computation happens in the Arithmetic-Logical-Unit (ALU). In this level we'll build a simple 1-bit ALU that can compute A AND B, A OR B, or A + B (sum bit). A 2-bit control signal `op` selects the operation. Later we want to expand the ALU to more bits, so our adder needs to have a carry in and a carry out. For now use a seperate \"dummy\" input as a carry in tied to 0, and connect the carry out to the labeled output.",
     "difficulty": "Medium",

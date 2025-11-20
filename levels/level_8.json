@@ -1,5 +1,5 @@
 	{
-	"level_id": 9,
+	"level_id": 8,
 	"name": "Decoder",
 	"description": "A decoder translates a 3-bit wire into 8 single-bit outputs. Each output corresponds to one of the possible values of the 3-bit input (except in this level the 000 case should produce all zeros).",
 	"difficulty": "Medium",

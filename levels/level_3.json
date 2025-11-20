@@ -1,0 +1,26 @@
+{
+    "level_id": 3,
+    "name": "Functional Completeness 1",
+    "description": "Fun fact: Theoretically any function can be created using only NOR gates!",
+    "difficulty": "Easy",
+    "objectives": [
+        "Create a combination of NOR gates which is functionally identical to an OR gate."
+    ],
+    "components": [
+        {"type": "Input", "position": [0,1], "immovable": true, "label": "A"},
+        {"type": "Input", "position": [0,3], "immovable": true, "label": "B"}, 
+        {"type": "Output", "position": [6,2], "immovable": true}    
+    ],
+    "available_components": [
+        {"type": "Nor"}
+    ],
+    "hints": [
+        "Try making a NOT gate first."
+    ],
+    "tests": [
+        {"inputs": [[0,1],[0,1]], "expected_output": [[0,1]]},
+        {"inputs": [[1,1],[0,1]], "expected_output": [[1,1]]},
+        {"inputs": [[0,1],[1,1]], "expected_output": [[1,1]]},
+        {"inputs": [[1,1],[1,1]], "expected_output": [[1,1]]}
+    ]
+}

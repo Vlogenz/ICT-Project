@@ -1,26 +1,30 @@
 {
-    "level_id": 11,
-    "name": "AND Gate",
-    "description": "The AND gate checks if A and B are true, if this is the case, it will return 1, otherwise it returns 0.",
-    "difficulty": "Easy",
-    "objectives": [
-        "Connect the inputs with an AND gate. Then connect the AND gate to the Output"
-    ],
-    "components": [
-        {"type": "Input", "position": [0,1], "immovable": true, "label": "A"},
-        {"type": "Input", "position": [0,3], "immovable": true, "label": "B"}, 
-        {"type": "Output", "position": [4,2], "immovable": true}    
-    ],
-    "available_components": [
-        {"type": "And"}
-    ],
-    "hints": [
-        "Gates on the left can be dragged into the grid"
-    ],
-    "tests": [
-        {"inputs": [[0,1],[0,1]], "expected_output": [[0,1]]},
-        {"inputs": [[1,1],[0,1]], "expected_output": [[0,1]]},
-        {"inputs": [[0,1],[1,1]], "expected_output": [[0,1]]},
-        {"inputs": [[1,1],[1,1]], "expected_output": [[1,1]]}
-    ]
+  "level_id": 11,
+  "name": "Half Adder",
+  "description": "A Half-Adder adds two 1-bit numbers (A and B).\nIt produces a Sum and a Carry. This is the smallest building block of binary addition.",
+  "difficulty": "Medium",
+  "objectives": ["Create a circuit that adds to 1bit together and returns sum and carry"],
+  "components": [
+    {"type": "Input", "position": [0,1], "immovable": true, "label": "A"},
+    {"type": "Input", "position": [0,3], "immovable": true, "label": "B"},
+    {"type": "Output", "position":  [4, 1], "immovable":  true, "label":  "Sum"},
+    {"type": "Output", "position":  [4, 3], "immovable":  true, "label":  "CarryOut"}
+  ],
+  "available_components": [
+    {"type":  "Xor"},
+    {"type": "And"}
+  ],
+  "hints": [
+    "Think about binary addition: 0+0=0, 0+1=1, 1+0=1, 1+1=10 (that's 0 with a carry of 1)",
+    "The Sum output should be 1 only when A and B are different",
+    "The CarryOut should be 1 only when both A and B are 1",
+    "XOR gives 1 when inputs differ, AND gives 1 when both inputs are 1"
+  ],
+  "solution": "",
+  "tests": [
+      {"inputs": [[0,1],[0,1]], "expected_output": [[0,1],[0,1]]},
+      {"inputs": [[1,1],[0,1]], "expected_output": [[1,1],[0,1]]},
+      {"inputs": [[0,1],[1,1]], "expected_output": [[1,1],[0,1]]},
+      {"inputs": [[1,1],[1,1]], "expected_output": [[0,1],[1,1]]}
+  ]
 }

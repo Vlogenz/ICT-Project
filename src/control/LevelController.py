@@ -1,5 +1,5 @@
 from src.control.LogicComponentController import LogicComponentController
-from src.model import DataMemory, InstructionMemory, Register, Input
+from src.model import DataMemory, InstructionMemory, Register, Input, RegisterBlock
 from src.model.LogicComponent import LogicComponent
 from src.infrastructure.eventBus import getBus
 from src.constants import COMPONENT_MAP
@@ -60,8 +60,16 @@ class LevelController:
                 comp.state = {"outValue": (componentData["initialValue"], 32)}
                 
             if type(comp) == Input:
-                if "initialBitWidth" in componentData:
-                    comp.state = {"outValue": (0, componentData["initialBitWidth"])}
+                if "initialValue" in componentData:
+                    comp.state["outValue"] = (componentData["initialValue"], componentData["initialBitWidth"])
+                    print(" settin bitwidth, and value")
+                elif "initialBitWidth" in componentData:
+                    comp.state["outValue"] = (0, componentData["initialBitWidth"])
+                    print("only setting bitwidth")
+                
+            if type(comp) == RegisterBlock:
+                if "initialValue" in componentData:
+                    comp.registers = componentData["initialValue"]
                 
             
             if type(comp) == InstructionMemory or type(comp) == DataMemory:

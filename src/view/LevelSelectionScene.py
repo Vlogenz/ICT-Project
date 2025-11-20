@@ -1,6 +1,6 @@
 from PySide6 import QtCore, QtWidgets
 from PySide6.QtWidgets import QPushButton
-from PySide6.QtGui import QPainter, QPen, QColor
+from PySide6.QtGui import QPainter, QPen, QColor, QPainterPath
 
 from src.constants import PR_COLOR_2, BG_COLOR
 from src.infrastructure.eventBus import getBus
@@ -14,6 +14,7 @@ class WrappingButton(QtWidgets.QWidget):
     def __init__(self, text="", parent=None):
         super().__init__(parent)
         self.label = QtWidgets.QLabel(text)
+        self.label.setObjectName("level-button")
         self.label.setWordWrap(True)
         self.label.setAlignment(QtCore.Qt.AlignCenter)
         self.label.setContentsMargins(0,0,0,0)
@@ -42,12 +43,13 @@ class LevelSelectionScene(QtWidgets.QWidget):
         self.central = QtWidgets.QWidget()
         self.layout = QtWidgets.QVBoxLayout(self)
 
-        self.nodeStyle = f"border: {BORDER_WIDTH}px solid rgb{PR_COLOR_2}; border-radius: 5px; min-height: 60px;"
-
         self.headerLabel = QtWidgets.QLabel("<h1>Select a level</h1>")
         self.headerLabel.setAlignment(QtCore.Qt.AlignCenter)
+        self.headerLabel.setStyleSheet(f"color: rgb{PR_COLOR_2}")
         self.headerLabel.setContentsMargins(0,0,0,0)
         self.grid = QtWidgets.QGridLayout()
+        self.grid.setHorizontalSpacing(10)
+        self.grid.setVerticalSpacing(10)
         self.toggleLevelLockButton = QtWidgets.QPushButton()
         
         if self.levelFileController.getAllLevelsUnlocked():
@@ -61,9 +63,11 @@ class LevelSelectionScene(QtWidgets.QWidget):
 
         self.layout.addWidget(mainSceneBtn, alignment=QtCore.Qt.AlignLeft)
         self.layout.addWidget(self.headerLabel)
+        self.layout.addSpacing(75)
         self.layout.addLayout(self.grid)
         self.layout.addWidget(self.toggleLevelLockButton)
 
+        self.layout.setStretch(3, 1)
 
         self.levelButtons = []
         self.createLevelButtons()
@@ -82,7 +86,7 @@ class LevelSelectionScene(QtWidgets.QWidget):
         col: int = 0
         for blockTitle, blockLevels in levels.items():
             blockTitleLabel = QtWidgets.QLabel(f"<strong>{blockTitle}</strong>")
-            blockTitleLabel.setStyleSheet(self.nodeStyle)
+            blockTitleLabel.setObjectName("btn-secondary-bold")
             blockTitleLabel.setAlignment(QtCore.Qt.AlignCenter)
             blockTitleLabel.setContentsMargins(0,0,0,0)
             self.grid.addWidget(blockTitleLabel, 0, col)
@@ -92,7 +96,6 @@ class LevelSelectionScene(QtWidgets.QWidget):
             for levelId, levelName in blockLevels.items():
 
                 button = WrappingButton()
-                button.setStyleSheet(self.nodeStyle)
                 text = levelName
                 if levelId in completed:
                     text += " (Done)"
@@ -153,7 +156,12 @@ class LevelSelectionScene(QtWidgets.QWidget):
             p1 = QtCore.QPoint(self.headerLabel.geometry().center().x(), header_text_bottom_y)
             item2 = self.grid.itemAtPosition(0, col)
             p2 = QtCore.QPoint(item2.geometry().center().x(), item2.geometry().top())
-            painter.drawLine(p1,p2)
+            path = QPainterPath(p1)
+            midY = (p1.y() + p2.y()) / 2
+            path.lineTo(QtCore.QPoint(p1.x(), midY))
+            path.lineTo(QtCore.QPoint(p2.x(), midY))
+            path.lineTo(p2)
+            painter.drawPath(path)
 
             # Draw lines between each element in column
             for row in range(self.grid.rowCount()):

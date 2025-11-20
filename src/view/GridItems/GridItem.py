@@ -6,7 +6,7 @@ from PySide6.QtGui import QAction, QCursor, QBrush, QPalette
 from PySide6.QtWidgets import QMenu, QPushButton, QInputDialog
 
 from src.model.LogicComponent import LogicComponent
-from src.constants import CELL_SIZE, MIME_TYPE
+from src.constants import CELL_SIZE, MIME_TYPE, OFFWHITE
 from src.infrastructure.eventBus import getBus
 
 
@@ -54,7 +54,7 @@ class WrapAnywhereLabel(QtWidgets.QWidget):
             font.setPointSizeF(base_size * self._scale_factor)
             painter.setFont(font)
 
-        painter.setPen(QtGui.QColor("black"))
+        painter.setPen(QtGui.QColor(*OFFWHITE))
 
         # Get font metrics
         font_metrics = painter.fontMetrics()
@@ -128,7 +128,7 @@ class GridItem(QtWidgets.QFrame):
         # Create nameLabel - we'll use a custom widget for wrap-anywhere behavior
         self.nameLabel = WrapAnywhereLabel(self.getName(), self)
         self.nameLabel.setAlignment(QtCore.Qt.AlignCenter)
-        self.nameLabel.setStyleSheet("color: black; background-color: transparent;")
+        #self.nameLabel.setStyleSheet("color: black; background-color: transparent;")
         self.nameLabel.setContextMenuPolicy(QtCore.Qt.NoContextMenu)
         self.nameLabel.setAttribute(QtCore.Qt.WA_TransparentForMouseEvents)
 

@@ -9,7 +9,7 @@
   },
   "Further Gates": {
     "6": "Multiplexer",
-    "7": "8-bit Collector and bigger MUX",
+    "7": "8-bit Collector and bigger MUX with a very long label text",
     "8": "Decoder"
   },
   "Persistence": {

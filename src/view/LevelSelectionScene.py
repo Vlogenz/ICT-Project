@@ -5,6 +5,24 @@ from src.infrastructure.eventBus import getBus
 from src.control.LevelFileController import LevelFileController
 COLUMNS = 5
 
+class WrappingButton(QtWidgets.QWidget):
+    clicked = QtCore.Signal()
+
+    def __init__(self, text="", parent=None):
+        super().__init__(parent)
+        self.label = QtWidgets.QLabel(text)
+        self.label.setWordWrap(True)
+        self.label.setAlignment(QtCore.Qt.AlignCenter)
+        layout = QtWidgets.QVBoxLayout(self)
+        layout.addWidget(self.label)
+        self.setLayout(layout)
+
+    def mousePressEvent(self, event):
+        self.clicked.emit()
+
+    def setText(self, text):
+        self.label.setText(text)
+
 class LevelSelectionScene(QtWidgets.QWidget):
     """
     Shows a grid with a cell for each level.
@@ -19,7 +37,7 @@ class LevelSelectionScene(QtWidgets.QWidget):
         self.central = QtWidgets.QWidget()
         self.layout = QtWidgets.QVBoxLayout(self)
 
-        headerLabel = QtWidgets.QLabel("Select a level")
+        headerLabel = QtWidgets.QLabel("<h1>Select a level</h1>")
         headerLabel.setAlignment(QtCore.Qt.AlignCenter)
         self.grid = QtWidgets.QGridLayout()
         self.toggleLevelLockButton = QtWidgets.QPushButton()
@@ -53,29 +71,32 @@ class LevelSelectionScene(QtWidgets.QWidget):
         unlocked = self.levelFileController.getAllLevelsUnlocked()
         max_completed = max(completed) if completed else -1
 
-        row: int = 0
+        col: int = 0
         for blockTitle, blockLevels in levels.items():
-            blockTitleLabel = QtWidgets.QLabel(blockTitle)
-            self.grid.addWidget(blockTitleLabel, row, 0, 1, COLUMNS)
-            row += 1
+            blockTitleLabel = QtWidgets.QLabel(f"<strong>{blockTitle}</strong>")
+            blockTitleLabel.setAlignment(QtCore.Qt.AlignCenter)
+            self.grid.addWidget(blockTitleLabel, 0, col)
 
-            col: int = 0
+            row: int = 1
             for levelId, levelName in blockLevels.items():
 
-                button = QtWidgets.QPushButton()
-                text = f"Level {levelId}"
+                button = WrappingButton()
+                button.setStyleSheet("border: 2px solid orange; border-radius: 5px; min-height: 100px;")
+                text = levelName
                 if levelId in completed:
                     text += " (Done)"
-                elif not unlocked and levelId > max_completed + 1:
+                elif not unlocked and int(levelId) > max_completed + 1:
                     text += " (Locked)"
                 button.setText(text)
-                if not (not unlocked and levelId > max_completed + 1):
+                if not (not unlocked and int(levelId) > max_completed + 1):
                     button.clicked.connect(lambda checked=False, lvl=levelId: self.onLevelClicked(lvl))
-                self.grid.addWidget(button, row, col%COLUMNS)
+                self.grid.addWidget(button, row, col)
                 self.levelButtons.append(button)
-                col += 1
+                row += 1
 
-            row += 1
+            col += 1
+            for i in range(self.grid.columnCount()):
+                self.grid.setColumnStretch(i, 1)
 
     def onLevelClicked(self, level_number: int):
         """User clicks on a level"""
@@ -94,9 +115,9 @@ class LevelSelectionScene(QtWidgets.QWidget):
 
     def updateLevelButtons(self):
         """Updates the level buttons."""
-        for b in self.levelButtons:
-            self.grid.removeWidget(b)
-            b.deleteLater()
+        while self.grid.count():
+            item = self.grid.takeAt(0)
+            item.widget().deleteLater()
+            del item
         self.levelButtons.clear()
         self.createLevelButtons()
-

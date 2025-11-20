@@ -8,6 +8,7 @@ from PySide6.QtWidgets import QMenu, QPushButton, QInputDialog
 from src.model.LogicComponent import LogicComponent
 from src.constants import CELL_SIZE, MIME_TYPE, OFFWHITE
 from src.infrastructure.eventBus import getBus
+from src.view.util.ImageLoader import ImageLoader
 
 
 class WrapAnywhereLabel(QtWidgets.QWidget):
@@ -128,13 +129,13 @@ class GridItem(QtWidgets.QFrame):
         # Create nameLabel - we'll use a custom widget for wrap-anywhere behavior
         self.nameLabel = WrapAnywhereLabel(self.getName(), self)
         self.nameLabel.setAlignment(QtCore.Qt.AlignCenter)
-        #self.nameLabel.setStyleSheet("color: black; background-color: transparent;")
         self.nameLabel.setContextMenuPolicy(QtCore.Qt.NoContextMenu)
         self.nameLabel.setAttribute(QtCore.Qt.WA_TransparentForMouseEvents)
 
         self.nameLabelContainer = None  # Initialize to None
 
-        self.pixmap = QtGui.QPixmap(self.image_path)
+        #self.pixmap = QtGui.QPixmap(self.image_path)
+        self.pixmap = ImageLoader.svg_to_pixmap(self.image_path, QtGui.QColor(*OFFWHITE))
         if self.pixmap.isNull():
             # No image available, add nameLabel to layout with margins
             # Create a container layout with margins to keep text away from port labels

@@ -2,7 +2,8 @@ import json
 from symtable import Class
 
 from PySide6 import QtWidgets, QtGui, QtCore
-from src.constants import MIME_TYPE, CELL_SIZE
+from src.constants import MIME_TYPE, CELL_SIZE, OFFWHITE
+from src.view.util.ImageLoader import ImageLoader
 
 
 class PaletteItem(QtWidgets.QFrame):
@@ -23,7 +24,7 @@ class PaletteItem(QtWidgets.QFrame):
         self.imgLabel.setScaledContents(True)
         layout.addWidget(self.imgLabel)
         imagePath = self.getImagePath()
-        pixmap = QtGui.QPixmap(imagePath)
+        pixmap = ImageLoader.svg_to_pixmap(imagePath, QtGui.QColor(*OFFWHITE))
         if not pixmap.isNull():
             self.imgLabel.setPixmap(pixmap)
         else:

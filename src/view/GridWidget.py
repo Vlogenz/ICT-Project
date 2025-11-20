@@ -3,7 +3,7 @@ from PySide6.QtCore import QPoint
 from PySide6.QtGui import QPainterPath, QPainterPathStroker
 
 from src.control.LogicComponentController import LogicComponentController
-from src.constants import GRID_COLS, GRID_ROWS, CELL_SIZE, MIME_TYPE, COMPONENT_MAP
+from src.constants import GRID_COLS, GRID_ROWS, CELL_SIZE, MIME_TYPE, COMPONENT_MAP, PR_TEXT_COLOR
 from src.model.CustomLogicComponentData import CustomLogicComponentData
 from src.model.LogicComponent import LogicComponent
 from src.infrastructure.eventBus import getBus
@@ -52,7 +52,7 @@ class GridWidget(QtWidgets.QWidget):
             painter.drawLine(0, y, self.cols * CELL_SIZE * self.scale_factor, y)
 
         # painting connections
-        black_pen = QtGui.QPen(QtGui.QColor("black"), 2)
+        black_pen = QtGui.QPen(QtGui.QColor(*PR_TEXT_COLOR), 2)
         red_pen = QtGui.QPen(QtGui.QColor("red"), 2)
         painter.setPen(black_pen)
         for i,connection in enumerate(self.connections):

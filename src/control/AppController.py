@@ -7,7 +7,7 @@ from src.view.SandboxModeScene import SandboxModeScene
 from src.view.LevelSelectionScene import LevelSelectionScene
 from src.view.LevelScene import LevelScene
 from src.view.MainScene import MainScene
-from src.constants import Scene, BG_COLOR, PR_COLOR_1, PR_COLOR_2, OFFWHITE
+from src.constants import Scene, BG_COLOR, PR_COLOR_1, PR_COLOR_2, PR_TEXT_COLOR
 from src.control.LevelFileController import LevelFileController
 from src.control.LevelController import LevelController
 
@@ -18,7 +18,7 @@ class AppController():
         self.app = QtWidgets.QApplication(sys.argv)
         stylesheet = f"""
             QWidget {{
-            color: rgb{OFFWHITE};
+            color: rgb{PR_TEXT_COLOR};
             background-color: rgb{BG_COLOR};
             font-size: 16px;
             }}

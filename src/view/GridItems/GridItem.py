@@ -6,7 +6,7 @@ from PySide6.QtGui import QAction, QCursor, QBrush, QPalette
 from PySide6.QtWidgets import QMenu, QPushButton, QInputDialog
 
 from src.model.LogicComponent import LogicComponent
-from src.constants import CELL_SIZE, MIME_TYPE, OFFWHITE
+from src.constants import CELL_SIZE, MIME_TYPE, PR_TEXT_COLOR
 from src.infrastructure.eventBus import getBus
 from src.view.util.ImageLoader import ImageLoader
 
@@ -55,7 +55,7 @@ class WrapAnywhereLabel(QtWidgets.QWidget):
             font.setPointSizeF(base_size * self._scale_factor)
             painter.setFont(font)
 
-        painter.setPen(QtGui.QColor(*OFFWHITE))
+        painter.setPen(QtGui.QColor(*PR_TEXT_COLOR))
 
         # Get font metrics
         font_metrics = painter.fontMetrics()
@@ -123,8 +123,6 @@ class GridItem(QtWidgets.QFrame):
 
         self.layout = QtWidgets.QVBoxLayout(self)
         self.layout.setContentsMargins(0,0,0,0)
-        
-        self.image_path = self.getImagePath()
 
         # Create nameLabel - we'll use a custom widget for wrap-anywhere behavior
         self.nameLabel = WrapAnywhereLabel(self.getName(), self)
@@ -134,8 +132,7 @@ class GridItem(QtWidgets.QFrame):
 
         self.nameLabelContainer = None  # Initialize to None
 
-        #self.pixmap = QtGui.QPixmap(self.image_path)
-        self.pixmap = ImageLoader.svg_to_pixmap(self.image_path, QtGui.QColor(*OFFWHITE))
+        self.pixmap = self.getImage()
         if self.pixmap.isNull():
             # No image available, add nameLabel to layout with margins
             # Create a container layout with margins to keep text away from port labels
@@ -194,8 +191,9 @@ class GridItem(QtWidgets.QFrame):
         # Enable mouse tracking for tooltips
         self.setMouseTracking(True)
 
-    def getImagePath(self) -> str:
-        return f"assets/gates/{self.logicComponent.__class__.__name__}.svg"
+    def getImage(self) -> QtGui.QPixmap:
+        imagePath = f"assets/gates/{self.logicComponent.__class__.__name__}.svg"
+        return ImageLoader.svg_to_pixmap(imagePath, QtGui.QColor(*PR_TEXT_COLOR))
 
     def getName(self) -> str:
         if self.logicComponent.getLabel() != "":

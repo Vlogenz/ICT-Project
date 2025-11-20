@@ -29,7 +29,8 @@
   "Further Gates": [
     {
       "id": 6,
-      "name": "Multiplexer"
+      "name": "Multiplexer",
+      "recommended": true
     },
     {
       "id": 7,
@@ -75,7 +76,8 @@
     },
     {
       "id": 16,
-      "name": "Adding NOR"
+      "name": "Adding NOR",
+      "recommended": true
     },
     {
       "id": 17,
@@ -83,7 +85,8 @@
     },
     {
       "id": 18,
-      "name": "SLT (Set-on-Less-Than)"
+      "name": "SLT (Set-on-Less-Than)",
+      "recommended": true
     }
   ],
   "Registers": [
@@ -93,13 +96,15 @@
     },
     {
       "id": 20,
-      "name": "Adding the write option to Register Block"
+      "name": "Adding the write option to Register Block",
+      "recommended": true
     }
   ],
   "Full Processor": [
     {
       "id": 21,
-      "name": "Loading Commands"
+      "name": "Loading Commands",
+      "recommended": true
     }
   ]
 }

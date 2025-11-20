@@ -1,10 +1,12 @@
 {
     "level_id": 11,
     "name": "AND Gate",
-    "description": "The AND gate checks if A and B are true, if this is the case, it will return 1, otherwise it returns 0.",
+    "description": "Welcome to CircuitQuest, a puzzle-driven journey into the inner workings of a MIPS-based processor. In this game, you’ll explore how digital circuits come together to form the logic that drives real computer architectures. Each level focuses on a core concept—from simple logic gates to more advanced components like ALUs, multiplexers, and control units. By solving interactive circuit challenges, you’ll gain an intuitive understanding of how processors make decisions, perform calculations, and execute instructions. Whether you’re new to digital logic or brushing up on fundamentals, CircuitQuest aims to teach through hands-on, creative problem-solving. In this first Level you will learn what an AND-Gate is, and how to use it.The AND gate checks if A and B are true, if this is the case, it will return 1, otherwise it returns 0.",
     "difficulty": "Easy",
     "objectives": [
-        "Connect the inputs with an AND gate. Then connect the AND gate to the Output"
+        "Connect the inputs with an AND gate. Then connect the AND gate to the Output",
+        "when you are done, press the Check solution button, to see if your circuit works correctly.",
+        "if you want to see the calculation of the circuit, tune down the slider in the top right corner to addjust the speed of the simulation."
     ],
     "components": [
         {"type": "Input", "position": [0,1], "immovable": true, "label": "A"},

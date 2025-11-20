@@ -42,7 +42,10 @@ class AppController():
             border-radius: 10px;
             background-color: rgb{BG_COLOR};
             color: rgb{PR_COLOR_2};
-            }} 
+            }}
+            .recommended {{
+            background-color: rgb{PR_COLOR_1}
+            }}
             """
         self.app.setStyleSheet(stylesheet)
         self.app.aboutToQuit.connect(self._cleanup)  # connect signal

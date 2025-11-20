@@ -29,6 +29,9 @@ class WrappingButton(QtWidgets.QWidget):
     def setText(self, text):
         self.label.setText(text)
 
+    def setStyleClasses(self, classes: str):
+        self.label.setProperty("class", classes)
+
 class LevelSelectionScene(QtWidgets.QWidget):
     """
     Shows a grid with a cell for each level.
@@ -43,6 +46,8 @@ class LevelSelectionScene(QtWidgets.QWidget):
         self.central = QtWidgets.QWidget()
         self.layout = QtWidgets.QVBoxLayout(self)
 
+        self.levelRecommendationsShown = False
+
         self.headerLabel = QtWidgets.QLabel("<h1>Select a level</h1>")
         self.headerLabel.setAlignment(QtCore.Qt.AlignCenter)
         self.headerLabel.setStyleSheet(f"color: rgb{PR_COLOR_2}")
@@ -50,13 +55,23 @@ class LevelSelectionScene(QtWidgets.QWidget):
         self.grid = QtWidgets.QGridLayout()
         self.grid.setHorizontalSpacing(10)
         self.grid.setVerticalSpacing(10)
+
+        # Reviewer options section
+        self.reviewerOptions = QtWidgets.QVBoxLayout(self)
+        reviewerOptionsLabel = QtWidgets.QLabel("Reviewer options")
+        reviewerOptionsLabel.setAlignment(QtCore.Qt.AlignCenter)
+        self.toggleLevelRecommendationsButton = QtWidgets.QPushButton("Show level recommendations")
+        self.toggleLevelRecommendationsButton.clicked.connect(self.toggleLevelRecommendations)
         self.toggleLevelLockButton = QtWidgets.QPushButton()
-        
         if self.levelFileController.getAllLevelsUnlocked():
             self.toggleLevelLockButton.setText("Lock levels")
         else:
             self.toggleLevelLockButton.setText("Unlock all levels")
         self.toggleLevelLockButton.clicked.connect(self.toggleLevelLock)
+
+        self.reviewerOptions.addWidget(reviewerOptionsLabel)
+        self.reviewerOptions.addWidget(self.toggleLevelRecommendationsButton)
+        self.reviewerOptions.addWidget(self.toggleLevelLockButton)
 
         mainSceneBtn = QPushButton(text="< Back to Main Screen", parent=self)
         mainSceneBtn.clicked.connect(lambda: self.bus.emit("goToMain"))
@@ -65,7 +80,7 @@ class LevelSelectionScene(QtWidgets.QWidget):
         self.layout.addWidget(self.headerLabel)
         self.layout.addSpacing(75)
         self.layout.addLayout(self.grid)
-        self.layout.addWidget(self.toggleLevelLockButton)
+        self.layout.addLayout(self.reviewerOptions)
 
         self.layout.setStretch(3, 1)
 
@@ -93,10 +108,13 @@ class LevelSelectionScene(QtWidgets.QWidget):
             colButtons = []
 
             row: int = 1
-            for levelId, levelName in blockLevels.items():
+            for levelInfo in blockLevels:
 
                 button = WrappingButton()
-                text = levelName
+                if self.levelRecommendationsShown and levelInfo.get("recommended", False):
+                    button.setStyleClasses("level-button recommended")
+                levelId = levelInfo.get("id", -1)
+                text = levelInfo.get("name", "Unknown level")
                 if levelId in completed:
                     text += " (Done)"
                 elif not unlocked and int(levelId) > max_completed + 1:
@@ -117,6 +135,15 @@ class LevelSelectionScene(QtWidgets.QWidget):
     def onLevelClicked(self, level_number: int):
         """User clicks on a level"""
         self.bus.emit("levelSelection:levelSelected", level_number)
+
+    def toggleLevelRecommendations(self):
+        if self.levelRecommendationsShown:
+            self.levelRecommendationsShown = False
+            self.toggleLevelRecommendationsButton.setText("Show level recommendations")
+        else:
+            self.levelRecommendationsShown = True
+            self.toggleLevelRecommendationsButton.setText("Hide level recommendations")
+        self.updateLevelButtons()
 
     def toggleLevelLock(self):
         """Toggles whether all levels are unlocked.

@@ -22,7 +22,6 @@ class SimulationControls(QtWidgets.QFrame):
         self.startStopButton: QPushButton = QPushButton("Start")
         self.resetButton: QPushButton = QPushButton("Reset")
         self.speedLabel: QLabel = QLabel("Speed:", self)
-        self.speedLabel.setStyleSheet("color: black;")
 
         # Configure speed slider: 1 to 10 steps per second
         self.speedSlider: QSlider = QSlider(Qt.Horizontal, self)
@@ -86,7 +85,6 @@ class SimulationControls(QtWidgets.QFrame):
             index (int): The index to add the button in the order. Defaults to -1, meaning it is added to the end
         """
         newButton = QPushButton(text)
-        newButton.setStyleSheet("color: black;")
         newButton.clicked.connect(function)
         if index == -1 or index >= self.layout.count():
             self.layout.addWidget(newButton)

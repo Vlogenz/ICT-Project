@@ -7,7 +7,7 @@ from src.view.SandboxModeScene import SandboxModeScene
 from src.view.LevelSelectionScene import LevelSelectionScene
 from src.view.LevelScene import LevelScene
 from src.view.MainScene import MainScene
-from src.constants import Scene, BG_COLOR, PR_COLOR_1, PR_COLOR_2
+from src.constants import Scene, BG_COLOR, PR_COLOR_1, PR_COLOR_2, OFFWHITE
 from src.control.LevelFileController import LevelFileController
 from src.control.LevelController import LevelController
 
@@ -17,7 +17,8 @@ class AppController():
     def __init__(self):
         self.app = QtWidgets.QApplication(sys.argv)
         stylesheet = f"""
-            QMainWindow {{
+            QWidget {{
+            color: rgb{OFFWHITE};
             background-color: rgb{BG_COLOR};
             }}
             QPushButton {{

@@ -12,6 +12,7 @@ APP_NAME = "CircuitQuest"
 BG_COLOR = (36,38,106)
 PR_COLOR_1 = (42,114,255)
 PR_COLOR_2 = (255,131,0)
+OFFWHITE = (246,240,237)
 
 class Scene(Enum):
     MAIN = 0

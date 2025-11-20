@@ -20,33 +20,28 @@ class AppController():
             QWidget {{
             color: rgb{OFFWHITE};
             background-color: rgb{BG_COLOR};
+            font-size: 16px;
             }}
             QPushButton {{
             background-color: rgb{PR_COLOR_1};
             color: rgb{BG_COLOR};
+            font-weight: bold;
+            border-radius: 5px;
+            }}
+            .large {{
             font-size: 24px;
             font-weight: bold;
             border-radius: 10px;
             }}
-            #btn-secondary-bold {{
+            .btn-secondary {{
             background-color: rgb{PR_COLOR_2};
             color: rgb{BG_COLOR};
-            font-size: 24px;
-            font-weight: bold;
-            border-radius: 10px;
             }}
-            #btn-secondary {{
-            background-color: rgb{PR_COLOR_2};
-            color: rgb{BG_COLOR};
-            font-size: 24px;
-            border-radius: 10px;
-            }}
-             #level-button {{
+            .level-button {{
             border: 5px solid rgb{PR_COLOR_2};
             border-radius: 10px;
             background-color: rgb{BG_COLOR};
             color: rgb{PR_COLOR_2};
-            font-size: 16px;
             }} 
             """
         self.app.setStyleSheet(stylesheet)

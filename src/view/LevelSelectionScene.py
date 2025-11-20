@@ -14,7 +14,7 @@ class WrappingButton(QtWidgets.QWidget):
     def __init__(self, text="", parent=None):
         super().__init__(parent)
         self.label = QtWidgets.QLabel(text)
-        self.label.setObjectName("level-button")
+        self.label.setProperty("class", "level-button")
         self.label.setWordWrap(True)
         self.label.setAlignment(QtCore.Qt.AlignCenter)
         self.label.setContentsMargins(0,0,0,0)
@@ -86,7 +86,7 @@ class LevelSelectionScene(QtWidgets.QWidget):
         col: int = 0
         for blockTitle, blockLevels in levels.items():
             blockTitleLabel = QtWidgets.QLabel(f"<strong>{blockTitle}</strong>")
-            blockTitleLabel.setObjectName("btn-secondary-bold")
+            blockTitleLabel.setProperty("class", "btn-secondary large")
             blockTitleLabel.setAlignment(QtCore.Qt.AlignCenter)
             blockTitleLabel.setContentsMargins(0,0,0,0)
             self.grid.addWidget(blockTitleLabel, 0, col)

@@ -103,7 +103,7 @@
   "Full Processor": [
     {
       "id": 21,
-      "name": "Loading Commands",
+      "name": "Limited MIPS Processor",
       "recommended": true
     }
   ]

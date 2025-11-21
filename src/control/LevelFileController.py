@@ -33,16 +33,25 @@ class LevelFileController:
                 json.dump(metaJson, f, indent=4)
             return metaJson
         
-    def getAvailableLevels(self)-> List[int]:
-        """Returns a list of numbers of available levels by scanning the levels directory"""
-        levelFiles = Path(self.path).glob("level_*.json")
-        levelNumbers = []
-        for levelFile in levelFiles:
-            filename = levelFile.name
-            if filename.startswith("level_") and filename.endswith(".json"):
-                levelNumber = int(levelFile.stem.split('_')[1].split('.')[0])
-                levelNumbers.append(levelNumber)  
-        return sorted(levelNumbers)
+    # def getAvailableLevels(self)-> List[int]:
+    #     """Returns a list of numbers of available levels by scanning the levels directory"""
+    #     levelFiles = Path(self.path).glob("level_*.json")
+    #     levelNumbers = []
+    #     for levelFile in levelFiles:
+    #         filename = levelFile.name
+    #         if filename.startswith("level_") and filename.endswith(".json"):
+    #             levelNumber = int(levelFile.stem.split('_')[1].split('.')[0])
+    #             levelNumbers.append(levelNumber)
+    #     return sorted(levelNumbers)
+
+    def getAvailableLevels(self) -> dict:
+        """Returns the structured information about available levels from level_block.json"""
+        levelBlockPath = Path(self.path) / "level_blocks.json"
+        try:
+            with open(levelBlockPath, "r") as f:
+                return json.load(f)
+        except FileNotFoundError as e:
+            return {}
 
     def getCompletedLevels(self) -> List[int]:
         """Returns the list of completed levels from the meta json file."""

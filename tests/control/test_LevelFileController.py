@@ -80,24 +80,28 @@ def test_loadLevel_file_not_found(level_file_controller):
 def test_getAvailableLevels_empty_directory(level_file_controller):
     """Test getting available levels from empty directory"""
     levels = level_file_controller.getAvailableLevels()
-    assert list(levels) == []
+    assert levels == {}
 
 
-def test_getAvailableLevels_with_levels(level_file_controller, temp_levels_dir, sample_level_data):
-    """Test getting available levels when levels exist"""
-    # Create multiple test level files
-    for i in [0, 1, 2]:
-        level_file = temp_levels_dir / f"level_{i}.json"
-        data = sample_level_data.copy()
-        data["level_id"] = i
-        with open(level_file, 'w') as f:
-            json.dump(data, f)
-    
+def test_getAvailableLevels_with_levels(level_file_controller, temp_levels_dir):
+    """Test getting available levels when level_blocks.json exists"""
+    # Create sample level_blocks.json
+    level_blocks_data = {
+        "Test Block": [
+            {"id": 0, "name": "Level 0"},
+            {"id": 1, "name": "Level 1"},
+            {"id": 2, "name": "Level 2"}
+        ]
+    }
+    level_blocks_file = temp_levels_dir / "level_blocks.json"
+    with open(level_blocks_file, 'w') as f:
+        json.dump(level_blocks_data, f)
+
     # Get available levels
-    levels = list(level_file_controller.getAvailableLevels())
-    
-    # Verify (should find 3 levels)
-    assert len(levels) == 3
+    levels = level_file_controller.getAvailableLevels()
+
+    # Verify
+    assert levels == level_blocks_data
 
 
 def test_loadLevel_invalid_json(level_file_controller, temp_levels_dir):
@@ -209,4 +213,3 @@ def test_loadMetaFile_creates_file_if_not_exists(level_file_controller, temp_lev
     }
     assert loaded_data == expected
     assert meta_data == expected
-

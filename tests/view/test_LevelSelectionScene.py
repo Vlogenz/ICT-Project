@@ -9,7 +9,16 @@ from src.view.LevelSelectionScene import LevelSelectionScene
 @pytest.fixture
 def level_file_controller():
     controller = Mock(spec=LevelFileController)
-    controller.getAvailableLevels.return_value = [0, 1, 2, 3]
+    controller.getAvailableLevels.return_value = {
+        "Block 1": [
+            {"id": 0, "name": "Level 0"},
+            {"id": 1, "name": "Level 1"}
+        ],
+        "Block 2": [
+            {"id": 2, "name": "Level 2"},
+            {"id": 3, "name": "Level 3"}
+        ]
+    }
     controller.getCompletedLevels.return_value = [0, 1]
     controller.getAllLevelsUnlocked.return_value = False
     return controller
@@ -29,11 +38,13 @@ class TestLevelSelectionScene:
         qtbot.addWidget(scene)
 
         # Check that buttons are created
-        assert len(scene.levelButtons) == 4
-        assert scene.levelButtons[0].text() == "Level 0 (Done)"
-        assert scene.levelButtons[1].text() == "Level 1 (Done)"
-        assert scene.levelButtons[2].text() == "Level 2"
-        assert scene.levelButtons[3].text() == "Level 3 (Locked)"
+        assert len(scene.levelButtons) == 2  # Two blocks
+        assert len(scene.levelButtons[0]) == 2  # Two levels in first block
+        assert len(scene.levelButtons[1]) == 2  # Two levels in second block
+        assert scene.levelButtons[0][0].label.text() == "Level 0 (Done)"
+        assert scene.levelButtons[0][1].label.text() == "Level 1 (Done)"
+        assert scene.levelButtons[1][0].label.text() == "Level 2"
+        assert scene.levelButtons[1][1].label.text() == "Level 3 (Locked)"
 
     def test_on_level_clicked(self, qtbot, level_file_controller):
         with patch('src.view.LevelSelectionScene.getBus') as mock_get_bus:

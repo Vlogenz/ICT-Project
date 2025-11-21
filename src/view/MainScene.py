@@ -19,8 +19,6 @@ class MainScene(QtWidgets.QMainWindow):
         layout.setContentsMargins(60, 60, 60, 60)
         layout.setSpacing(30)
         self.setCentralWidget(central)
-        self.setStyleSheet(f"background-color: rgb{BG_COLOR};")
-
 
         layout.setRowStretch(0, 2)   # top area
         layout.setRowStretch(1, 5)   # logo
@@ -54,35 +52,17 @@ class MainScene(QtWidgets.QMainWindow):
 
         teachingBtn = QPushButton(text="Learning", parent=self)
         teachingBtn.setMinimumSize(200, 120)
-        teachingBtn.setStyleSheet(f"""
-                    background-color: rgb{PR_COLOR_1};
-                    color: rgb{BG_COLOR};
-                    font-size: 24px;
-                    font-weight: bold;
-                    border-radius: 20px;
-                """)
+        teachingBtn.setProperty("class", "large")
         teachingBtn.clicked.connect(lambda: self.bus.emit("goToLevelSelection"))
 
         sandboxBtn = QPushButton(text="Sandbox", parent=self)
+        sandboxBtn.setProperty("class", "btn-secondary large")
         sandboxBtn.setMinimumSize(200, 120)
-        sandboxBtn.setStyleSheet(f"""
-                    background-color: rgb{PR_COLOR_2};
-                    color: rgb{BG_COLOR};
-                    font-size: 24px;
-                    font-weight: bold;
-                    border-radius: 20px;
-                """)
         sandboxBtn.clicked.connect(lambda: self.bus.emit("goToSandboxMode"))
 
         exitBtn = QPushButton(text="Exit", parent=self)
         exitBtn.setMinimumSize(200, 120)
-        exitBtn.setStyleSheet(f"""
-                    background-color: rgb{PR_COLOR_1};
-                    color: rgb{BG_COLOR};
-                    font-size: 24px;
-                    font-weight: bold;
-                    border-radius: 20px;
-                """)
+        exitBtn.setProperty("class", "large")
         exitBtn.clicked.connect(lambda: self.bus.emit("stopApp"))
 
         btn_layout.addWidget(teachingBtn)

@@ -24,7 +24,7 @@ class AppController():
             }}
             QPushButton {{
             background-color: rgb{PR_COLOR_1};
-            color: rgb{BG_COLOR};
+            color: rgb{PR_TEXT_COLOR};
             font-weight: bold;
             border-radius: 5px;
             }}
@@ -35,13 +35,13 @@ class AppController():
             }}
             .btn-secondary {{
             background-color: rgb{PR_COLOR_2};
-            color: rgb{BG_COLOR};
+            color: rgb{PR_TEXT_COLOR};
             }}
             .level-button {{
             border: 5px solid rgb{PR_COLOR_2};
             border-radius: 10px;
             background-color: rgb{BG_COLOR};
-            color: rgb{PR_COLOR_2};
+            color: rgb{PR_TEXT_COLOR};
             }}
             .recommended {{
             background-color: rgb{PR_COLOR_1}

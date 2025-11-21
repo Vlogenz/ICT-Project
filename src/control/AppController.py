@@ -16,6 +16,7 @@ from src.control.LevelController import LevelController
 class AppController():
     def __init__(self):
         self.app = QtWidgets.QApplication(sys.argv)
+        #stylesheet
         stylesheet = f"""
             QWidget {{
             color: rgb{PR_TEXT_COLOR};

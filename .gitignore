@@ -19,6 +19,10 @@ main.pdf
 main.run.xml
 main.synctex.gz
 main.toc
+**.bbl
+**.bcf
+**.fls
+**.log
 
 # Ignore meta file
 meta.json

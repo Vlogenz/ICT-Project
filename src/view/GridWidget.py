@@ -3,7 +3,7 @@ from PySide6.QtCore import QPoint
 from PySide6.QtGui import QPainterPath, QPainterPathStroker
 
 from src.control.LogicComponentController import LogicComponentController
-from src.constants import GRID_COLS, GRID_ROWS, CELL_SIZE, MIME_TYPE, COMPONENT_MAP, PR_TEXT_COLOR
+from src.constants import GRID_COLS, GRID_ROWS, CELL_SIZE, MIME_TYPE, COMPONENT_MAP, PR_TEXT_COLOR, GRID_COLOR
 from src.model.CustomLogicComponentData import CustomLogicComponentData
 from src.model.LogicComponent import LogicComponent
 from src.infrastructure.eventBus import getBus
@@ -42,7 +42,7 @@ class GridWidget(QtWidgets.QWidget):
         painter = QtGui.QPainter(self)
 
         # Grid
-        pen = QtGui.QPen(QtGui.QColor(200, 200, 200))
+        pen = QtGui.QPen(QtGui.QColor(*GRID_COLOR))
         painter.setPen(pen)
         for c in range(self.cols + 1):
             x = c * CELL_SIZE * self.scale_factor

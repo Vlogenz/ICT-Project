@@ -6,6 +6,10 @@ skinparam classFontSize 10
 skinparam classFontName "Courier New"
 skinparam classArrowFontSize 10
 skinparam packageStyle rectangle
+skinparam wrapWidth 160
+skinparam maxMessageSize 60
+top to bottom direction
+scale 0.85
 skinparam class {
   BackgroundColor lightblue
   BorderColor darkblue
@@ -15,341 +19,577 @@ skinparam package {
   BorderColor darkgray
 }
 
-' Layout directives for better organization
-!define LAYOUT top to bottom direction
-
 package "View" {
   class "DeleteArea" as src.view.DeleteArea.DeleteArea {
     gridWidget
     dragEnterEvent(event)
     dropEvent(event)
   }
-  
-  class "GridItem" as src.view.GridItem.GridItem {
-    input_port
-    item_type : str
-    output_port
-    uid : str
-    deleteItem()
-    mousePressEvent(event)
-    openContextMenu()
-    paintEvent(event)
-  }
-  
+
   class "GridWidget" as src.view.GridWidget.GridWidget {
     cols : int
     connections : list
-    dragging_item_pos : NoneType
-    dragging_item_uid : NoneType
-    dragging_line : NoneType, tuple
+    draggingLine : DraggingLine
     items : dict
     rows : int
-    useRandomOffset : bool
     addItem(cell, widget)
     cellAt(pos)
-    dragEnterEvent(event)
-    dragMoveEvent(event)
-    dropEvent(event)
-    isOccupied(cell)
-    mouseMoveEvent(event)
-    mouseReleaseEvent(event)
-    orthogonalRoute(path, src, dst)
-    paintEvent(event)
-    removeConnectionTo(item)
     removeItem(uid)
     startConnection(item, port, event)
   }
-  
+
   class "PaletteItem" as src.view.PaletteItem.PaletteItem {
+    componentName : str
     color
-    label : str
     mousePressEvent(event)
   }
-  
-  class "SandboxModeWindow" as src.view.SandboxModeWindow.SandboxModeWindow {
-  }
-  
+
   class "SimulationControls" as src.view.SimulationControls.SimulationControls {
     resetButton
-    speedLabel
     speedSlider
     startStopButton
+    addButton(label, handler, index)
+    configureReset(handler)
     updateSpeedLabel(value)
+  }
+
+  class "LogicComponentPalette" as src.view.LogicComponentPalette.LogicComponentPalette {
+    createCollapsibleSections()
+  }
+
+  class "CustomComponentPaletteItem" as src.view.CustomComponentPaletteItem.CustomComponentPaletteItem {
+    componentData : CustomLogicComponentData
+    getImagePath() : str
+    getPayload()
+  }
+
+  class "Connection" as src.view.Connection.Connection {
+    dstItem
+    dstKey : str
+    isActive : bool
+    srcItem
+    srcKey : str
+    getPath()
+    setPath(path)
+  }
+
+  class "DraggingLine" as src.view.DraggingLine.DraggingLine {
+    currentPos
+    srcItem
+    srcKey : str
+    startPos
+  }
+
+  class "CreateCustomComponentDialog" as src.view.CreateCustomComponentDialog.CreateCustomComponentDialog {
+    logicController : LogicComponentController
+    spritePath : str
+    submitForm()
+    toggleHelp()
+  }
+
+  class "Hint" as src.view.Hint.Hint {
+    current_hint_index : int
+    levelController : LevelController
+    change_icon()
+    show_hint()
+  }
+
+  class "LevelScene" as src.view.LevelScene.LevelScene {
+    backButton
+    grid : GridWidget
+    levelController : LevelController
+    levelData : dict
+    levelFileController : LevelFileController
+    checkSolution()
+    goToLevelSelection()
+  }
+
+  class "LevelSelectionScene" as src.view.LevelSelectionScene.LevelSelectionScene {
+    bus
+    grid
+    levelButtons : list
+    levelFileController : LevelFileController
+    toggleLevelLockButton
+    createLevelButtons()
+    toggleLevelLock()
+  }
+
+  class "MainScene" as src.view.MainScene.MainScene {
+    bus
+    closeApplication()
+  }
+
+  class "OutputPrediction" as src.view.OutputPrediction.OutputPrediction {
+    levelController : LevelController
+    enterPrediction(fromInput, bitwidth, index)
+  }
+
+  class "SandboxModeScene" as src.view.SandboxModeScene.SandboxModeScene {
+    bus
+    grid : GridWidget
+    logicController : LogicComponentController
+    goToMain()
+    openCreateCustomComponentDialog()
+  }
+
+  package "Grid Items" {
+    class "WrapAnywhereLabel" as src.view.GridItems.GridItem.WrapAnywhereLabel {
+      text : str
+      setText(text)
+      setScaleFactor(scale)
+    }
+
+    class "GridItem" as src.view.GridItems.GridItem.GridItem {
+      bus
+      immovable : bool
+      inputs : dict
+      logicComponent : LogicComponent
+      outputLabels : dict
+      outputs : dict
+      uid : str
+      deleteItem()
+      openContextMenu()
+      portAt(pos)
+      updatePortLabels()
+    }
+
+    class "GridItemFactory" as src.view.GridItems.GridItemFactory.GridItemFactory {
+      {static}createGridItem(component, **kwargs) : GridItem
+    }
+
+    class "InputGridItem" as src.view.GridItems.InputGridItem.InputGridItem {
+    }
+
+    class "HalfAdderGridItem" as src.view.GridItems.HalfAdderGridItem.HalfAdderGridItem {
+    }
+
+    class "FullAdderGridItem" as src.view.GridItems.FullAdderGridItem.FullAdderGridItem {
+    }
+
+    class "ALUSimpleGridItem" as src.view.GridItems.ALUSimpleGridItem.ALUSimpleGridItem {
+    }
+
+    class "ALUAdvancedGridItem" as src.view.GridItems.ALUAdvancedGridItem.ALUAdvancedGridItem {
+    }
+
+    class "Multiplexer2InpGridItem" as src.view.GridItems.Multiplexer2InpGridItem.Multiplexer2InpGridItem {
+    }
+
+    class "Multiplexer4InpGridItem" as src.view.GridItems.Multiplexer4InpGridItem.Multiplexer4InpGridItem {
+    }
+
+    class "Multiplexer8InpGridItem" as src.view.GridItems.Multiplexer8InpGridItem.Multiplexer8InpGridItem {
+    }
+
+    class "CustomComponentGridItem" as src.view.GridItems.CustomComponentGridItem.CustomComponentGridItem {
+      getImagePath() : str
+      getName() : str
+      showComponentTooltip()
+    }
+
+    class "DataMemoryGridItem" as src.view.GridItems.DataMemoryGridItem.DataMemoryGridItem {
+    }
   }
 }
 
 package "Control" {
-
   package "Infrastructure" {
-  class "EventBus" as src.infrastructure.eventBus.EventBus {
-    manual : bool
-    emit(event)
-    setAuto()
-    setManual()
-    subscribe(event, handler)
+    class "EventBus" as src.infrastructure.eventBus.EventBus {
+      manual : bool
+      emit(event, *payload)
+      setAuto()
+      setManual()
+      subscribe(event, handler)
+      unsubscribe(event, handler)
+    }
   }
-}
 
   class "AppController" as src.control.AppController.AppController {
-    app
-    window
+    app : QApplication
+    bus
+    logicController : LogicComponentController
+    levelController : LevelController
+    levelFileController : LevelFileController
+    window : QMainWindow
     run()
+    switchToScene(scene)
+    onLevelSelected(levelNumber)
   }
-  
+
   class "LogicComponentController" as src.control.LogicComponentController.LogicComponentController {
-    T : T
-    bus : NoneType
+    bus
     components : typing.List['LogicComponent']
+    dataMemory : DataMemory
     inputs : typing.List['Input']
-    playbackSpeed : float
-    playbackspeed : float
-    updateInTick : Dict
-    addConnection(origin, originKey, target, targetKey) -> bool
-    addLogicComponent(component)
-    eval()
-    eventDrivenEval()
-    getComponents()
-    getInputs()
-    khanFrontierEval()
-    onModelInputUpdate(model)
-    removeConnection(origin, originKey, target, targetKey)
+    instructionMemory : InstructionMemory
+    outputs : typing.List['LogicComponent']
+    registerBlock : RegisterBlock
+    tickLength : float
+    updateInTick : typing.Dict
+    addConnection(origin, originKey, target, targetKey) : bool
+    addCustomLogicComponent(componentData) : LogicComponent
+    addLogicComponent(component) : LogicComponent
+    clearComponents()
+    eval() : bool
     removeLogicComponent(component)
-    setEvalSpeed(speed)
-    updateComponents()
+    setTickLength(length)
+    updateComponents(**tickList)
     updateRegisters()
+  }
+
+  class "CustomComponentController" as src.control.CustomComponentController.CustomComponentController {
+    {static}createCustomComponent(data) : bool
+    {static}loadCustomComponents() : List
+  }
+
+  class "LevelController" as src.control.LevelController.LevelController {
+    currentLevel
+    eventBus
+    grid
+    levelData : dict
+    logicComponentController : LogicComponentController
+    outputPredictions : list
+    buildLevel()
+    checkSolution() : bool
+    usesOutputPredictions() : bool
+  }
+
+  class "LevelFileController" as src.control.LevelFileController.LevelFileController {
+    currentLevel
+    path : str
+    getAvailableLevels() : List[int]
+    loadLevel(levelNumber) : dict
+    loadMetaFile() : dict
+    updateCompletedLevels(levelId)
   }
 }
 
 package "Model - Core" {
   abstract class "LogicComponent" as src.model.LogicComponent.LogicComponent {
-    bus : NoneType
+    bus
     id : int
-    inputBitwidths : Dict
-    inputs : Dict
-    outputs : typing.List['LogicComponent', str]
+    inputBitwidths : typing.Dict
+    inputs : typing.Dict
+    label : str
+    outputs : typing.List[tuple]
     state : dict
-    addInput(input, key, internalKey)
+    addInput(input, key, internalKey) : bool
     addOutput(output, key)
-    {abstract}eval() -> bool
-    getBitwidth(key) -> int
-    getInputs() -> typing.List['LogicComponent']
-    getOutputs() -> typing.List[tuple]
-    {abstract}getSprite() -> None
-    getState()
+    {abstract}eval() : bool
+    getBitwidth(key) : int
+    getInputs() : typing.Dict
+    getOutputs() : typing.List[tuple]
+    getState() : dict
     removeInput(input, key, internalKey)
     removeOutput(output, key)
+    setLabel(label)
   }
-  
+
   class "Input" as src.model.Input.Input {
-    id : int
     inputs : dict
+    outputBitwidth : int
     outputs : typing.List['LogicComponent']
-    state : bool, dict
-    eval() -> bool
-    getState() -> dict
+    state : dict
+    eval() : bool
     setState(state)
     toggleState()
   }
-  
+
   class "Output" as src.model.Output.Output {
-    inputBitwidths : Dict
-    inputs : Dict
+    inputBitwidths : typing.Dict
+    inputs : typing.Dict
     state : dict
-    eval() -> bool
+    eval() : bool
+  }
+
+  class "CustomLogicComponent" as src.model.CustomLogicComponent.CustomLogicComponent {
+    childComponents : list
+    customComponentName : str
+    inputs : typing.Dict
+    state : dict
+    eval() : bool
+  }
+
+  class "CustomLogicComponentData" as src.model.CustomLogicComponentData.CustomLogicComponentData {
+    name : str
+    inputMap : Dict[str, int]
+    outputMap : Dict[str, int]
+    components : List[str]
+    connections : List
   }
 }
 
-package "Model - Basic Logic Gates" #lightgreen {
+package "Model - Basic Logic" #lightgreen {
   class "And" as src.model.And.And {
-    inputBitwidths : Dict
-    inputs : Dict
+    inputs : typing.Dict
     state : dict
-    eval() -> bool
+    eval() : bool
   }
-  
+
   class "Or" as src.model.Or.Or {
-    inputBitwidths : Dict
-    inputs : Dict
+    inputs : typing.Dict
     state : dict
-    eval() -> bool
+    eval() : bool
   }
-  
+
   class "Not" as src.model.Not.Not {
-    inputBitwidths : Dict
-    inputs : Dict
+    inputs : typing.Dict
     state : dict
-    eval() -> bool
+    eval() : bool
   }
-  
+
   class "Nand" as src.model.Nand.Nand {
-    inputBitwidths : Dict
-    inputs : Dict
+    inputs : typing.Dict
     state : dict
-    eval() -> bool
+    eval() : bool
   }
-  
+
   class "Nor" as src.model.Nor.Nor {
-    inputBitwidths : Dict
-    inputs : Dict
+    inputs : typing.Dict
     state : dict
-    eval() -> bool
+    eval() : bool
   }
-  
+
   class "Xor" as src.model.Xor.Xor {
-    inputBitwidths : Dict
-    inputs : Dict
+    inputs : typing.Dict
     state : dict
-    eval() -> bool
+    eval() : bool
   }
-  
+
   class "Xnor" as src.model.Xnor.Xnor {
-    inputBitwidths : Dict
-    inputs : Dict
+    inputs : typing.Dict
     state : dict
-    eval() -> bool
+    eval() : bool
   }
 }
 
 package "Model - Advanced Logic" #lightyellow {
   class "ALUAdvanced" as src.model.ALUAdvanced.ALUAdvanced {
-    inputBitwidths : Dict
-    inputs : Dict
+    inputs : typing.Dict
     state : dict
-    eval() -> bool
+    eval() : bool
   }
-  
+
   class "ALUSimple" as src.model.ALUSimple.ALUSimple {
-    inputBitwidths : Dict
-    inputs : Dict
+    inputs : typing.Dict
     state : dict
-    eval() -> bool
+    eval() : bool
   }
-  
+
+  class "Adder32bit" as src.model.Adder32bit.Adder32bit {
+    inputs : typing.Dict
+    state : dict
+    eval() : bool
+  }
+
   class "FullAdder" as src.model.FullAdder.FullAdder {
-    inputBitwidths : dict
     inputs : dict
     state : dict
-    eval() -> bool
+    eval() : bool
   }
-  
+
   class "HalfAdder" as src.model.HalfAdder.HalfAdder {
-    inputBitwidths : Dict
     inputs : dict
     state : dict
-    eval() -> bool
+    eval() : bool
   }
-  
+
   class "DecoderThreeBit" as src.model.DecoderThreeBit.DecoderThreeBit {
-    inputBitwidths : Dict
-    inputs : Dict
+    inputs : typing.Dict
     state : dict
-    eval() -> bool
+    eval() : bool
   }
-  
+
   class "DLatch" as src.model.DLatch.DLatch {
-    inputBitwidths : Dict
-    inputs : Dict
+    inputs : typing.Dict
     state : dict
-    eval() -> bool
+    eval() : bool
   }
-  
+}
+
+package "Model - Memory & Control" #lightgoldenrodyellow {
   class "Register" as src.model.Register.Register {
-    inputBitwidths : Dict
-    inputs : Dict
+    inputs : typing.Dict
     nextState : tuple
     state : dict
-    eval() -> bool
-    updateState() -> bool
+    eval() : bool
+    updateState() : bool
+  }
+
+  class "RegisterBlock" as src.model.RegisterBlock.RegisterBlock {
+    inputs : typing.Dict
+    registers : typing.List[int]
+    state : dict
+    eval() : bool
+    updateRegisterValues()
+  }
+
+  class "ProgramCounter" as src.model.ProgramCounter.ProgramCounter {
+    bus
+    inputs : typing.Dict
+    maxValue : int
+    state : dict
+    eval() : bool
+    onInstructionCount(count)
+  }
+
+  class "DataMemory" as src.model.DataMemory.DataMemory {
+    dataList : typing.List[int]
+    inputs : typing.Dict
+    state : dict
+    eval() : bool
+    loadData(data)
+  }
+
+  class "InstructionMemory" as src.model.InstructionMemory.InstructionMemory {
+    inputs : typing.Dict
+    instructionList : typing.List[int]
+    state : dict
+    eval() : bool
+    loadInstructions(instructions)
+  }
+
+  class "ControlUnit" as src.model.ControlUnit.ControlUnit {
+    inputs : typing.Dict
+    state : dict
+    eval() : bool
+  }
+
+  class "ALUControl" as src.model.ALUControl.ALUControl {
+    inputs : typing.Dict
+    state : dict
+    eval() : bool
   }
 }
 
 package "Model - Data Processing" #lightcoral {
+  class "Collector1to2" as src.model.Collector1to2.Collector1to2 {
+    inputs : typing.Dict
+    state : dict
+    eval() : bool
+  }
+
+  class "Collector1to3" as src.model.Collector1to3.Collector1to3 {
+    inputs : typing.Dict
+    state : dict
+    eval() : bool
+  }
+
+  class "Collector1to5" as src.model.Collector1to5.Collector1to5 {
+    inputs : typing.Dict
+    state : dict
+    eval() : bool
+  }
+
+  class "Collector1to6" as src.model.Collector1to6.Collector1to6 {
+    inputs : typing.Dict
+    state : dict
+    eval() : bool
+  }
+
   class "Collector1to8" as src.model.Collector1to8.Collector1to8 {
-    inputBitwidths : Dict
-    inputs : Dict
+    inputs : typing.Dict
     state : dict
-    eval()
+    eval() : bool
   }
-  
+
+  class "Collector8to16" as src.model.Collector8to16.Collector8to16 {
+    inputs : typing.Dict
+    state : dict
+    eval() : bool
+  }
+
   class "Collector8to32" as src.model.Collector8to32.Collector8to32 {
-    inputBitwidths : Dict
-    inputs : Dict
+    inputs : typing.Dict
     state : dict
-    eval()
+    eval() : bool
   }
-  
+
   class "Splitter32to8" as src.model.Splitter32to8.Splitter32to8 {
-    inputBitwidths : Dict
-    inputs : Dict
+    inputs : typing.Dict
     state : dict
     eval()
   }
-  
+
   class "Splitter8to1" as src.model.Splitter8to1.Splitter8to1 {
-    inputBitwidths : Dict
-    inputs : Dict
+    inputs : typing.Dict
     state : dict
     eval()
   }
-  
+
   class "ShiftLeft2" as src.model.ShiftLeft2.ShiftLeft2 {
-    inputBitwidths : Dict
-    inputs : Dict
+    inputs : typing.Dict
     state : dict
     addInput(input, key, internalKey)
     addOutput(output, key)
-    eval() -> bool
+    eval() : bool
     removeInput(input, key, internalKey)
     removeOutput(output, key)
   }
-  
+
   class "SignExtend" as src.model.SignExtend.SignExtend {
-    inputBitwidths : Dict
-    inputs : Dict
+    inputs : typing.Dict
     state : dict
-    eval() -> bool
+    eval() : bool
   }
-  
-  class "Multiplexer2Inp" as src.model.Multiplexer.Multiplexer2Inp {
-    inputBitwidths : Dict
-    inputs : Dict
-    state : Dict, dict
-    addInput(input, key, internalKey)
-    addOutput(output, key) -> bool
-    eval() -> bool
-    getOutputBitwidth() -> int
-    removeInput(input, key, internalKey)
-    removeOutput(output, key)
+
+  class "Multiplexer2Inp" as src.model.Multiplexer2Input.Multiplexer2Inp {
+    inputs : typing.Dict
+    state : typing.Dict
+    addInput(input, key, internalKey) : bool
+    addOutput(output, key) : bool
+    eval() : bool
+    getOutputBitwidth() : int
+    removeInput(input, key, internalKey) : bool
+    removeOutput(output, key) : bool
   }
-  
-  class "Multiplexer4Inp" as src.model.Multiplexer.Multiplexer4Inp {
-    inputBitwidths : Dict
-    inputs : Dict
-    state : Dict, dict
-    addInput(input, key, internalKey)
-    addOutput(output, key) -> bool
-    eval() -> bool
-    getOutputBitwidth() -> int
-    removeInput(input, key, internalKey)
-    removeOutput(output, key)
+
+  class "Multiplexer4Inp" as src.model.Multiplexer4Input.Multiplexer4Inp {
+    inputs : typing.Dict
+    state : typing.Dict
+    addInput(input, key, internalKey) : bool
+    addOutput(output, key) : bool
+    eval() : bool
+    getOutputBitwidth() : int
+    removeInput(input, key, internalKey) : bool
+    removeOutput(output, key) : bool
   }
-  
-  class "Multiplexer8Inp" as src.model.Multiplexer.Multiplexer8Inp {
-    inputBitwidths : Dict
-    inputs : Dict
-    state : Dict, dict
-    addInput(input, key, internalKey)
-    addOutput(output, key) -> bool
-    eval() -> bool
-    getOutputBitwidth() -> int
-    removeInput(input, key, internalKey)
-    removeOutput(output, key)
+
+  class "Multiplexer8Inp" as src.model.Multiplexer8Input.Multiplexer8Inp {
+    inputs : typing.Dict
+    state : typing.Dict
+    addInput(input, key, internalKey) : bool
+    addOutput(output, key) : bool
+    eval() : bool
+    getOutputBitwidth() : int
+    removeInput(input, key, internalKey) : bool
+    removeOutput(output, key) : bool
   }
 }
 
-' Inheritance Relationships
-src.model.ALUAdvanced.ALUAdvanced --|> src.model.LogicComponent.LogicComponent
-src.model.ALUSimple.ALUSimple --|> src.model.LogicComponent.LogicComponent
+package "Algorithms" {
+  class "Algorithms" as src.Algorithms.Algorithms {
+    {static}eventDrivenEval(inputs, components, updateFunction, waitFunction, **kw) : bool
+    {static}khanFrontierEval(inputs, components, updateFunction, waitFunction) : bool
+  }
+}
+
+' Inheritance relationships
+src.view.CustomComponentPaletteItem.CustomComponentPaletteItem --|> src.view.PaletteItem.PaletteItem
+src.view.GridItems.InputGridItem.InputGridItem --|> src.view.GridItems.GridItem.GridItem
+src.view.GridItems.HalfAdderGridItem.HalfAdderGridItem --|> src.view.GridItems.GridItem.GridItem
+src.view.GridItems.FullAdderGridItem.FullAdderGridItem --|> src.view.GridItems.GridItem.GridItem
+src.view.GridItems.ALUSimpleGridItem.ALUSimpleGridItem --|> src.view.GridItems.GridItem.GridItem
+src.view.GridItems.ALUAdvancedGridItem.ALUAdvancedGridItem --|> src.view.GridItems.GridItem.GridItem
+src.view.GridItems.Multiplexer2InpGridItem.Multiplexer2InpGridItem --|> src.view.GridItems.GridItem.GridItem
+src.view.GridItems.Multiplexer4InpGridItem.Multiplexer4InpGridItem --|> src.view.GridItems.GridItem.GridItem
+src.view.GridItems.Multiplexer8InpGridItem.Multiplexer8InpGridItem --|> src.view.GridItems.GridItem.GridItem
+src.view.GridItems.CustomComponentGridItem.CustomComponentGridItem --|> src.view.GridItems.GridItem.GridItem
+src.view.GridItems.DataMemoryGridItem.DataMemoryGridItem --|> src.view.GridItems.GridItem.GridItem
+
+src.model.CustomLogicComponent.CustomLogicComponent --|> src.model.LogicComponent.LogicComponent
+src.model.Input.Input --|> src.model.LogicComponent.LogicComponent
+src.model.Output.Output --|> src.model.LogicComponent.LogicComponent
 src.model.And.And --|> src.model.LogicComponent.LogicComponent
 src.model.Or.Or --|> src.model.LogicComponent.LogicComponent
 src.model.Not.Not --|> src.model.LogicComponent.LogicComponent
@@ -357,29 +597,45 @@ src.model.Nand.Nand --|> src.model.LogicComponent.LogicComponent
 src.model.Nor.Nor --|> src.model.LogicComponent.LogicComponent
 src.model.Xor.Xor --|> src.model.LogicComponent.LogicComponent
 src.model.Xnor.Xnor --|> src.model.LogicComponent.LogicComponent
+src.model.ALUAdvanced.ALUAdvanced --|> src.model.LogicComponent.LogicComponent
+src.model.ALUSimple.ALUSimple --|> src.model.LogicComponent.LogicComponent
+src.model.Adder32bit.Adder32bit --|> src.model.LogicComponent.LogicComponent
+src.model.FullAdder.FullAdder --|> src.model.LogicComponent.LogicComponent
+src.model.HalfAdder.HalfAdder --|> src.model.LogicComponent.LogicComponent
+src.model.DecoderThreeBit.DecoderThreeBit --|> src.model.LogicComponent.LogicComponent
+src.model.DLatch.DLatch --|> src.model.LogicComponent.LogicComponent
+src.model.Register.Register --|> src.model.LogicComponent.LogicComponent
+src.model.RegisterBlock.RegisterBlock --|> src.model.LogicComponent.LogicComponent
+src.model.ProgramCounter.ProgramCounter --|> src.model.LogicComponent.LogicComponent
+src.model.DataMemory.DataMemory --|> src.model.LogicComponent.LogicComponent
+src.model.InstructionMemory.InstructionMemory --|> src.model.LogicComponent.LogicComponent
+src.model.ControlUnit.ControlUnit --|> src.model.LogicComponent.LogicComponent
+src.model.ALUControl.ALUControl --|> src.model.LogicComponent.LogicComponent
+src.model.Collector1to2.Collector1to2 --|> src.model.LogicComponent.LogicComponent
+src.model.Collector1to3.Collector1to3 --|> src.model.LogicComponent.LogicComponent
+src.model.Collector1to5.Collector1to5 --|> src.model.LogicComponent.LogicComponent
+src.model.Collector1to6.Collector1to6 --|> src.model.LogicComponent.LogicComponent
 src.model.Collector1to8.Collector1to8 --|> src.model.LogicComponent.LogicComponent
+src.model.Collector8to16.Collector8to16 --|> src.model.LogicComponent.LogicComponent
 src.model.Collector8to32.Collector8to32 --|> src.model.LogicComponent.LogicComponent
 src.model.Splitter32to8.Splitter32to8 --|> src.model.LogicComponent.LogicComponent
 src.model.Splitter8to1.Splitter8to1 --|> src.model.LogicComponent.LogicComponent
 src.model.ShiftLeft2.ShiftLeft2 --|> src.model.LogicComponent.LogicComponent
 src.model.SignExtend.SignExtend --|> src.model.LogicComponent.LogicComponent
-src.model.Multiplexer.Multiplexer2Inp --|> src.model.LogicComponent.LogicComponent
-src.model.Multiplexer.Multiplexer4Inp --|> src.model.LogicComponent.LogicComponent
-src.model.Multiplexer.Multiplexer8Inp --|> src.model.LogicComponent.LogicComponent
-src.model.DLatch.DLatch --|> src.model.LogicComponent.LogicComponent
-src.model.DecoderThreeBit.DecoderThreeBit --|> src.model.LogicComponent.LogicComponent
-src.model.FullAdder.FullAdder --|> src.model.LogicComponent.LogicComponent
-src.model.HalfAdder.HalfAdder --|> src.model.LogicComponent.LogicComponent
-src.model.Register.Register --|> src.model.LogicComponent.LogicComponent
-src.model.Input.Input --|> src.model.LogicComponent.LogicComponent
-src.model.Output.Output --|> src.model.LogicComponent.LogicComponent
+src.model.Multiplexer2Input.Multiplexer2Inp --|> src.model.LogicComponent.LogicComponent
+src.model.Multiplexer4Input.Multiplexer4Inp --|> src.model.LogicComponent.LogicComponent
+src.model.Multiplexer8Input.Multiplexer8Inp --|> src.model.LogicComponent.LogicComponent
 
-' Composition/Aggregation Relationships
+' Composition / aggregation
 src.infrastructure.eventBus.EventBus --* src.control.LogicComponentController.LogicComponentController : bus
 src.infrastructure.eventBus.EventBus --* src.model.LogicComponent.LogicComponent : bus
-src.view.SandboxModeWindow.SandboxModeWindow --* src.control.AppController.AppController : window
+src.control.AppController.AppController --* src.control.LogicComponentController.LogicComponentController : logicController
+src.control.AppController.AppController --* src.control.LevelController.LevelController : levelController
+src.control.AppController.AppController --* src.control.LevelFileController.LevelFileController : levelFileController
+src.control.LevelController.LevelController --* src.control.LogicComponentController.LogicComponentController : logicComponentController
+src.view.SandboxModeScene.SandboxModeScene --* src.view.GridWidget.GridWidget : grid
 
-' Layout hints for better organization
+' Layout hints
 src.control.AppController.AppController -down-> src.control.LogicComponentController.LogicComponentController
 src.control.LogicComponentController.LogicComponentController -down-> src.model.LogicComponent.LogicComponent
 src.model.LogicComponent.LogicComponent -down-> src.model.Input.Input

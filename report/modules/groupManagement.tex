@@ -1,8 +1,27 @@
-% - management style
-%     - how we splitted the Group
-% - Problems we faced
-% - what we would do differently
-% - Contributions
+\section{Group Management and Methodology}
+\label{sec:group_management}
 
+Managing a group of six students presents different challenges compared to the smaller teams typically found in this course. To prevent the project from becoming chaotic, we needed a clear way to organize our work and communication. However, rather than strictly following a complex management framework, we chose a pragmatic approach that adapted Agile principles to our specific needs.
 
-\section{Group management}
+\subsection{Team Structure and Responsibilities}
+We decided against assigning formal leadership roles such as a Project Manager. Instead, we operated with a flat hierarchy where every member had equal say in decision-making. To work efficiently, we naturally divided into two main areas of focus based on the application's architecture:
+
+\begin{itemize}
+    \item \textbf{Backend:} Luis, Tækkyon, and Martin focused on the core logic, including the gate implementation and processor simulation.
+    \item \textbf{Frontend:} Luca, Lorenz, and Harshal focused on the Graphical User Interface (GUI) and user interactions.
+\end{itemize}
+
+This separation was not strict; members often helped out in the other domain when bottlenecks appeared. This flexibility allowed us to utilize the full capacity of the team without being limited by rigid role definitions.
+
+\subsection{Workflow and Communication}
+Our workflow was organized in weekly cycles. We held one synchronous meeting per week which served as our main synchronization point. During these sessions, we discussed the tasks completed in the previous week, identified any technical problems, and brought up new ideas. Once the status was clear, we defined the tasks for the upcoming week and distributed them among the team.
+
+We used GitHub as our sole project management tool. By utilizing GitHub Issues and Projects, we kept our planning close to the code, which reduced the complexity of using external tools.
+
+\subsection{Quality Control and Reflection}
+To ensure the stability of our code, we established a "Quality Gate" system using GitHub Actions. Theoretically, our protocol required that every change be submitted via a Pull Request and reviewed by another member before being merged into the \textit{main} branch.
+
+In the early and middle stages of the project, this discipline was maintained and helped us catch several errors. However, as the final deadline approached and the pressure to deliver features increased, we became less strict with this rule. Towards the end, code was occasionally merged with little to no review to save time. In hindsight, this was a risky deviation from our workflow. While it allowed us to move faster in the short term, it potentially introduced instability that could have been avoided with better time management.
+
+\subsection{Conflict Resolution}
+Despite the large group size, we encountered very few interpersonal conflicts. Disagreements were almost exclusively technical. We resolved these by trusting the expertise of the person most involved in that specific part of the code. We believe the project ran smoothly largely because four of the members (Lorenz, Luis, Luca, and Martin) had previous experience working on software projects of this scale. This experience helped the group anticipate coordination issues before they became major problems.

@@ -1,4 +1,37 @@
-% - logicgates
-% - boolean algebra
-
 \section{Theoretical Background}
+\label{sec:theoretical_background}
+
+This project aims to gamify the understanding of computer architecture. To comprehend the educational scope of the application, it is necessary to understand the underlying principles of digital system design, ranging from elementary logic gates to the organization of a microprocessor. This section outlines the fundamental concepts of digital logic, sequential circuits, and the MIPS architecture upon which the application is based.
+
+\subsection{Digital Logic and Combinational Circuits}
+Digital computers operate on binary data, representing information as sequences of zeros and ones (low and high voltage levels). The fundamental building blocks of these systems are \textit{logic gates}, which implement Boolean algebraic functions. The most basic gates include AND, OR, and NOT. By combining these primitives, functionally complete sets can be formed, allowing for the construction of any complex logical operation.
+
+Circuits constructed from these gates without any memory elements are known as \textit{Combinational Circuits}. In these circuits, the output is a pure function of the present inputs. The application simulates several key combinational components used in processor design:
+\begin{itemize}
+    \item \textbf{Multiplexers (MUX):} Components that select one input signal from multiple sources based on a control signal.
+    \item \textbf{Decoders:} Circuits that convert an $n$-bit input code into one of $2^n$ output lines, essential for interpreting operation codes.
+    \item \textbf{Arithmetic Logic Unit (ALU):} The computational core of the processor, capable of performing arithmetic (ADD, SUB) and logical (AND, OR) operations.
+\end{itemize}
+
+\subsection{Sequential Circuits and State}
+While combinational circuits handle data manipulation, computation requires the storage of intermediate results. \textit{Sequential Circuits} differ from combinational logic in that their output depends not only on the current inputs but also on the past history of inputs, effectively possessing a "state."
+
+The basic storage element is the \textit{Latch} or \textit{Flip-Flop}, typically constructed from cross-coupled gates (e.g., NAND or NOR). These elements can store a single bit of information. In a synchronous processor design, these state elements are updated on the edge of a global clock signal. By grouping multiple flip-flops, we create \textbf{Registers}, which form the high-speed memory (Register File) of the processor.
+
+\subsection{MIPS Architecture}
+The final educational goal of the application is the construction of a MIPS (Microprocessor without Interlocked Pipeline Stages) processor. MIPS is a Reduced Instruction Set Computer (RISC) architecture, characterized by a small set of simple, regular instructions. The design focuses on a \textit{Single-Cycle Datapath}, where every instruction takes exactly one clock cycle to complete.
+
+The architecture distinguishes between the \textbf{Datapath} and the \textbf{Control Unit}:
+\begin{itemize}
+    \item \textbf{The Datapath} consists of the functional units (ALU, Registers, Memory) and the interconnections (buses) that process data. It executes the "Fetch-Decode-Execute" cycle: retrieving an instruction from Instruction Memory, decoding its fields to read registers, performing the operation in the ALU, and optionally accessing Data Memory or writing back to the Register File.
+    \item \textbf{The Control Unit} acts as the brain of the processor. Based on the 6-bit opcode (and occasionally the "funct" field) of the instruction, it generates the necessary control signals (e.g., \textit{RegDst}, \textit{ALUSrc}, \textit{MemWrite}) to steer data through the multiplexers and activate the correct units in the datapath.
+\end{itemize}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.9\linewidth]{assets/mips-cpu.pdf}
+    \caption{Single-cycle MIPS datapath adapted from \cite{referenceBookEnglish}.\\\textbf{Note.} The example processor in level 21 is for demonstration purposes and does not implement jump functionality.}
+    \label{fig:mips_single_cycle}
+\end{figure}
+
+In a single-cycle implementation, the clock cycle must be long enough to accommodate the slowest instruction (typically a Load Word instruction), rendering it less efficient than pipelined designs but significantly easier to model and understand for educational purposes.

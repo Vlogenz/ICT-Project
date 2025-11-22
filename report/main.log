@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2025.7.2)  22 NOV 2025 17:46
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2025.7.2)  22 NOV 2025 23:20
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -1777,7 +1777,7 @@ LaTeX Font Info:    Font shape `TS1/SourceSansPro-TLF/m/n' aliased to
 LaTeX Font Info:    Font shape `TS1/SourceSansPro-TLF/regular/n' will be
 (Font)              scaled to size 10.0pt on input line 11.
  [5]
-<assets/mips-cpu.pdf, id=125, 803.56712pt x 568.83212pt>
+<assets/mips-cpu.pdf, id=127, 803.56712pt x 568.83212pt>
 File: assets/mips-cpu.pdf Graphic file (type pdf)
 <use assets/mips-cpu.pdf>
 Package pdftex.def Info: assets/mips-cpu.pdf  used on input line 32.
@@ -1788,39 +1788,59 @@ Class scrartcl Info: Workaround for not recommended usage of \\ or
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
 l.8 
-     <./assets/mips-cpu.pdf>]) (./modules/programStructure.tex) (./modules/backend.tex
-LaTeX Font Info:    Trying to load font information for T1+SourceCodePro-TLF on input line 11.
+     <./assets/mips-cpu.pdf>]) (./modules/programStructure.tex
+LaTeX Font Info:    Trying to load font information for T1+SourceCodePro-TLF on input line 5.
  (/usr/share/texlive/texmf-dist/tex/latex/sourcecodepro/T1SourceCodePro-TLF.fd
 File: T1SourceCodePro-TLF.fd 2018/02/18 (autoinst) Font definitions for T1/SourceCodePro-TLF.
 )
 LaTeX Font Info:    Font shape `T1/SourceCodePro-TLF/m/n' will be
-(Font)              scaled to size 10.0pt on input line 11.
+(Font)              scaled to size 10.0pt on input line 5.
+ [7]
+LaTeX Font Info:    Font shape `T1/SourceCodePro-TLF/b/n' will be
+(Font)              scaled to size 10.0pt on input line 8.
 
+Overfull \hbox (3.09865pt too wide) in paragraph at lines 11--12
+[]\T1/SourceSansPro-TLF/bold/n/10 Infrastructure (\T1/SourceCodePro-TLF/b/n/10 src.infrastructure\T1/SourceSansPro-TLF/bold/n/10 ): \T1/SourceSansPro-TLF/regular/n/10 This pack-age con-tains shared util-i-ties, most no-tably the \T1/SourceCodePro-TLF/m/n/10 Event-
+ []
+
+
+
+pdfTeX warning: pdflatex (file ./assets/package_Diagramm.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
+<./assets/package_Diagramm.pdf, id=180, 612.08263pt x 594.38388pt>
+File: ./assets/package_Diagramm.pdf Graphic file (type pdf)
+<use ./assets/package_Diagramm.pdf>
+Package pdftex.def Info: ./assets/package_Diagramm.pdf  used on input line 18.
+(pdftex.def)             Requested size: 375.57782pt x 364.72311pt.
+[8pdfTeX warning (ext4): destination with the same identifier (name{figure.2}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.26 
+      <./assets/package_Diagramm.pdf>]) (./modules/backend.tex
 Overfull \hbox (4.68933pt too wide) in paragraph at lines 9--13
 \T1/SourceSansPro-TLF/regular/n/10 fron-tier eval-u-a-tion and an event-driven prop-a-ga-tion. Both al-go-rithms are im-ple-mented in `\T1/SourceCodePro-TLF/m/n/10 src/Algorithms.py\T1/SourceSansPro-TLF/regular/n/10 `
  []
 
-[7]
+
 
 pdfTeX warning: pdflatex (file ./assets/ActivityKhanFrontier.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
-<./assets/ActivityKhanFrontier.pdf, id=176, 614.295pt x 794.97pt>
+<./assets/ActivityKhanFrontier.pdf, id=189, 614.295pt x 794.97pt>
 File: ./assets/ActivityKhanFrontier.pdf Graphic file (type pdf)
 <use ./assets/ActivityKhanFrontier.pdf>
 Package pdftex.def Info: ./assets/ActivityKhanFrontier.pdf  used on input line 37.
 (pdftex.def)             Requested size: 469.47049pt x 607.5557pt.
-[8] [9pdfTeX warning (ext4): destination with the same identifier (name{figure.2}) has been already used, duplicate ignored
+[9] [10pdfTeX warning (ext4): destination with the same identifier (name{figure.3}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
 l.47 \begin{itemize}
                      <./assets/ActivityKhanFrontier.pdf>]
 
 pdfTeX warning: pdflatex (file ./assets/ActivityEventdriven.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
-<./assets/ActivityEventdriven.pdf, id=201, 614.295pt x 794.97pt>
+<./assets/ActivityEventdriven.pdf, id=212, 614.295pt x 794.97pt>
 File: ./assets/ActivityEventdriven.pdf Graphic file (type pdf)
 <use ./assets/ActivityEventdriven.pdf>
 Package pdftex.def Info: ./assets/ActivityEventdriven.pdf  used on input line 58.
 (pdftex.def)             Requested size: 469.47049pt x 607.5557pt.
-[10] [11pdfTeX warning (ext4): destination with the same identifier (name{figure.3}) has been already used, duplicate ignored
+[11] [12pdfTeX warning (ext4): destination with the same identifier (name{figure.4}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
 l.66 	\item T
@@ -1829,12 +1849,12 @@ Underfull \hbox (badness 10000) in paragraph at lines 80--84
 
  []
 
-[12]) (./modules/frondend.tex) (./modules/testing.tex) (./modules/discussion.tex) (./modules/conclusion.tex) [13]
+[13]) (./modules/frondend.tex) (./modules/testing.tex) (./modules/discussion.tex) (./modules/conclusion.tex) [14]
 LaTeX Font Info:    Font shape `T1/SourceSansPro-TLF/m/sc' aliased to
 (Font)              `T1/SourceSansPro-TLF/regular/sc' on input line 42.
 LaTeX Font Info:    Font shape `T1/SourceSansPro-TLF/regular/sc' will be
 (Font)              scaled to size 10.0pt on input line 42.
- [14] (./main.aux)
+ [15] (./main.aux)
 
 LaTeX Font Warning: Size substitutions with differences
 (Font)              up to 0.5pt have occurred.
@@ -1849,18 +1869,18 @@ Package logreq Info: Writing requests to 'main.run.xml'.
 
  ) 
 Here is how much of TeX's memory you used:
- 48323 strings out of 478287
- 985239 string characters out of 5849290
- 1852866 words of memory out of 5000000
- 65645 multiletter control sequences out of 15000+600000
- 582411 words of font info for 99 fonts, out of 8000000 for 9000
+ 48338 strings out of 478287
+ 985627 string characters out of 5849290
+ 1852966 words of memory out of 5000000
+ 65654 multiletter control sequences out of 15000+600000
+ 583025 words of font info for 101 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  108i,19n,106p,10668b,2235s stack positions out of 5000i,500n,10000p,200000b,80000s
-{/usr/share/texlive/texmf-dist/fonts/enc/dvips/sourcesanspro/a_4jropk.enc}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/sourcecodepro/a_lutrty.enc}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/sourcesanspro/a_5ponh6.enc}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/sourcesanspro/a_emkxm5.enc}</usr/share/texlive/texmf-dist/fonts/type1/public/newtx/NewTXMI.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/newtx/NewTXMI7.pfb></usr/share/texlive/texmf-dist/fonts/type1/adobe/sourcecodepro/SourceCodePro-Regular.pfb></usr/share/texlive/texmf-dist/fonts/type1/adobe/sourcesanspro/SourceSansPro-Bold.pfb></usr/share/texlive/texmf-dist/fonts/type1/adobe/sourcesanspro/SourceSansPro-It.pfb></usr/share/texlive/texmf-dist/fonts/type1/adobe/sourcesanspro/SourceSansPro-Regular.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmss10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmss12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmssbx10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt12.pfb>
-Output written on main.pdf (14 pages, 528177 bytes).
+{/usr/share/texlive/texmf-dist/fonts/enc/dvips/sourcesanspro/a_4jropk.enc}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/sourcecodepro/a_lutrty.enc}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/sourcesanspro/a_5ponh6.enc}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/sourcesanspro/a_emkxm5.enc}</usr/share/texlive/texmf-dist/fonts/type1/public/newtx/NewTXMI.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/newtx/NewTXMI7.pfb></usr/share/texlive/texmf-dist/fonts/type1/adobe/sourcecodepro/SourceCodePro-Bold.pfb></usr/share/texlive/texmf-dist/fonts/type1/adobe/sourcecodepro/SourceCodePro-Regular.pfb></usr/share/texlive/texmf-dist/fonts/type1/adobe/sourcesanspro/SourceSansPro-Bold.pfb></usr/share/texlive/texmf-dist/fonts/type1/adobe/sourcesanspro/SourceSansPro-It.pfb></usr/share/texlive/texmf-dist/fonts/type1/adobe/sourcesanspro/SourceSansPro-Regular.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmss10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmss12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmssbx10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt12.pfb>
+Output written on main.pdf (15 pages, 658734 bytes).
 PDF statistics:
- 373 PDF objects out of 1000 (max. 8388607)
- 292 compressed objects within 3 object streams
- 55 named destinations out of 1000 (max. 500000)
- 369 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 392 PDF objects out of 1000 (max. 8388607)
+ 305 compressed objects within 4 object streams
+ 58 named destinations out of 1000 (max. 500000)
+ 382 words of extra memory for PDF output out of 10000 (max. 10000000)
 

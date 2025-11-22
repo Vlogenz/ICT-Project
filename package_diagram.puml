@@ -1,0 +1,82 @@
+@startuml package_ICT_Project
+skinparam linetype ortho
+skinparam shadowing false
+skinparam packageStyle rectangle
+skinparam defaultFontName "Courier New"
+skinparam defaultFontSize 12
+skinparam nodesep 90
+skinparam ranksep 90
+skinparam arrowFontSize 12
+skinparam arrowThickness 2
+skinparam ArrowMessageAlign left
+left to right direction
+scale 1.3
+
+package "src" {
+  package "control" as control
+  package "view" as view {
+    package "GridItems" as view_griditems
+    package "util" as view_util
+  }
+  package "model" as model
+  package "infrastructure" as infrastructure
+  package "constants" as constants
+  package "Algorithms" as algorithms
+  package "main" as app_main
+}
+
+app_main ..> control
+control --> view
+control --> model
+control --> infrastructure
+control .> constants
+control .> algorithms
+
+view --> control
+view --> model
+view .> infrastructure
+view .> constants
+view_griditems --> model
+view_griditems .> constants
+
+model --> infrastructure
+model .> constants
+model .> algorithms
+
+algorithms --> model
+algorithms .> infrastructure
+algorithms .> constants
+
+constants --> model
+
+app_main -[hidden]-> control
+control -[hidden]-> model
+model -[hidden]-> infrastructure
+infrastructure -[hidden]-> constants
+constants -[hidden]-> algorithms
+control -[hidden]down-> view
+view -[hidden]-> view_griditems
+
+legend right
+|= Dependency |= Meaning |
+| app_main ..> control | application entry starts controllers |
+| control --> view | controllers swap active scenes |
+| control --> model | orchestrates simulation logic |
+| control --> infrastructure | accesses event bus |
+| control .> constants | consumes shared configuration |
+| control .> algorithms | triggers algorithm helpers |
+| view --> control | UI raises controller actions |
+| view --> model | renders logic components |
+| view .> infrastructure | publishes events |
+| view .> constants | uses shared constants |
+| view_griditems --> model | grid widgets wrap model types |
+| view_griditems .> constants | needs layout constants |
+| model --> infrastructure | emits events |
+| model .> constants | reads component map |
+| model .> algorithms | delegates complex evaluation |
+| algorithms --> model | evaluates and updates model |
+| algorithms .> infrastructure | signals via event bus |
+| algorithms .> constants | uses thresholds/constants |
+| constants --> model | export constant definitions |
+endlegend
+@enduml

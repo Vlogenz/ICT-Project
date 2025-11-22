@@ -2,7 +2,8 @@ import json
 from symtable import Class
 
 from PySide6 import QtWidgets, QtGui, QtCore
-from src.constants import MIME_TYPE, CELL_SIZE
+from src.constants import MIME_TYPE, CELL_SIZE, PR_TEXT_COLOR
+from src.view.util.ImageLoader import ImageLoader
 
 
 class PaletteItem(QtWidgets.QFrame):
@@ -22,22 +23,17 @@ class PaletteItem(QtWidgets.QFrame):
         self.imgLabel = QtWidgets.QLabel()
         self.imgLabel.setScaledContents(True)
         layout.addWidget(self.imgLabel)
-        imagePath = self.getImagePath()
-        pixmap = QtGui.QPixmap(imagePath)
+        pixmap = self.getImage()
         if not pixmap.isNull():
             self.imgLabel.setPixmap(pixmap)
         else:
             self.imgLabel.setText(self.componentName)
-            self.imgLabel.setStyleSheet("color: black;")
 
         self.imgLabel.setAlignment(QtCore.Qt.AlignCenter)
 
-        # Apply stylesheet
-        self.setStyleSheet(
-            f"border: 1px solid lightgray; background-color: lightgray;")
-
-    def getImagePath(self) -> str:
-        return f"assets/gates/{self.componentName}.svg"
+    def getImage(self) -> QtGui.QPixmap:
+        imagePath = f"assets/gates/{self.componentName}.svg"
+        return ImageLoader.svg_to_pixmap(imagePath, QtGui.QColor(*PR_TEXT_COLOR))
 
     def getPayload(self):
         return {

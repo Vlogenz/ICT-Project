@@ -1,17 +1,15 @@
 from src.constants import PALETTE_COLS, CELL_SIZE
 from src.control.LevelController import LevelController
 from src.control.LevelFileController import LevelFileController
-from src.control.LogicComponentController import LogicComponentController
 from src.view.Hint import Hint
 from src.view.LogicComponentPalette import LogicComponentPalette
 from src.view.OutputPrediction import OutputPrediction
 
-from src.view.PaletteItem import PaletteItem
 from src.view.GridWidget import GridWidget
 from src.view.DeleteArea import DeleteArea
 from src.view.SimulationControls import SimulationControls
 
-from PySide6 import QtGui, QtWidgets
+from PySide6 import QtGui, QtWidgets, QtCore
 
 
 class LevelScene(QtWidgets.QWidget):
@@ -72,6 +70,7 @@ class LevelScene(QtWidgets.QWidget):
         # Add a label for level description
         levelInfoLabel = QtWidgets.QLabel()
         levelInfoLabel.setFixedWidth(PALETTE_COLS * CELL_SIZE + 20)
+        levelInfoLabel.setStyleSheet("padding-left: 10px; padding-right: 10px")
         levelInfoLabel.setWordWrap(True)
         try:
             levelName = self.levelData["name"]
@@ -89,18 +88,22 @@ class LevelScene(QtWidgets.QWidget):
             print(f"Error loading level information: {e}")
             levelInfoLabel.setText("Could not load level information")
 
-
-        # Add the widgets to the layout
-        self.layout.addWidget(self.backButton, 0, 0)
-        self.layout.addWidget(levelInfoLabel, 1, 0)
-        self.layout.addLayout(sidebarFrame, 2, 0)
-        self.layout.addWidget(simControls, 0, 1)
+        levelInfoContainer = QtWidgets.QScrollArea()
+        levelInfoContainer.setWidget(levelInfoLabel)
+        levelInfoContainer.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        levelInfoContainer.setSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Expanding)
 
         # Wrap grid in scroll area
         gridScrollArea = QtWidgets.QScrollArea()
         gridScrollArea.setWidget(self.grid)
         gridScrollArea.setWidgetResizable(True)
-        self.layout.addWidget(gridScrollArea, 1, 1, 2, 1)
+
+        # Add the widgets to the layout
+        self.layout.addWidget(self.backButton, 0, 0)
+        self.layout.addWidget(levelInfoContainer, 1, 0, 2, 1)
+        self.layout.addLayout(sidebarFrame, 3, 0)
+        self.layout.addWidget(simControls, 0, 1)
+        self.layout.addWidget(gridScrollArea, 1, 1, 3, 1)
 
     def checkSolution(self):
         """Calls the levelController to check the solution.

@@ -5,3 +5,48 @@
 
 
 \section{Program Usage}
+\subsection{Installation and Executing From Source}
+% Im going to write this section as the project stands currently, I.E. using a venv
+
+Running the program should be done from a terminal.
+
+\begin{itemize}
+    \item For Windows: Use powershell, cd to the project root directory
+    \item For Linux: In your preferred terminal, cd to the project root directory
+    \item For Mac: Ask Lorenz\\
+\end{itemize}
+
+\paragraph{Instructions}
+
+Dependencies:
+\begin{itemize}
+    \item \texttt{python}, Version 3.13 was used in development, but newer versions will likely work.\\
+
+\end{itemize}
+
+Step 1, setting up the environment:
+\begin{itemize}
+    \item All: \texttt{python3.13 -m venv env}\\
+
+\end{itemize}
+
+Step 2, entering the environment:
+\begin{itemize}
+    \item Linux: \texttt{source env/bin/activate}
+    \item Windows: \texttt{\& "./env/Scripts/Activate.ps1"}.  If an error comes up saying that running scripts is disabled, 
+    run \texttt{Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Scope Process} first.
+    \item Mac: \\
+
+\end{itemize}
+
+Step 3, installing/updating packages:
+\begin{itemize}
+    \item All: \texttt{pip install -r requirements.txt}.\\
+
+\end{itemize}
+
+Step 4, Running:
+\begin{itemize}
+    \item All: \texttt{python3 -m src.main}.\\
+
+\end{itemize}

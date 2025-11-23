@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2025.7.2)  23 NOV 2025 13:32
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2025.7.2)  23 NOV 2025 15:38
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -1777,7 +1777,7 @@ LaTeX Font Info:    Font shape `TS1/SourceSansPro-TLF/m/n' aliased to
 LaTeX Font Info:    Font shape `TS1/SourceSansPro-TLF/regular/n' will be
 (Font)              scaled to size 10.0pt on input line 11.
  [5]
-<assets/mips-cpu.pdf, id=129, 803.56712pt x 568.83212pt>
+<assets/mips-cpu.pdf, id=141, 803.56712pt x 568.83212pt>
 File: assets/mips-cpu.pdf Graphic file (type pdf)
 <use assets/mips-cpu.pdf>
 Package pdftex.def Info: assets/mips-cpu.pdf  used on input line 32.
@@ -1841,7 +1841,7 @@ Overfull \hbox (3.09865pt too wide) in paragraph at lines 11--12
 [8]
 
 pdfTeX warning: pdflatex (file ./assets/package_Diagramm.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
-<./assets/package_Diagramm.pdf, id=190, 612.08263pt x 594.38388pt>
+<./assets/package_Diagramm.pdf, id=202, 612.08263pt x 594.38388pt>
 File: ./assets/package_Diagramm.pdf Graphic file (type pdf)
 <use ./assets/package_Diagramm.pdf>
 Package pdftex.def Info: ./assets/package_Diagramm.pdf  used on input line 18.
@@ -1858,7 +1858,7 @@ l.13
       <./assets/package_Diagramm.pdf>]
 
 pdfTeX warning: pdflatex (file ./assets/ActivityKhanFrontier.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
-<./assets/ActivityKhanFrontier.pdf, id=197, 614.295pt x 794.97pt>
+<./assets/ActivityKhanFrontier.pdf, id=209, 614.295pt x 794.97pt>
 File: ./assets/ActivityKhanFrontier.pdf Graphic file (type pdf)
 <use ./assets/ActivityKhanFrontier.pdf>
 Package pdftex.def Info: ./assets/ActivityKhanFrontier.pdf  used on input line 37.
@@ -1870,7 +1870,7 @@ l.47 \begin{itemize}
                      <./assets/ActivityKhanFrontier.pdf>]
 
 pdfTeX warning: pdflatex (file ./assets/ActivityEventdriven.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
-<./assets/ActivityEventdriven.pdf, id=220, 614.295pt x 794.97pt>
+<./assets/ActivityEventdriven.pdf, id=232, 614.295pt x 794.97pt>
 File: ./assets/ActivityEventdriven.pdf Graphic file (type pdf)
 <use ./assets/ActivityEventdriven.pdf>
 Package pdftex.def Info: ./assets/ActivityEventdriven.pdf  used on input line 58.
@@ -1884,12 +1884,73 @@ Underfull \hbox (badness 10000) in paragraph at lines 80--84
 
  []
 
-[14]) (./modules/frondend.tex) (./modules/testing.tex) (./modules/discussion.tex) (./modules/conclusion.tex) [15]
+[14]) (./modules/frontend.tex
+
+LaTeX Warning: Citation 'requirements.txt' on page 15 undefined on input line 13.
+
+
+LaTeX Warning: Citation 'src/constants.py' on page 15 undefined on input line 15.
+
+
+LaTeX Warning: Citation 'src/view/MainScene.py' on page 15 undefined on input line 21.
+
+
+LaTeX Warning: Citation 'src/view/LevelScene.py' on page 15 undefined on input line 23.
+
+
+Overfull \hbox (14.64175pt too wide) in paragraph at lines 23--24
+[]\T1/SourceSansPro-TLF/bold/n/10 Level View (\T1/SourceCodePro-TLF/b/n/10 LevelScene\T1/SourceSansPro-TLF/bold/n/10 ): \T1/SourceSansPro-TLF/regular/n/10 This is the pri-mary con-tainer for game-play. It ag-gre-gates es-sen-tial sub-components
+ []
+
+
+Overfull \hbox (18.95546pt too wide) in paragraph at lines 23--24
+\T1/SourceSansPro-TLF/regular/n/10 in-clud-ing the Com-po-nent Palette, Sim-u-la-tion Con-trols, and the cen-tral \T1/SourceCodePro-TLF/m/n/10 Grid-Wid-get \T1/SourceSansPro-TLF/regular/n/10 [[]]. 
+ []
+
+
+LaTeX Warning: Citation 'src/view/GridWidget.py' on page 15 undefined on input line 25.
+
+
+LaTeX Warning: Citation 'src/view/GridWidget.py' on page 15 undefined on input line 29.
+
+
+Overfull \hbox (34.86412pt too wide) in paragraph at lines 29--30
+\T1/SourceSansPro-TLF/regular/n/10 The core of the sim-u-la-tion vi-su-al-iza-tion is the \T1/SourceCodePro-TLF/m/n/10 Grid-Wid-get\T1/SourceSansPro-TLF/regular/n/10 , a cus-tom com-po-nent in-her-it-ing from \T1/SourceCodePro-TLF/m/n/10 QtWid-gets.QWidget\T1/SourceSansPro-TLF/regular/n/10 .
+ []
+
+[15]
+
+LaTeX Warning: Citation 'src/control/LevelFileController.py' on page 16 undefined on input line 37.
+
+
+LaTeX Warning: Citation 'src/control/LevelController.py' on page 16 undefined on input line 39.
+
+
+LaTeX Warning: Citation 'src/control/LevelController.py' on page 16 undefined on input line 41.
+
+
+LaTeX Warning: Citation 'src/view/GridWidget.py' on page 16 undefined on input line 43.
+
+
+LaTeX Warning: Citation 'src/view/GridItems/GridItem.py' on page 16 undefined on input line 47.
+
+
+LaTeX Warning: Citation 'src/view/GridItems/GridItem.py' on page 16 undefined on input line 49.
+
+
+Overfull \hbox (103.5422pt too wide) in paragraph at lines 49--50
+\T1/SourceSansPro-TLF/regular/n/10 tom tooltips that re-veal the ex-act bit-value and bit-width of a spe-cific in-put or out-put port when hov-ered [[]]. 
+ []
+
+
+LaTeX Warning: Citation 'src/view/GridWidget.py' on page 16 undefined on input line 54.
+
+) (./modules/testing.tex [16]) (./modules/discussion.tex) (./modules/conclusion.tex) [17]
 LaTeX Font Info:    Font shape `T1/SourceSansPro-TLF/m/sc' aliased to
 (Font)              `T1/SourceSansPro-TLF/regular/sc' on input line 42.
 LaTeX Font Info:    Font shape `T1/SourceSansPro-TLF/regular/sc' will be
 (Font)              scaled to size 10.0pt on input line 42.
- [16] (./main.aux)
+ [18] (./main.aux)
 
 LaTeX Font Warning: Size substitutions with differences
 (Font)              up to 0.5pt have occurred.
@@ -1897,25 +1958,33 @@ LaTeX Font Warning: Size substitutions with differences
 
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
+
+LaTeX Warning: There were undefined references.
+
 Package rerunfilecheck Info: File `main.out' has not changed.
 (rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
+
+Package biblatex Warning: Please (re)run Biber on the file:
+(biblatex)                main
+(biblatex)                and rerun LaTeX afterwards.
+
 Package logreq Info: Writing requests to 'main.run.xml'.
 \openout1 = `main.run.xml'.
 
  ) 
 Here is how much of TeX's memory you used:
- 48343 strings out of 478287
- 985678 string characters out of 5849290
- 1852966 words of memory out of 5000000
- 65655 multiletter control sequences out of 15000+600000
+ 48361 strings out of 478287
+ 985836 string characters out of 5849290
+ 1853364 words of memory out of 5000000
+ 65661 multiletter control sequences out of 15000+600000
  583025 words of font info for 101 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  108i,19n,106p,10668b,2235s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/share/texlive/texmf-dist/fonts/enc/dvips/sourcesanspro/a_4jropk.enc}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/sourcecodepro/a_lutrty.enc}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/sourcesanspro/a_5ponh6.enc}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/sourcesanspro/a_emkxm5.enc}</usr/share/texlive/texmf-dist/fonts/type1/public/newtx/NewTXMI.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/newtx/NewTXMI7.pfb></usr/share/texlive/texmf-dist/fonts/type1/adobe/sourcecodepro/SourceCodePro-Bold.pfb></usr/share/texlive/texmf-dist/fonts/type1/adobe/sourcecodepro/SourceCodePro-Regular.pfb></usr/share/texlive/texmf-dist/fonts/type1/adobe/sourcesanspro/SourceSansPro-Bold.pfb></usr/share/texlive/texmf-dist/fonts/type1/adobe/sourcesanspro/SourceSansPro-It.pfb></usr/share/texlive/texmf-dist/fonts/type1/adobe/sourcesanspro/SourceSansPro-Regular.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmss10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmss12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmssbx10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt12.pfb>
-Output written on main.pdf (16 pages, 661143 bytes).
+Output written on main.pdf (18 pages, 670781 bytes).
 PDF statistics:
- 404 PDF objects out of 1000 (max. 8388607)
- 316 compressed objects within 4 object streams
- 62 named destinations out of 1000 (max. 500000)
- 390 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 449 PDF objects out of 1000 (max. 8388607)
+ 359 compressed objects within 4 object streams
+ 74 named destinations out of 1000 (max. 500000)
+ 438 words of extra memory for PDF output out of 10000 (max. 10000000)
 

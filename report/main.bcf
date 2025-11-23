@@ -2347,7 +2347,28 @@
     <bcf:citekey order="0" nocite="1">*</bcf:citekey>
     <bcf:citekey order="1">referenceBookEnglish</bcf:citekey>
     <bcf:citekey order="1">referenceBookEnglish</bcf:citekey>
-    <bcf:citekey order="2">referenceBookEnglish</bcf:citekey>
+    <bcf:citekey order="2">requirements.txt</bcf:citekey>
+    <bcf:citekey order="3">src/constants.py</bcf:citekey>
+    <bcf:citekey order="4">src/view/MainScene.py</bcf:citekey>
+    <bcf:citekey order="5">src/view/LevelScene.py</bcf:citekey>
+    <bcf:citekey order="6">src/view/GridWidget.py</bcf:citekey>
+    <bcf:citekey order="7">src/view/GridWidget.py</bcf:citekey>
+    <bcf:citekey order="8">src/control/LevelFileController.py</bcf:citekey>
+    <bcf:citekey order="9">src/control/LevelController.py</bcf:citekey>
+    <bcf:citekey order="10">src/control/LevelController.py</bcf:citekey>
+    <bcf:citekey order="11">src/view/GridWidget.py</bcf:citekey>
+    <bcf:citekey order="12">src/view/GridItems/GridItem.py</bcf:citekey>
+    <bcf:citekey order="13">src/view/GridItems/GridItem.py</bcf:citekey>
+    <bcf:citekey order="14">src/view/GridWidget.py</bcf:citekey>
+    <bcf:citekey order="15">referenceBookEnglish</bcf:citekey>
+    <bcf:citekey order="16">requirements.txt</bcf:citekey>
+    <bcf:citekey order="17">src/constants.py</bcf:citekey>
+    <bcf:citekey order="18">src/view/MainScene.py</bcf:citekey>
+    <bcf:citekey order="19">src/view/LevelScene.py</bcf:citekey>
+    <bcf:citekey order="20">src/view/GridWidget.py</bcf:citekey>
+    <bcf:citekey order="21">src/control/LevelFileController.py</bcf:citekey>
+    <bcf:citekey order="22">src/control/LevelController.py</bcf:citekey>
+    <bcf:citekey order="23">src/view/GridItems/GridItem.py</bcf:citekey>
   </bcf:section>
   <!-- SORTING TEMPLATES -->
   <bcf:sortingtemplate name="ynt">

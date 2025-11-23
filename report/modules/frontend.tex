@@ -46,8 +46,6 @@ A critical feature of the frontend is the ability to dynamically render educatio
 \subsection{Component Rendering}
 Logic gates are visually represented by the \texttt{GridItem} class. Rather than drawing shapes manually, the application renders Scalable Vector Graphics (SVG) loaded from the assets directory (e.g., \texttt{assets/gates/And.svg}). This ensures that components remain crisp at any zoom level \cite{src/view/GridItems/GridItem.py}.
 
-\Fig{./assets/gates/And.svg}{Visual representation of an AND gate rendered from SVG}{fig:and_gate}
-
 Ports are generated dynamically based on the component's state. To aid debugging, the system implements custom tooltips that reveal the exact bit-value and bit-width of a specific input or output port when hovered \cite{src/view/GridItems/GridItem.py}.
 
 \subsection{Intelligent Connection Routing}

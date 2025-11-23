@@ -25,3 +25,9 @@ meta.json
 
 # Ignore coverage file
 .coverage
+
+# Ignore build related files
+build
+out
+dist
+

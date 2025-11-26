@@ -69,18 +69,21 @@ Students can reset their progress within a level at any time, which clears all p
 
 Advanced levels may include additional complexity such as pre-placed immovable components that define part of the circuit structure, memory integration involving instruction or data memory with pre-loaded content, output prediction exercises that test understanding before implementation, and multi-objective challenges requiring satisfaction of multiple, potentially competing goals.
 
-\subsection{Installation and Executing From Source}
+\subsection{Building From Source}
 
 Running the program should be done from a terminal. For Windows users, use PowerShell and navigate to the project root directory, while Linux users should use their preferred terminal and change to the project root directory. Mac users should ask Lorenz for specific instructions.
 
 \paragraph{Installation Instructions}
 
-The primary dependency is Python, where version 3.13 was used in development, though newer versions will likely work as well.
+The primary dependency is Python, where version 3.13 was used in development, though newer versions will likely work as well.\\
 
-To set up the environment, all platforms should run \texttt{python3.13 -m venv env} to create the virtual environment.
+To set up the environment, all platforms should run \texttt{python3.13 -m venv env} to create the virtual environment.\\
 
-For entering the environment, Linux users should execute \texttt{source env/bin/activate}, while Windows users need to run \texttt{\& "./env/Scripts/Activate.ps1"}. If Windows displays an error about running scripts being disabled, first execute \texttt{Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Scope Process}.
+For entering the environment, Linux users should execute \texttt{source env/bin/activate}, while Windows users need to run \texttt{\& "./env/Scripts/Activate.ps1"}.\\
+If Windows displays an error about running scripts being disabled, \texttt{Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Scope Process} should fix the error.\\
 
-After activating the environment, install the required packages using \texttt{pip install -r requirements.txt}.
+After activating the environment, install the required packages using \texttt{pip install -r requirements.txt}.\\
 
-Finally, run the application with \texttt{python3 -m src.main}.
+Windows users may need to manually place the python3.dll and python313.dll files into the project directory.  This location changes from person to person, find this using \texttt{py -0p}.\\
+
+Finally, build the application with \texttt{python3 -m src.setup build}.

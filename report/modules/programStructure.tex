@@ -19,7 +19,7 @@ The high-level dependencies and relationships between these packages are illustr
     \caption{Package diagram illustrating the dependencies between the application modules.}
     \label{fig:package_diagram}
 \end{figure}
-
+\includepdf[pages=-,fitpaper=true,angle=90]{./assets/classes_ICT-Project}
 \subsection{Design Patterns and Architectural Decisions}
 
 To maintain loose coupling between components, the project employs the \textbf{Event Bus} pattern. This allows the Model to emit state changes (such as \texttt{model:input\_changed}) without having direct dependencies on the View. The Controller and View subscribe to these events to update the simulation state or the GUI respectively, preventing rigid hard-coding of component interactions.

@@ -23,6 +23,9 @@ class AppController():
             background-color: rgb{BG_COLOR};
             font-size: 16px;
             }}
+            QToolTip {{
+            color: rgb{PR_COLOR_2};
+            }}
             QPushButton {{
             background-color: rgb{PR_COLOR_1};
             color: rgb{PR_TEXT_COLOR};

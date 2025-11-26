@@ -6,7 +6,7 @@ from PySide6.QtGui import QAction, QCursor, QBrush, QPalette
 from PySide6.QtWidgets import QMenu, QPushButton, QInputDialog
 
 from src.model.LogicComponent import LogicComponent
-from src.constants import CELL_SIZE, MIME_TYPE, PR_TEXT_COLOR
+from src.constants import CELL_SIZE, MIME_TYPE, PR_TEXT_COLOR, BG_COLOR, PR_COLOR_2
 from src.infrastructure.eventBus import getBus
 from src.view.util.ImageLoader import ImageLoader
 
@@ -271,6 +271,7 @@ class GridItem(QtWidgets.QFrame):
     def openContextMenu(self):
         """Open a context menu with options like deleting the item."""
         menu = QMenu(self)  # Parent the menu to avoid leaks
+        menu.setStyleSheet("background-color: white; color: black;")
         if not self.immovable:
             renameAction = QAction("Rename", self)
             renameAction.triggered.connect(self.openRenameDialog)
@@ -356,10 +357,15 @@ class GridItem(QtWidgets.QFrame):
                 label.setText("NC")
 
     def openRenameDialog(self):
-        text, ok = QInputDialog.getText(self, "Rename component", "Enter a label:")
-        if ok and text:
-            self.logicComponent.setLabel(text)
-            self.nameLabel.setText(self.getName())
+        dialog = QInputDialog(self)
+        dialog.setWindowTitle("Rename component")
+        dialog.setLabelText("Enter a label:")
+        dialog.setStyleSheet(f"background-color: rgb{BG_COLOR};")
+        if dialog.exec() == QtWidgets.QDialog.Accepted:
+            text = dialog.textValue()
+            if text:
+                self.logicComponent.setLabel(text)
+                self.nameLabel.setText(self.getName())
 
     def showComponentTooltip(self):
         self.setToolTip(f"{self.getName()} ({self.logicComponent.__class__.__name__})")

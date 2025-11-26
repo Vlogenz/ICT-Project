@@ -48,12 +48,12 @@ class WrapAnywhereLabel(QtWidgets.QWidget):
 
         painter = QtGui.QPainter(self)
 
-        # Adjust font size based on scale factor (only shrink when scale < 1.0)
+        # Set base font size to 12 and adjust for scale factor
         font = painter.font()
-        if self._scale_factor < 1.0:
-            base_size = font.pointSize() if font.pointSize() > 0 else 12
-            font.setPointSizeF(base_size * self._scale_factor)
-            painter.setFont(font)
+        font.setPointSize(12)
+        if self._scale_factor <= 1.0:
+            font.setPointSizeF(12 * self._scale_factor)
+        painter.setFont(font)
 
         painter.setPen(QtGui.QColor(*PR_TEXT_COLOR))
 
@@ -123,6 +123,8 @@ class GridItem(QtWidgets.QFrame):
 
         self.layout = QtWidgets.QVBoxLayout(self)
         self.layout.setContentsMargins(0,0,0,0)
+
+        self.setStyleSheet("background-color: transparent;")
 
         # Create nameLabel - we'll use a custom widget for wrap-anywhere behavior
         self.nameLabel = WrapAnywhereLabel(self.getName(), self)

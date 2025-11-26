@@ -19,9 +19,12 @@ main.pdf
 main.run.xml
 main.synctex.gz
 main.toc
+**.log
 
 # Ignore meta file
 meta.json
 
 # Ignore coverage file
 .coverage
+
+build

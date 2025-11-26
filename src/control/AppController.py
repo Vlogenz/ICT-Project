@@ -26,13 +26,15 @@ class AppController():
             QPushButton {{
             background-color: rgb{PR_COLOR_1};
             color: rgb{PR_TEXT_COLOR};
-            font-weight: bold;
             border-radius: 5px;
             }}
             .large {{
             font-size: 24px;
             font-weight: bold;
             border-radius: 10px;
+            }}
+            .small {{
+            font-size: 12px;
             }}
             .btn-secondary {{
             background-color: rgb{PR_COLOR_2};

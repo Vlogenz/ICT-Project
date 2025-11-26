@@ -1,52 +1,86 @@
-% - How to install
-% - How to use everything, Teaching Mode and Sandboxmode
-% - Levelprogression, recommend Levels
-% - Usage as Customcomponents
-
-
 \section{Program Usage}
+
+This section describes how to use the logic circuit simulator application, covering both the Learning Mode and Sandbox Mode that the application provides.
+
+\subsection{Starting the Application}
+
+When launching the application, users are presented with the main menu screen featuring three primary options. The \textbf{Learning} button enters the structured learning environment with predefined levels and guided exercises, while \textbf{Sandbox} provides unrestricted access to all components for free-form circuit design. The \textbf{Exit} button closes the application cleanly.
+
+The main screen displays the application logo prominently and provides a clean, intuitive interface for mode selection with clearly labeled buttons positioned for easy access.
+
+\subsection{Sandbox Mode}
+
+Sandbox Mode offers complete freedom to experiment with digital logic circuits without restrictions. This mode is ideal for users who want to explore circuit design concepts or test custom implementations.
+
+\subsubsection{Core Features}
+
+In Sandbox Mode, users have access to the complete palette of logic components including gates, memory elements, and I/O components with unlimited grid space for circuit construction. The environment provides full simulation controls for playing, pausing, and resetting simulations along with intuitive drag-and-drop component placement and a visual connection system for wiring components together. A dedicated delete area allows for easy removal of unwanted components.
+
+The interface consists of a sidebar containing the component palette and delete area, simulation controls at the top, and a scrollable grid workspace where circuits are constructed. Components can be interacted with through left-click operations for connections and movement, as well as right-click context menus that provide additional options such as renaming or deleting movable components.
+
+\subsubsection{Adding Custom Components}
+
+One of Sandbox Mode's most powerful features is the ability to create and save custom logic components. Users can design complex subcircuits and encapsulate them as reusable components:
+
+\paragraph{Creating Custom Components}
+To create a custom component, users first design a circuit using Input and Output components to define the interface, then click the "Save as logic component" button in the simulation controls. This opens the Create Custom Component Dialog where users can specify a component name and define meaningful names for each input and output pin. The dialog also allows selection of a custom visual representation through sprite selection supporting PNG, JPG, JPEG, or SVG formats, and includes a help section that can be toggled to provide contextual information about component ordering.
+
+The dialog automatically detects all Input and Output components in the current circuit while preserving bit widths from the original Input components. Labels are automatically converted to camelCase for consistency throughout the application.
+
+\paragraph{Custom Component Management}
+Custom components are saved persistently and become available in the component palette for future use. The order of inputs and outputs is determined by the sequence in which they were placed on the grid, allowing precise control over the component interface.
+
+\subsection{Learning Mode}
+
+Learning Mode provides a structured, progressive approach to learning digital logic concepts through carefully designed levels and exercises.
+
+\subsubsection{Level Selection Interface}
+
+The level selection screen presents available levels in an organized grid format where levels are grouped into thematic blocks such as basic gates, combinational circuits, and sequential logic. Graphical lines connect related levels to clearly show the learning progression, while status indicators display completion status with "Done" markers or "Locked" labels for unavailable content. A recommendation system highlights suggested next steps in the learning path to guide students through the most effective sequence of exercises.
+
+\subsubsection{Level Progression System}
+
+The application implements a structured unlock system where initial levels are available by default, but completing a level unlocks the next level in the sequence. This ensures users must demonstrate mastery before advancing to more complex topics. The system tracks completion status persistently across sessions.
+
+\subsubsection{Reviewer Options}
+
+For instructors and advanced users, additional reviewer options provide enhanced control over the learning experience. These include the ability to show or hide level recommendations that toggle visual indicators for suggested levels, unlock all levels to override the progression system for immediate access to any content, or re-lock levels to restore the structured progression system when needed.
+
+\subsubsection{Individual Level Experience}
+
+Each level provides a focused learning environment with specific constraints and objectives:
+
+\paragraph{Level Information Display}
+Each level presents its name and description with clear explanations of the learning objective along with specific, measurable goals for completion. The scrollable interface accommodates detailed descriptions and multiple objectives without cluttering the workspace.
+
+\paragraph{Restricted Component Access}
+Unlike Sandbox Mode, each level provides access only to components relevant to the learning objective. This focused approach prevents overwhelming beginners with too many options while encouraging exploration of specific circuit design patterns. It ensures students engage with the intended concepts and builds complexity gradually across levels.
+
+\paragraph{Integrated Hint System}
+Learning levels include a context-sensitive hint system with multiple progressive hints available per level that are revealed sequentially as needed. The system provides visual feedback through a lamp icon that changes from off to on when hints are accessed. This non-intrusive design ensures hints remain optional and don't interrupt the natural learning flow, while the hint progression resets automatically for repeated level attempts.
+
+\paragraph{Solution Checking and Validation}
+The application provides automated solution verification through a check solution button that gives immediate feedback on circuit correctness. Comprehensive testing validates circuit behavior using multiple test cases, while some levels integrate output prediction exercises that require students to predict results before simulation. Clear success and failure messages provide specific guidance for improvements, and successful completion automatically updates the user's progress in the system.
+
+\paragraph{Level Reset Functionality}
+Students can reset their progress within a level at any time, which clears all placed components except immovable, pre-placed elements and restores the initial circuit state. This allows fresh attempts without penalty while maintaining the level structure and objectives.
+
+\subsubsection{Special Level Features}
+
+Advanced levels may include additional complexity such as pre-placed immovable components that define part of the circuit structure, memory integration involving instruction or data memory with pre-loaded content, output prediction exercises that test understanding before implementation, and multi-objective challenges requiring satisfaction of multiple, potentially competing goals.
+
 \subsection{Installation and Executing From Source}
-% Im going to write this section as the project stands currently, I.E. using a venv
 
-Running the program should be done from a terminal.
+Running the program should be done from a terminal. For Windows users, use PowerShell and navigate to the project root directory, while Linux users should use their preferred terminal and change to the project root directory. Mac users should ask Lorenz for specific instructions.
 
-\begin{itemize}
-    \item For Windows: Use powershell, cd to the project root directory
-    \item For Linux: In your preferred terminal, cd to the project root directory
-    \item For Mac: Ask Lorenz\\
-\end{itemize}
+\paragraph{Installation Instructions}
 
-\paragraph{Instructions}
+The primary dependency is Python, where version 3.13 was used in development, though newer versions will likely work as well.
 
-Dependencies:
-\begin{itemize}
-    \item \texttt{python}, Version 3.13 was used in development, but newer versions will likely work.\\
+To set up the environment, all platforms should run \texttt{python3.13 -m venv env} to create the virtual environment.
 
-\end{itemize}
+For entering the environment, Linux users should execute \texttt{source env/bin/activate}, while Windows users need to run \texttt{\& "./env/Scripts/Activate.ps1"}. If Windows displays an error about running scripts being disabled, first execute \texttt{Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Scope Process}.
 
-Step 1, setting up the environment:
-\begin{itemize}
-    \item All: \texttt{python3.13 -m venv env}\\
+After activating the environment, install the required packages using \texttt{pip install -r requirements.txt}.
 
-\end{itemize}
-
-Step 2, entering the environment:
-\begin{itemize}
-    \item Linux: \texttt{source env/bin/activate}
-    \item Windows: \texttt{\& "./env/Scripts/Activate.ps1"}.  If an error comes up saying that running scripts is disabled, 
-    run \texttt{Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Scope Process} first.
-    \item Mac: \\
-
-\end{itemize}
-
-Step 3, installing/updating packages:
-\begin{itemize}
-    \item All: \texttt{pip install -r requirements.txt}.\\
-
-\end{itemize}
-
-Step 4, Running:
-\begin{itemize}
-    \item All: \texttt{python3 -m src.main}.\\
-
-\end{itemize}
+Finally, run the application with \texttt{python3 -m src.main}.

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2026/dev/Arch Linux) (preloaded format=pdflatex 2025.9.6)  26 NOV 2025 11:14
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2026/dev/Arch Linux) (preloaded format=pdflatex 2025.9.6)  26 NOV 2025 13:39
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1915,13 +1915,13 @@ LaTeX Font Warning: Font shape `U/wasy/m/n' in size <5.5> not available
 
 
 LaTeX Font Info:    Font shape `T1/SourceSansPro-TLF/m/sl' aliased to
-(Font)              `T1/SourceSansPro-TLF/regular/sl' on input line 29.
+(Font)              `T1/SourceSansPro-TLF/regular/sl' on input line 35.
 LaTeX Font Info:    Font shape `T1/SourceSansPro-TLF/regular/sl' in size <10> n
 ot available
 (Font)              Font shape `T1/SourceSansPro-TLF/regular/it' tried instead 
-on input line 29.
+on input line 35.
 LaTeX Font Info:    Font shape `T1/SourceSansPro-TLF/regular/it' will be
-(Font)              scaled to size 10.0pt on input line 29.
+(Font)              scaled to size 10.0pt on input line 35.
 [2])
 \tf@toc=\write6
 \openout6 = `main.toc'.
@@ -1949,7 +1949,7 @@ LaTeX Font Info:    Font shape `TS1/SourceSansPro-TLF/regular/n' will be
 
 
 [5{/usr/share/texmf-dist/fonts/enc/dvips/sourcesanspro/a_5ponh6.enc}]
-<assets/mips-cpu.pdf, id=151, 803.56712pt x 568.83212pt>
+<assets/mips-cpu.pdf, id=171, 803.56712pt x 568.83212pt>
 File: assets/mips-cpu.pdf Graphic file (type pdf)
 <use assets/mips-cpu.pdf>
 Package pdftex.def Info: assets/mips-cpu.pdf  used on input line 32.
@@ -1957,62 +1957,43 @@ Package pdftex.def Info: assets/mips-cpu.pdf  used on input line 32.
 Class scrartcl Info: Workaround for not recommended usage of \\ or
 (scrartcl)           \newlinein caption text  on input line 33.
 ) (./modules/programUsage.tex
-Underfull \hbox (badness 10000) in paragraph at lines 16--17
-
- []
-
-
 
 [6
 pdfTeX warning (ext4): destination with the same identifier (name{figure.1}) ha
 s been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.17 \end{itemize}
-                   <./assets/mips-cpu.pdf>]
+l.8 
+     <./assets/mips-cpu.pdf>]
+Overfull \hbox (1.07457pt too wide) in paragraph at lines 31--32
+[] []\T1/SourceSansPro-TLF/bold/n/10 Custom Com-po-nent Man-age-ment[][] \T1/So
+urceSansPro-TLF/regular/n/10 Cus-tom com-po-nents are saved per-sis-tently and 
+be-come avail-able in the com-
+ []
+
+
+
+[7]
+
+[8]
 LaTeX Font Info:    Trying to load font information for T1+SourceCodePro-TLF on
- input line 23.
+ input line 80.
 (/usr/share/texmf-dist/tex/latex/sourcecodepro/T1SourceCodePro-TLF.fd
 File: T1SourceCodePro-TLF.fd 2018/02/18 (autoinst) Font definitions for T1/Sour
 ceCodePro-TLF.
 )
 LaTeX Font Info:    Font shape `T1/SourceCodePro-TLF/m/n' will be
-(Font)              scaled to size 10.0pt on input line 23.
+(Font)              scaled to size 10.0pt on input line 80.
 
-Underfull \hbox (badness 10000) in paragraph at lines 23--24
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 29--30
-
- []
-
-
-Overfull \hbox (2.96178pt too wide) in paragraph at lines 36--38
-\T1/SourceSansPro-TLF/regular/n/10 abled, run \T1/SourceCodePro-TLF/m/n/10 Set-
-ExecutionPolicy -ExecutionPolicy Un-re-stricted -Scope Pro-cess \T1/SourceSansP
-ro-TLF/regular/n/10 first. 
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 38--39
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 44--45
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 50--51
-
+Overfull \hbox (8.08168pt too wide) in paragraph at lines 82--83
+\T1/SourceSansPro-TLF/regular/n/10 dis-abled, first ex-e-cute \T1/SourceCodePro
+-TLF/m/n/10 Set-ExecutionPolicy -ExecutionPolicy Un-re-stricted -Scope Pro-cess
+\T1/SourceSansPro-TLF/regular/n/10 . 
  []
 
 ) (./modules/groupManagement.tex
 
-[7{/usr/share/texmf-dist/fonts/enc/dvips/sourcecodepro/a_lutrty.enc}]) (./modul
+[9{/usr/share/texmf-dist/fonts/enc/dvips/sourcecodepro/a_lutrty.enc}]) (./modul
 es/programStructure.tex
 LaTeX Font Info:    Font shape `T1/SourceCodePro-TLF/b/n' will be
 (Font)              scaled to size 10.0pt on input line 8.
@@ -2026,19 +2007,19 @@ ceCodePro-TLF/m/n/10 Event-
 
 
 
-[8]
-<./assets/package_Diagramm.pdf, id=212, 612.08263pt x 594.38388pt>
+[10]
+<./assets/package_Diagramm.pdf, id=254, 612.08263pt x 594.38388pt>
 File: ./assets/package_Diagramm.pdf Graphic file (type pdf)
 <use ./assets/package_Diagramm.pdf>
 Package pdftex.def Info: ./assets/package_Diagramm.pdf  used on input line 18.
 (pdftex.def)             Requested size: 375.57782pt x 364.72311pt.
-<./assets/classes_ICT-Project.pdf, id=213, 7259.55914pt x 1255.4653pt>
+<./assets/classes_ICT-Project.pdf, id=255, 7259.55914pt x 1255.4653pt>
 File: ./assets/classes_ICT-Project.pdf Graphic file (type pdf)
 <use ./assets/classes_ICT-Project.pdf>
 Package pdftex.def Info: ./assets/classes_ICT-Project.pdf  used on input line 2
 2.
 (pdftex.def)             Requested size: 7259.54155pt x 1255.46225pt.
-<./assets/classes_ICT-Project.pdf, id=215, page=1, 7259.55914pt x 1255.4653pt>
+<./assets/classes_ICT-Project.pdf, id=257, page=1, 7259.55914pt x 1255.4653pt>
 File: ./assets/classes_ICT-Project.pdf Graphic file (type pdf)
 <use ./assets/classes_ICT-Project.pdf, page 1>
 Package pdftex.def Info: ./assets/classes_ICT-Project.pdf , page1 used on input
@@ -2051,7 +2032,7 @@ Package pdftex.def Info: ./assets/classes_ICT-Project.pdf , page1 used on input
 (pdftex.def)             Requested size: 7259.54155pt x 1255.46225pt.
 
 
-[9
+[11
 pdfTeX warning (ext4): destination with the same identifier (name{figure.2}) ha
 s been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
@@ -2076,7 +2057,7 @@ File: ./assets/classes_ICT-Project.pdf Graphic file (type pdf)
 Package pdftex.def Info: ./assets/classes_ICT-Project.pdf , page1 used on input
  line 22.
 (pdftex.def)             Requested size: 7259.54155pt x 1255.46225pt.
-[10
+[12
 
  <./assets/classes_ICT-Project.pdf>]) (./modules/backend.tex
 Overfull \hbox (4.68933pt too wide) in paragraph at lines 9--13
@@ -2085,7 +2066,7 @@ prop-a-ga-tion. Both al-go-rithms are im-ple-mented in `\T1/SourceCodePro-TLF/m
 /n/10 src/Algorithms.py\T1/SourceSansPro-TLF/regular/n/10 `
  []
 
-<./assets/ActivityKhanFrontier.pdf, id=272, 614.295pt x 794.97pt>
+<./assets/ActivityKhanFrontier.pdf, id=314, 614.295pt x 794.97pt>
 File: ./assets/ActivityKhanFrontier.pdf Graphic file (type pdf)
 <use ./assets/ActivityKhanFrontier.pdf>
 Package pdftex.def Info: ./assets/ActivityKhanFrontier.pdf  used on input line 
@@ -2093,16 +2074,16 @@ Package pdftex.def Info: ./assets/ActivityKhanFrontier.pdf  used on input line
 (pdftex.def)             Requested size: 469.47049pt x 607.5557pt.
 
 
-[11]
+[13]
 
-[12
+[14
 pdfTeX warning (ext4): destination with the same identifier (name{figure.3}) ha
 s been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
 l.47 \begin{itemize}
                      <./assets/ActivityKhanFrontier.pdf>]
-<./assets/ActivityEventdriven.pdf, id=295, 614.295pt x 794.97pt>
+<./assets/ActivityEventdriven.pdf, id=339, 614.295pt x 794.97pt>
 File: ./assets/ActivityEventdriven.pdf Graphic file (type pdf)
 <use ./assets/ActivityEventdriven.pdf>
 Package pdftex.def Info: ./assets/ActivityEventdriven.pdf  used on input line 5
@@ -2110,9 +2091,9 @@ Package pdftex.def Info: ./assets/ActivityEventdriven.pdf  used on input line 5
 (pdftex.def)             Requested size: 469.47049pt x 607.5557pt.
 
 
-[13]
+[15]
 
-[14
+[16
 pdfTeX warning (ext4): destination with the same identifier (name{figure.4}) ha
 s been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
@@ -2126,21 +2107,21 @@ Underfull \hbox (badness 10000) in paragraph at lines 80--84
 
 
 
-[15]) (./modules/frontend.tex
+[17]) (./modules/frontend.tex
 
-LaTeX Warning: Citation 'requirements.txt' on page 16 undefined on input line 1
+LaTeX Warning: Citation 'requirements.txt' on page 18 undefined on input line 1
 3.
 
 
-LaTeX Warning: Citation 'src/constants.py' on page 16 undefined on input line 1
+LaTeX Warning: Citation 'src/constants.py' on page 18 undefined on input line 1
 5.
 
 
-LaTeX Warning: Citation 'src/view/MainScene.py' on page 16 undefined on input l
+LaTeX Warning: Citation 'src/view/MainScene.py' on page 18 undefined on input l
 ine 21.
 
 
-LaTeX Warning: Citation 'src/view/LevelScene.py' on page 16 undefined on input 
+LaTeX Warning: Citation 'src/view/LevelScene.py' on page 18 undefined on input 
 line 23.
 
 
@@ -2159,11 +2140,11 @@ a-tion Con-trols, and the cen-tral \T1/SourceCodePro-TLF/m/n/10 Grid-Wid-get \T
  []
 
 
-LaTeX Warning: Citation 'src/view/GridWidget.py' on page 16 undefined on input 
+LaTeX Warning: Citation 'src/view/GridWidget.py' on page 18 undefined on input 
 line 25.
 
 
-LaTeX Warning: Citation 'src/view/GridWidget.py' on page 16 undefined on input 
+LaTeX Warning: Citation 'src/view/GridWidget.py' on page 18 undefined on input 
 line 29.
 
 
@@ -2176,29 +2157,29 @@ ar/n/10 , a cus-tom com-po-nent in-her-it-ing from \T1/SourceCodePro-TLF/m/n/10
 
 
 
-[16]
+[18]
 
-LaTeX Warning: Citation 'src/control/LevelFileController.py' on page 17 undefin
+LaTeX Warning: Citation 'src/control/LevelFileController.py' on page 19 undefin
 ed on input line 37.
 
 
-LaTeX Warning: Citation 'src/control/LevelController.py' on page 17 undefined o
+LaTeX Warning: Citation 'src/control/LevelController.py' on page 19 undefined o
 n input line 39.
 
 
-LaTeX Warning: Citation 'src/control/LevelController.py' on page 17 undefined o
+LaTeX Warning: Citation 'src/control/LevelController.py' on page 19 undefined o
 n input line 41.
 
 
-LaTeX Warning: Citation 'src/view/GridWidget.py' on page 17 undefined on input 
+LaTeX Warning: Citation 'src/view/GridWidget.py' on page 19 undefined on input 
 line 43.
 
 
-LaTeX Warning: Citation 'src/view/GridItems/GridItem.py' on page 17 undefined o
+LaTeX Warning: Citation 'src/view/GridItems/GridItem.py' on page 19 undefined o
 n input line 47.
 
 
-LaTeX Warning: Citation 'src/view/GridItems/GridItem.py' on page 17 undefined o
+LaTeX Warning: Citation 'src/view/GridItems/GridItem.py' on page 19 undefined o
 n input line 49.
 
 
@@ -2208,17 +2189,17 @@ ue and bit-width of a spe-cific in-put or out-put port when hov-ered [[]].
  []
 
 
-LaTeX Warning: Citation 'src/view/GridWidget.py' on page 17 undefined on input 
+LaTeX Warning: Citation 'src/view/GridWidget.py' on page 19 undefined on input 
 line 54.
 
 ) (./modules/testing.tex
 
-[17]
+[19]
 
-LaTeX Warning: Citation 'test_alu' on page 18 undefined on input line 9.
+LaTeX Warning: Citation 'test_alu' on page 20 undefined on input line 9.
 
 
-LaTeX Warning: Citation 'test_levelscene' on page 18 undefined on input line 11
+LaTeX Warning: Citation 'test_levelscene' on page 20 undefined on input line 11
 .
 
 
@@ -2228,20 +2209,20 @@ Overfull \hbox (21.31851pt too wide) in paragraph at lines 11--12
  []
 
 
-LaTeX Warning: Citation 'quality_gate' on page 18 undefined on input line 20.
+LaTeX Warning: Citation 'quality_gate' on page 20 undefined on input line 20.
 
 ) (./modules/discussion.tex) (./modules/conclusion.tex)
 
-[18]
+[20]
 
-[19]
+[21]
 LaTeX Font Info:    Font shape `T1/SourceSansPro-TLF/m/sc' aliased to
 (Font)              `T1/SourceSansPro-TLF/regular/sc' on input line 42.
 LaTeX Font Info:    Font shape `T1/SourceSansPro-TLF/regular/sc' will be
 (Font)              scaled to size 10.0pt on input line 42.
 
 
-[20{/usr/share/texmf-dist/fonts/enc/dvips/sourcesanspro/a_4jropk.enc}] (./main.
+[22{/usr/share/texmf-dist/fonts/enc/dvips/sourcesanspro/a_4jropk.enc}] (./main.
 aux)
  ***********
 LaTeX2e <2024-11-01> patch level 2
@@ -2269,10 +2250,10 @@ Package logreq Info: Writing requests to 'main.run.xml'.
 
  ) 
 Here is how much of TeX's memory you used:
- 49375 strings out of 475171
- 1006981 string characters out of 5767096
- 2003543 words of memory out of 5000000
- 71474 multiletter control sequences out of 15000+600000
+ 49424 strings out of 475171
+ 1007913 string characters out of 5767096
+ 2003555 words of memory out of 5000000
+ 71497 multiletter control sequences out of 15000+600000
  672640 words of font info for 109 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
  108i,19n,109p,10899b,2352s stack positions out of 10000i,1000n,20000p,200000b,200000s
@@ -2289,10 +2270,10 @@ sr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmss10.pfb></usr/share/texmf
 -dist/fonts/type1/public/amsfonts/cm/cmss12.pfb></usr/share/texmf-dist/fonts/ty
 pe1/public/amsfonts/cm/cmssbx10.pfb></usr/share/texmf-dist/fonts/type1/public/a
 msfonts/cm/cmtt12.pfb>
-Output written on main.pdf (20 pages, 780571 bytes).
+Output written on main.pdf (22 pages, 788927 bytes).
 PDF statistics:
- 526 PDF objects out of 1000 (max. 8388607)
- 416 compressed objects within 5 object streams
- 79 named destinations out of 1000 (max. 500000)
- 477 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 602 PDF objects out of 1000 (max. 8388607)
+ 490 compressed objects within 5 object streams
+ 105 named destinations out of 1000 (max. 500000)
+ 557 words of extra memory for PDF output out of 10000 (max. 10000000)
 

@@ -42,30 +42,7 @@ class LevelScene(QtWidgets.QWidget):
         levelController.setGrid(self.grid)
         levelController.buildLevel()
 
-        sidebarFrame = QtWidgets.QGridLayout()
-
-        # OutputPrediction, if necessary
-        if self.levelController.usesOutputPredictions():
-            sidebarFrame.addWidget(OutputPrediction(self.levelController), 0, 0, 1, 2)
-
-        # Palette
-        classes = self.levelController.getAvailableComponentClasses()
-        palette = LogicComponentPalette(classes)
-        sidebarFrame.addWidget(palette, 1, 0, 1, 2)
-
-        # Delete area
-        deleteArea = DeleteArea(self.grid)
-        sidebarFrame.addWidget(deleteArea, 2, 1)
-
-        # Hint button
-        hintButton = Hint(self.levelController)
-        sidebarFrame.addWidget(hintButton, 2, 0)
-
-
-        # Simulation controls
-        simControls = SimulationControls(self.logicController)
-        simControls.configureReset(self.levelController.resetLevel)
-        simControls.addButton("Check solution", self.checkSolution, 0)
+        sidebarFrame = QtWidgets.QVBoxLayout()
 
         # Add a label for level description
         levelInfoLabel = QtWidgets.QLabel()
@@ -92,6 +69,33 @@ class LevelScene(QtWidgets.QWidget):
         levelInfoContainer.setWidget(levelInfoLabel)
         levelInfoContainer.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
         levelInfoContainer.setSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Expanding)
+        sidebarFrame.addWidget(levelInfoContainer)
+
+        # OutputPrediction, if necessary
+        if self.levelController.usesOutputPredictions():
+            sidebarFrame.addWidget(OutputPrediction(self.levelController), 0, 0, 1, 2)
+
+        # Palette
+        classes = self.levelController.getAvailableComponentClasses()
+        if len(classes) != 0:
+            palette = LogicComponentPalette(classes)
+            sidebarFrame.addWidget(palette)
+
+        # Delete area
+        deleteArea = DeleteArea(self.grid)
+
+        # Hint button
+        hintButton = Hint(self.levelController)
+
+        deleteAndHintContainer = QtWidgets.QHBoxLayout()
+        deleteAndHintContainer.addWidget(hintButton)
+        deleteAndHintContainer.addWidget(deleteArea)
+        sidebarFrame.addLayout(deleteAndHintContainer)
+
+        # Simulation controls
+        simControls = SimulationControls(self.logicController)
+        simControls.configureReset(self.levelController.resetLevel)
+        simControls.addButton("Check solution", self.checkSolution, 0)
 
         # Wrap grid in scroll area
         gridScrollArea = QtWidgets.QScrollArea()
@@ -100,10 +104,9 @@ class LevelScene(QtWidgets.QWidget):
 
         # Add the widgets to the layout
         self.layout.addWidget(self.backButton, 0, 0)
-        self.layout.addWidget(levelInfoContainer, 1, 0, 2, 1)
-        self.layout.addLayout(sidebarFrame, 3, 0)
+        self.layout.addLayout(sidebarFrame, 1, 0)
         self.layout.addWidget(simControls, 0, 1)
-        self.layout.addWidget(gridScrollArea, 1, 1, 3, 1)
+        self.layout.addWidget(gridScrollArea, 1, 1)
 
     def checkSolution(self):
         """Calls the levelController to check the solution.

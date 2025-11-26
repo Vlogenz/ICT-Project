@@ -26,16 +26,14 @@ build_exe_options = {
     ],
 }
 
-base = None
-if sys.platform == "win32":
-    base = "Win32GUI"  # no console window
+base = "gui" # Dont open a console window
 
 executables = [
     Executable(
         main_script,
         base=base,
         target_name=APP_NAME,
-        icon="assets/sprites/AppLogo.ico",  # if you have one
+        icon="assets/sprites/AppLogo.ico"  # if you have one
     )
 ]
 

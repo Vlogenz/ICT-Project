@@ -69,11 +69,12 @@ class LevelScene(QtWidgets.QWidget):
         levelInfoContainer.setWidget(levelInfoLabel)
         levelInfoContainer.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
         levelInfoContainer.setSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Expanding)
+        self.levelInfoContainer = levelInfoContainer
         sidebarFrame.addWidget(levelInfoContainer)
 
         # OutputPrediction, if necessary
         if self.levelController.usesOutputPredictions():
-            sidebarFrame.addWidget(OutputPrediction(self.levelController), 0, 0, 1, 2)
+            sidebarFrame.addWidget(OutputPrediction(self.levelController))
 
         # Palette
         classes = self.levelController.getAvailableComponentClasses()

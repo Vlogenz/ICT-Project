@@ -11,7 +11,7 @@ class RegisterBlock(LogicComponent):
         # Half Adder has exactly two inputs
         #   (Tuples of component and output key of that component)
         self.state: dict = {"readData1": (0,32), "readData2": (0,32)}  
-        self.registers: typing.List = [0 for i in range(20)] # List of instructions stored in memory
+        self.registers: typing.List = [0 for i in range(32)] # List of registers (MIPS has 32 registers)
         
     
 

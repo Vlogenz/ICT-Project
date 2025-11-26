@@ -112,15 +112,17 @@ class TestLevelScene:
         scene = LevelScene(level_controller, level_file_controller)
         qtbot.addWidget(scene)
 
-        # Find the label in the layout
-        level_info_label = None
+        # Find the scroll area in the layout
+        level_info_scroll_area = None
         for i in range(scene.layout.count()):
             item = scene.layout.itemAt(i)
-            if item.widget() and isinstance(item.widget(), QtWidgets.QLabel):
-                level_info_label = item.widget()
+            if item.widget() and isinstance(item.widget(), QtWidgets.QScrollArea):
+                level_info_scroll_area = item.widget()
                 break
 
-        assert level_info_label is not None
+        assert level_info_scroll_area is not None
+        level_info_label = level_info_scroll_area.widget()
+        assert isinstance(level_info_label, QtWidgets.QLabel)
         assert "Test Level" in level_info_label.text()
         assert "A test level" in level_info_label.text()
         assert "Objective 1" in level_info_label.text()

@@ -1,11 +1,11 @@
 {
-    "level_id": 53,
-    "name": "Adding NOR",
-    "description": "we also want our ALU to also handle NOR operation. Again, we don’t need to implement a differentGate but can rather alter the signal to achieve the same result. Remember:A NOR B = NOT (A OR B) = NOT(A) AND NOT(B). This level adds a separate control signal `ainvert` to enable NOR operation.",
+    "level_id": 15,
+    "name": "Adding Subtraction",
+    "description": "Of course we want our ALU to also handle subtractions. We don’t add a different Adder, but rather reuse the same Adder. Remember: A - B = A + (NOT B) + 1. This level adds a separate control signal `binvert` to enable subtracting B. Also Note that the CarryIn Input you had in the last level is not needed here anymore",
     "difficulty": "Medium",
     "objectives": [
-        "expand the previous processor to also handle NOR. Use the separate control signal: ainvert",
-        "Use a separate control input `ainvert` so that when `ainvert`=1 and op selects the OR operation, the circuit computes A NOR B."
+        "Expand the previous 1-bit ALU so it can perform subtraction as well.",
+        "Use a separate control input `binvert` so that when `binvert`=1 and op selects the addition operation, the circuit computes A - B (via A + NOT(B) + 1)."
     ],
 
    "components": [
@@ -20,76 +20,43 @@
         {"type": "Or", "position": [11,8], "immovable":false},
         {"type": "Multiplexer4Inp", "position": [14,5], "immovable":false},
         {"type": "Output", "position": [13,3], "immovable": false, "label": "Carry_out"},
-        {"type": "Output", "position": [16,5], "immovable": false, "label": "OUT"},
-        {"type": "Not","position":[5,7], "immovable": false, "label": "NotBinvert"},
-        {"type": "Multiplexer2Inp", "position": [6,7], "immovable": false, "label": "MUXbinvert"},
-        {"type": "Input", "position": [3,11], "immovable": false, "label": "ainvert"}
+        {"type": "Output", "position": [16,5], "immovable": false, "label": "OUT"}
        
     ],
 
     "connections": [
-        {
-            "origin": 4,
+         {
+            "origin": 0,
             "originKey": "outValue",
             "destination": 6,
-            "destinationKey": "inputCin"
+            "destinationKey": "inputA"
         },
-        
-        {
-            "origin": 4,
-            "originKey": "outValue",
-            "destination": 13,
-            "destinationKey": "selection"
-        },
-        {
-            "origin": 1,
-            "originKey": "outValue",
-            "destination": 13,
-            "destinationKey": "input1"
-        },
-        {
-            "origin": 12,
-            "originKey": "outValue",
-            "destination": 13,
-            "destinationKey": "input2"
-        },
-        {
-            "origin": 1,
-            "originKey": "outValue",
-            "destination": 12,
-            "destinationKey": "input"
-        },
-        
          {
             "origin": 2,
             "originKey": "outValue",
             "destination": 5,
             "destinationKey": "input1"
         },
-        {
+         {
             "origin": 3,
             "originKey": "outValue",
             "destination": 5,
             "destinationKey": "input2"
         },
-                {
-            "origin": 13,
-            "originKey": "outputValue",
+        
+        {
+            "origin": 0,
+            "originKey": "outValue",
             "destination": 8,
-            "destinationKey": "input2"
+            "destinationKey": "input1"
         },
         {
-            "origin": 13,
-            "originKey": "outputValue",
+            "origin": 0,
+            "originKey": "outValue",
             "destination": 7,
-            "destinationKey": "input2"
+            "destinationKey": "input1"
         },
-        {
-            "origin": 13,
-            "originKey": "outputValue",
-            "destination": 6,
-            "destinationKey": "inputB"
-        },     
+       
         {
             "origin": 5,
             "originKey": "outValue",
@@ -143,24 +110,38 @@
     "solution": "",
 
     "tests": [
-
+       
         {
-            "inputs": [[0,1], [0,1], [0,1], [0,1], [1,1],[1,1]],
+            "inputs": [[1,1], [1,1], [0,1], [1,1], [1,1]],
+            "expected_output": [[1,1],[0,1]]
+        },
+        {
+            "inputs": [[1,1], [0,1], [0,1], [1,1], [1,1]],
             "expected_output": [[1,1],[1,1]]
         },
         {
-            "inputs": [[0,1], [1,1], [0,1], [0,1], [1,1],[1,1]],
+            "inputs": [[0,1], [1,1], [0,1], [1,1], [1,1]],
+            "expected_output": [[0,1],[1,1]]
+        },
+        {
+            "inputs": [[0,1], [0,1], [0,1], [1,1], [1,1]],
             "expected_output": [[1,1],[0,1]]
         },
         {
-            "inputs": [[1,1], [0,1], [0,1], [0,1], [1,1],[1,1]],
-            "expected_output": [[1,1],[0,1]]
-        },
-        {
-            "inputs": [[1,1], [1,1], [0,1], [0,1], [1,1],[1,1]],
+            "inputs": [[0,1], [0,1], [0,1], [1,1], [0,1]],
             "expected_output": [[0,1],[0,1]]
+        },
+        {
+            "inputs": [[1,1], [0,1], [0,1], [1,1], [0,1]],
+            "expected_output": [[0,1],[1,1]]
+        },
+        {
+            "inputs": [[0,1], [1,1], [0,1], [1,1], [0,1]],
+            "expected_output": [[0,1],[1,1]]
+        },
+        {
+            "inputs": [[1,1], [1,1], [0,1], [1,1], [0,1]],
+            "expected_output": [[1,1],[0,1]]
         }
-
-
     ]
 }

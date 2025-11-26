@@ -7,7 +7,7 @@ from src.view.SandboxModeScene import SandboxModeScene
 from src.view.LevelSelectionScene import LevelSelectionScene
 from src.view.LevelScene import LevelScene
 from src.view.MainScene import MainScene
-from src.constants import Scene
+from src.constants import Scene, BG_COLOR, PR_COLOR_1, PR_COLOR_2, PR_TEXT_COLOR
 from src.control.LevelFileController import LevelFileController
 from src.control.LevelController import LevelController
 
@@ -16,6 +16,39 @@ from src.control.LevelController import LevelController
 class AppController():
     def __init__(self):
         self.app = QtWidgets.QApplication(sys.argv)
+        #stylesheet
+        stylesheet = f"""
+            QWidget {{
+            color: rgb{PR_TEXT_COLOR};
+            background-color: rgb{BG_COLOR};
+            font-size: 16px;
+            }}
+            QPushButton {{
+            background-color: rgb{PR_COLOR_1};
+            color: rgb{PR_TEXT_COLOR};
+            font-weight: bold;
+            border-radius: 5px;
+            }}
+            .large {{
+            font-size: 24px;
+            font-weight: bold;
+            border-radius: 10px;
+            }}
+            .btn-secondary {{
+            background-color: rgb{PR_COLOR_2};
+            color: rgb{PR_TEXT_COLOR};
+            }}
+            .level-button {{
+            border: 5px solid rgb{PR_COLOR_2};
+            border-radius: 10px;
+            background-color: rgb{BG_COLOR};
+            color: rgb{PR_TEXT_COLOR};
+            }}
+            .recommended {{
+            background-color: rgb{PR_COLOR_1}
+            }}
+            """
+        self.app.setStyleSheet(stylesheet)
         self.app.aboutToQuit.connect(self._cleanup)  # connect signal
         self.bus = getBus()
         self.bus.subscribe("levelSelection:levelSelected", self.onLevelSelected)

@@ -1,0 +1,26 @@
+{
+    "level_id": 1,
+    "name": "OR Gate",
+    "description": "The OR gate checks if either A or B are true, if either are true, it will return 1, otherwise it returns 0.",
+    "difficulty": "Easy",
+    "objectives": [
+        "Connect the inputs with an OR gate. Then connect the OR gate to the Output"
+    ],
+    "components": [
+        {"type": "Input", "position": [0,1], "immovable": true, "label": "A"},
+        {"type": "Input", "position": [0,3], "immovable": true, "label": "B"}, 
+        {"type": "Output", "position": [4,2], "immovable": true}    
+    ],
+    "available_components": [
+        {"type": "Or"}
+    ],
+    "hints": [
+        "The OR gate will only return false if both A and B are 0."
+    ],
+    "tests": [
+        {"inputs": [[0,1],[0,1]], "expected_output": [[0,1]]},
+        {"inputs": [[1,1],[0,1]], "expected_output": [[1,1]]},
+        {"inputs": [[0,1],[1,1]], "expected_output": [[1,1]]},
+        {"inputs": [[1,1],[1,1]], "expected_output": [[1,1]]}
+    ]
+}

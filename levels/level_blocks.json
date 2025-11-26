@@ -1,0 +1,110 @@
+{
+  "Basic Gates": [
+    {
+      "id": 0,
+      "name": "AND Gate",
+      "recommended": true
+    },
+    {
+      "id": 1,
+      "name": "OR Gate"
+    },
+    {
+      "id": 2,
+      "name": "NOT Gate"
+    },
+    {
+      "id": 3,
+      "name": "Functional Completeness 1"
+    },
+    {
+      "id": 4,
+      "name": "Functional Completeness 2"
+    },
+    {
+      "id": 5,
+      "name": "Functional Completeness 3"
+    }
+  ],
+  "Further Gates": [
+    {
+      "id": 6,
+      "name": "Multiplexer",
+      "recommended": true
+    },
+    {
+      "id": 7,
+      "name": "8-bit Collector and bigger MUX"
+    },
+    {
+      "id": 8,
+      "name": "Decoder"
+    }
+  ],
+  "Persistence": [
+    {
+      "id": 9,
+      "name": "RS-Flipflop"
+    },
+    {
+      "id": 10,
+      "name": "D-Latch"
+    }
+  ],
+  "Adders": [
+    {
+      "id": 11,
+      "name": "Half Adder"
+    },
+    {
+      "id": 12,
+      "name": "Full Adder"
+    },
+    {
+      "id": 13,
+      "name": "Subtraction with a Full Adder"
+    }
+  ],
+  "Arithmetic-logical-unit": [
+    {
+      "id": 14,
+      "name": "1-bit ALU"
+    },
+    {
+      "id": 15,
+      "name": "Adding Subtraction"
+    },
+    {
+      "id": 16,
+      "name": "Adding NOR",
+      "recommended": true
+    },
+    {
+      "id": 17,
+      "name": "Zero flag logic"
+    },
+    {
+      "id": 18,
+      "name": "SLT (Set-on-Less-Than)",
+      "recommended": true
+    }
+  ],
+  "Registers": [
+    {
+      "id": 19,
+      "name": "Register Block"
+    },
+    {
+      "id": 20,
+      "name": "Adding the write option to Register Block",
+      "recommended": true
+    }
+  ],
+  "Full Processor": [
+    {
+      "id": 21,
+      "name": "Limited MIPS Processor",
+      "recommended": true
+    }
+  ]
+}

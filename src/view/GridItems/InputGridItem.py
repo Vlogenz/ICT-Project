@@ -24,14 +24,14 @@ class InputGridItem(GridItem):
 
         # Add the toggle for 1 bit
         self.toggleButton = QPushButton(f"Toggle")
-        self.toggleButton.setStyleSheet("color: black;")
         self.layout.addWidget(self.toggleButton)
 
         self.toggleButton.hide()
 
         # Add the text box for 8/32 bits
         self.numberInput = QLineEdit()
-        self.numberInput.insert("0")
+        # Set the initial value from the component's state
+        self.numberInput.insert(str(self.logicComponent.state["outValue"][0]))
         self.numberInput.setMaxLength(10)
         self.numberInput.setValidator(QIntValidator())
 

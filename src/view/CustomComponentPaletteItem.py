@@ -1,5 +1,6 @@
 from typing import override
 from pathlib import Path
+from PySide6 import QtGui
 
 from src.model.CustomLogicComponentData import CustomLogicComponentData
 from src.view.PaletteItem import PaletteItem
@@ -12,16 +13,16 @@ class CustomComponentPaletteItem(PaletteItem):
         self.componentData = componentData
 
     @override
-    def getImagePath(self) -> str:
+    def getImage(self) -> QtGui.QPixmap:
         # Try all supported image extensions
         supported_exts = [".png", ".jpg", ".jpeg", ".svg"]
         base_path = Path.home() / APP_NAME / "custom_components" / self.componentName
+        candidate = ""
         for ext in supported_exts:
             candidate = base_path / f"{self.componentName}{ext}"
             if candidate.exists():
-                return str(candidate)
-        # Optionally, return None or a default image path if not found
-        return ""
+                break
+        return QtGui.QPixmap(str(candidate))
 
     @override
     def getPayload(self):

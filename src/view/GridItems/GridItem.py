@@ -11,6 +11,12 @@ from src.infrastructure.eventBus import getBus
 from src.view.util.ImageLoader import ImageLoader
 
 
+# ===== AI NOTE =====
+# In this file, AI was used to generate the basic structure, especially the drag and drop behaviour and the paintEvent.
+# Also, the WrapAnywhereLabel was largely AI generated.
+# Everything was peer-reviewed by humans and changes were made for fine-tuning.
+# ===================
+
 class WrapAnywhereLabel(QtWidgets.QWidget):
     """A custom widget that wraps text anywhere, not just at word boundaries."""
 

@@ -9,10 +9,6 @@ __pycache__/
 # Ignore virtual environment
 env
 
-# Python DLLs for building
-python3.dll
-python314.dll
-
 # Tex files
 main.aux
 main.blg
@@ -34,4 +30,5 @@ meta.json
 build
 out
 dist
-
+python3.dll
+python314.dll

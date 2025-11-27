@@ -36,15 +36,15 @@ Learning Mode provides a structured, progressive approach to learning digital lo
 
 \subsubsection{Level Selection Interface}
 
-The level selection screen presents available levels in an organized grid format where levels are grouped into thematic blocks such as basic gates, combinational circuits, and sequential logic. Graphical lines connect related levels to clearly show the learning progression, while status indicators display completion status with "Done" markers or "Locked" labels for unavailable content. A recommendation system highlights suggested next steps in the learning path to guide students through the most effective sequence of exercises.
-
+The level selection screen presents available levels in an organized grid format where levels are grouped into thematic blocks such as basic gates, combinational circuits, and sequential logic. Graphical lines connect related levels to clearly show the learning progression, while status indicators display completion status with "Done" markers or "Locked" labels for unavailable content. 
 \subsubsection{Level Progression System}
 
 The application implements a structured unlock system where initial levels are available by default, but completing a level unlocks the next level in the sequence. This ensures users must demonstrate mastery before advancing to more complex topics. The system tracks completion status persistently across sessions.
 
 \subsubsection{Reviewer Options}
 
-For instructors and advanced users, additional reviewer options provide enhanced control over the learning experience. These include the ability to show or hide level recommendations that toggle visual indicators for suggested levels, unlock all levels to override the progression system for immediate access to any content, or re-lock levels to restore the structured progression system when needed.
+For reviewers and advanced users, additional reviewer options provide enhanced control over the learning experience. These include the ability to show or hide level recommendations that toggle visual indicators for suggested levels, unlock all levels to override the progression system for immediate access to any content, or re-lock levels to restore the structured progression system when needed.
+To get a good overview over the levels we recommend reviewers to look at the Levels: 0, 6, 16, 18, 20 and 21
 
 \subsubsection{Individual Level Experience}
 
@@ -60,7 +60,7 @@ Unlike Sandbox Mode, each level provides access only to components relevant to t
 Learning levels include a context-sensitive hint system with multiple progressive hints available per level that are revealed sequentially as needed. The system provides visual feedback through a lamp icon that changes from off to on when hints are accessed. This non-intrusive design ensures hints remain optional and don't interrupt the natural learning flow, while the hint progression resets automatically for repeated level attempts.
 
 \paragraph{Solution Checking and Validation}
-The application provides automated solution verification through a check solution button that gives immediate feedback on circuit correctness. Comprehensive testing validates circuit behavior using multiple test cases, while some levels integrate output prediction exercises that require students to predict results before simulation. Clear success and failure messages provide specific guidance for improvements, and successful completion automatically updates the user's progress in the system.
+The application provides automated solution verification through a check solution button that gives immediate feedback on circuit correctness. Comprehensive testing validates circuit behavior using multiple test cases. Clear success and failure messages are provided after the tests are run, successful completion automatically updates the user's progress in the system.
 
 \paragraph{Level Reset Functionality}
 Students can reset their progress within a level at any time, which clears all placed components except immovable, pre-placed elements and restores the initial circuit state. This allows fresh attempts without penalty while maintaining the level structure and objectives.

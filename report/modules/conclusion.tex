@@ -1,2 +1,30 @@
 
-\section{conclusion}
+\section{Conclusion}
+
+This report documented the design, implementation, and evaluation of \textit{CircuitQuest}, a software application developed to serve as an interactive educational tool for digital logic and computer architecture.
+
+\subsection{Summary of Work and Results}
+The objective of the project was to design and implement a gamified platform that guides students from fundamental Boolean logic through to the complex architecture of a functioning single-cycle MIPS processor. 
+
+
+Key outcomes of this project include:
+\begin{itemize}
+    \item Functional Datapath: We successfully implemented and tested the core components required to simulate a single-cycle MIPS datapath.
+    \item Robust Architecture: The adoption of the Model-View-Controller (MVC) pattern and an Event Bus mechanism ensured a decoupled system where the simulation logic remains isolated and testable, independent of the front-end visualization.
+    \item Validated Logic: Through comprehensive unit testing, the logic simulation layer achieved a test coverage of 93\%, validating the correctness of critical components, which is essential for an educational tool where accuracy is paramount.
+\end{itemize}
+
+\subsection{Project Implications and Gaps}
+\textit{CircuitQuest} provides a demonstrable solution to the problem of visualizing complex component interaction and control flow, concepts that are difficult to teach using static methods alone.
+
+While the project provides a strong foundation, the current implementation contains scope limitations that warrant future attention. The most significant gap is the simplified, pre-built nature of the Control Unit and the restriction on loading user-defined instructions in the Sandbox environment. Furthermore, the reliance on Python, while enabling rapid development, imposes performance constraints that would necessitate a transition to a lower-level language for a truly commercial-grade product.
+
+\subsection{Future Work}
+Based on the challenges and limitations identified, we propose the following steps for future development:
+
+\begin{enumerate}
+    \item \textbf{Temporal Simulation Model:} The primary extension should focus on implementing a fine-grained, clock-cycle-based simulation model. This is the necessary prerequisite for expanding the curriculum to advanced architectural concepts, specifically the construction and visualization of Multi-Cycle Processors and Pipelining.
+    \item \textbf{Enhance Usability:} The intelligence of the orthogonal wire routing algorithm must be improved to eliminate overlaps and maintain visual clarity in dense circuits.
+    \item \textbf{Instruction Set Interface:} Implement a graphical or textual interface to allow users to compile and load custom assembly code into the Instruction Memory in Sandbox mode, unlocking the full potential of the MIPS datapath as a functional simulator.
+\end{enumerate}
+In conclusion, the project successfully delivered an innovative and accurate educational tool, validating the core principle that interactive simulation can significantly deepen a student's understanding of computer architecture.

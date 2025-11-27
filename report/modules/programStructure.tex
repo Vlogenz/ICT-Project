@@ -22,7 +22,7 @@ The high-level dependencies and relationships between these packages are illustr
 \includepdf[pages=-,fitpaper=true,angle=90]{./assets/classes_ICT-Project}
 \subsection{Design Patterns and Architectural Decisions}
 
-To maintain loose coupling between components, the project employs the \textbf{Event Bus} pattern. This allows the Model to emit state changes (such as \texttt{model:input\_changed}) without having direct dependencies on the View. The Controller and View subscribe to these events to update the simulation state or the GUI respectively, preventing rigid hard-coding of component interactions.
+To maintain loose coupling between components, the project employs the \textbf{Event Bus} pattern. This is will further be explained in 6.2. Event bus and MVC decoupling.
 
 Additionally, the \textbf{Factory Method} pattern is utilized within the view layer to manage the creation of grid items. The \texttt{GridItemFactory} class provides a static interface for instantiating the appropriate graphical representation (e.g., \texttt{InputGridItem}, \texttt{ALUAdvancedGridItem}) based on the type of \texttt{LogicComponent} provided. This abstraction isolates the \texttt{GridWidget} from the complexity of instantiating specific component subclasses, thereby adhering to the Open/Closed Principle regarding the addition of new component types.
 

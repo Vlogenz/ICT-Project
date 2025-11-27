@@ -1,6 +1,32 @@
-% - Overall thoughts
-% - what we could do better
-% - what we wanted to do but didn't managed in time
-% - 
-
 \section{Discussion}
+
+This chapter provides a critical evaluation of \textit{CircuitQuest}, comparing the final implemented solution against the project's initial goals and discussing the technical decisions and trade-offs made during development. We analyze the validity of our simulation approach, address existing limitations, and propose avenues for future work.
+
+\subsection{Evaluation of Educational Scope and Simulation Trade-offs}
+The central challenge of \textit{CircuitQuest} was to achieve a balance between gamified accessibility and the complex reality of computer architecture.
+
+\subsubsection{Simplified Control Unit}
+A primary trade-off was necessitated by time constraints concerning the implementation of the Control Unit (CU) model. The CU in the final MIPS level (Level 21) is provided as a pre-built component that only supports a basic subset of instructions (R-type, \texttt{lw}, \texttt{sw}, and \texttt{beq}). This allowed us to prove the concept of a functioning Single-Cycle Datapath within the project deadline. However, a complete educational tool would require levels dedicated to teaching the player how to design the CU logic itself. This simplification, while necessary, represents a gap in the learning progression that was originally intended.
+
+\subsubsection{Sandbox Limitations}
+The Sandbox Mode serves its purpose for experimentation and skilled users. Nonetheless, its utility is restricted by the read-only nature of the Instruction Memory. Currently, users cannot load custom assembly commands into memory via the interface. This limits the ability of the player to fully utilize the processor simulation for running arbitrary code, constraining the open-ended design philosophy of the Sandbox.
+
+\subsection{Technical and Cross-Platform Considerations}
+\subsubsection{Technology Stack}
+The choice of Python with the PySide6 framework was strategic for rapid prototyping and accommodating a large, distributed team with mixed experience. This facilitated the timely development of both the simulation kernel and the interactive GUI. However, this choice introduces performance and maintenance limitations for a potential long-term commercial application. The performance advantages of a compiled language with strong typing, such as C++, would be necessary to ensure robustness and optimal simulation speed across complex circuits.
+
+\subsubsection{Performance and Portability Issues}
+While the event-driven simulation engine generally performs well, an observable performance degradation occurs in a specific scenario. When the main processor level (Level 21) is opened, a simulation is run, the level is closed, and then re-opened, a significant delay or lag is experienced upon re-initialization. This indicates potential issues with resource disposal or cleanup within the Qt framework or the Event Bus layer.
+
+Furthermore, ensuring cross-platform compatibility introduced unforeseen challenges. Specifically, users on macOS with \textit{Dark Mode} enabled experienced inverse color schemes, which required manual styling overrides to restore visual integrity.
+
+\subsection{Limitations of the Visual Simulation}
+A critical limitation of the visualization layer is the implementation of the connection routing algorithm. Due to development constraints, a custom orthogonal (Manhattan) routing algorithm was implemented to avoid messy diagonal lines. This custom solution, however, remains flawed. There are existing edge cases where signal lines improperly overlap or visually pass through other circuit components, leading to a cluttered and confusing representation of the circuit state. This negatively impacts the educational value, as visually clear component interconnection is paramount for understanding signal flow.
+
+\subsection{Outlook and Future Work}
+The most significant area for future development is the implementation of \textbf{temporal logic} to enable multi-cycle processing. By introducing a precise concept of time and clock-cycle operation beyond the current single-cycle model, the application could be expanded to cover advanced topics such as:
+\begin{enumerate}
+    \item \textbf{Multi-Cycle Processors:} Allowing the visualization of a single instruction broken down into sequential execution phases.
+    \item \textbf{Pipelining:} Extending the simulation to demonstrate the parallel execution of multiple instructions, which is a fundamental concept in modern computer architecture but currently beyond the scope of this tool.
+\end{enumerate}
+In addition to these major features, future work should address the identified limitations, specifically fixing the visual connection routing algorithm and providing the functionality for users to inject custom instructions into the Instruction Memory.

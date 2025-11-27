@@ -4,6 +4,8 @@ This section describes how to use the logic circuit simulator application, cover
 
 \subsection{Starting the Application}
 
+In the the ZIP-File we providede there is an executable file named \texttt{CircuitQuest.exe} for Windows users. Linux and Mac users need to build the application from source.
+
 When launching the application, users are presented with the main menu screen featuring three primary options. The \textbf{Learning} button enters the structured learning environment with predefined levels and guided exercises, while \textbf{Sandbox} provides unrestricted access to all components for free-form circuit design. The \textbf{Exit} button closes the application cleanly.
 
 The main screen displays the application logo prominently and provides a clean, intuitive interface for mode selection with clearly labeled buttons positioned for easy access.
@@ -14,7 +16,7 @@ Sandbox Mode offers complete freedom to experiment with digital logic circuits w
 
 \subsubsection{Core Features}
 
-In Sandbox Mode, users have access to the complete palette of logic components including gates, memory elements, and I/O components with unlimited grid space for circuit construction. The environment provides full simulation controls for playing, pausing, and resetting simulations along with intuitive drag-and-drop component placement and a visual connection system for wiring components together. A dedicated delete area allows for easy removal of unwanted components.
+In Sandbox Mode, users have access to the complete palette of logic components including gates, memory elements, and I/O components with vast grid space for circuit construction. The environment provides full simulation controls for playing, pausing, slowing down, speeding up, and resetting simulations along with intuitive drag-and-drop component placement and a visual connection system for wiring components together. A dedicated delete area allows for easy removal of unwanted components.
 
 The interface consists of a sidebar containing the component palette and delete area, simulation controls at the top, and a scrollable grid workspace where circuits are constructed. Components can be interacted with through left-click operations for connections and movement, as well as right-click context menus that provide additional options such as renaming or deleting movable components.
 
@@ -36,14 +38,14 @@ Learning Mode provides a structured, progressive approach to learning digital lo
 
 \subsubsection{Level Selection Interface}
 
-The level selection screen presents available levels in an organized grid format where levels are grouped into thematic blocks such as basic gates, combinational circuits, and sequential logic. Graphical lines connect related levels to clearly show the learning progression, while status indicators display completion status with "Done" markers or "Locked" labels for unavailable content. 
+The level selection screen presents available levels in an organized grid format where levels are grouped into thematic blocks such as basic gates, persistance, and Arithmetic-Logical-Unit. Graphical lines connect related levels to clearly show the learning progression, while status indicators display completion status with "Done" markers or "Locked" labels for unavailable content. 
 \subsubsection{Level Progression System}
 
 The application implements a structured unlock system where initial levels are available by default, but completing a level unlocks the next level in the sequence. This ensures users must demonstrate mastery before advancing to more complex topics. The system tracks completion status persistently across sessions.
 
 \subsubsection{Reviewer Options}
 
-For reviewers and advanced users, additional reviewer options provide enhanced control over the learning experience. These include the ability to show or hide level recommendations that toggle visual indicators for suggested levels, unlock all levels to override the progression system for immediate access to any content, or re-lock levels to restore the structured progression system when needed.
+For reviewers and advanced users, additional options provide enhanced control over the learning experience. These include the ability to show or hide level recommendations that toggle visual indicators for suggested levels, unlock all levels to override the progression system for immediate access to any content, or re-lock levels to restore the structured progression system when needed.
 To get a good overview over the levels we recommend reviewers to look at the Levels: 0, 6, 16, 18, 20 and 21
 
 \subsubsection{Individual Level Experience}
@@ -68,22 +70,3 @@ Students can reset their progress within a level at any time, which clears all p
 \subsubsection{Special Level Features}
 
 Advanced levels may include additional complexity such as pre-placed immovable components that define part of the circuit structure, memory integration involving instruction or data memory with pre-loaded content, output prediction exercises that test understanding before implementation, and multi-objective challenges requiring satisfaction of multiple, potentially competing goals.
-
-\subsection{Building From Source}
-
-Running the program should be done from a terminal. For Windows users, use PowerShell and navigate to the project root directory, while Linux users should use their preferred terminal and change to the project root directory. Mac users should ask Lorenz for specific instructions.
-
-\paragraph{Installation Instructions}
-
-The primary dependency is Python, where version 3.13 was used in development, though newer versions will likely work as well.\\
-
-To set up the environment, all platforms should run \texttt{python3.13 -m venv env} to create the virtual environment.\\
-
-For entering the environment, Linux users should execute \texttt{source env/bin/activate}, while Windows users need to run \texttt{\& "./env/Scripts/Activate.ps1"}.\\
-If Windows displays an error about running scripts being disabled, \texttt{Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Scope Process} should fix the error.\\
-
-After activating the environment, install the required packages using \texttt{pip install -r requirements.txt}.\\
-
-Windows users may need to manually place the python3.dll and python313.dll files into the project directory.  This location changes from person to person, find this using \texttt{py -0p}.\\
-
-Finally, build the application with \texttt{python3 -m src.setup build}.

@@ -10,47 +10,45 @@
 The frontend of the application is designed to provide an interactive and responsive environment where students can visualize and manipulate logic circuits. This section details the technology stack, the architecture of the user interface, and the custom implementation of the grid and component systems.
 
 \subsection{Technology Stack \& Framework}
-The graphical user interface (GUI) is built using \textbf{PySide6}, the official Python module from the Qt for Python project \cite{requirements.txt}. PySide6 was selected for its native desktop performance, robust event handling system (Signals/Slots), and the sophisticated \texttt{QPainter} API, which is essential for rendering custom circuit graphics.
+The graphical user interface (GUI) is built using \textbf{PySide6}, the official Python module from the Qt for Python project \texttt{requirements.txt}. PySide6 was selected for its native desktop performance, robust event handling system (Signals/Slots), and the sophisticated \texttt{QPainter} API, which is essential for rendering custom circuit graphics.
 
-To ensure a consistent visual identity, the application utilizes a centralized styling system in the \texttt{AppController}. Colors and palette constants (such as \texttt{BG\_COLOR} and \texttt{PR\_COLOR\_1}) are defined in \texttt{src.constants} and applied throughout the widget hierarchy \cite{src/constants.py}.
+To ensure a consistent visual identity, the application utilizes a centralized styling system in the \texttt{AppController}. Colors and palette constants (such as \texttt{BG\_COLOR} and \texttt{PR\_COLOR\_1}) are defined in \texttt{src.constants} and applied throughout the widget hierarchy \texttt{src/constants.py}.
 
 \subsection{User Interface Architecture}
 The application follows a scene-based navigation flow, visually represented by distinct widgets that act as containers for different application states:
 
 \begin{itemize}
-	\item \textbf{Main Menu (\texttt{MainScene}):} Serving as the entry point, this scene allows users to select between "Learning" and "Sandbox" modes. It utilizes a \texttt{QGridLayout} to center the application branding and navigation buttons \cite{src/view/MainScene.py}.
+	\item \textbf{Main Menu (\texttt{MainScene}):} Serving as the entry point, this scene allows users to select between "Learning" and "Sandbox" modes. It utilizes a \texttt{QGridLayout} to center the application branding and navigation buttons \texttt{src/view/MainScene.py}.
 	\item \textbf{Level Selection (\texttt{LevelSelectionScene}): } This is the overview for all available levels. The different blocks are displayed in seperate columns that resemble the branches of a logic circuit. In the bottom part, the reviewer has a few options that would not be available in the regular game. They can unlock all levels for testing purposes and also highlight the levels that we as the developer team recommend.
-	\item \textbf{Level View (\texttt{LevelScene}):} This is the primary container for gameplay. It aggregates essential sub-components including the Component Palette, Simulation Controls, and the central \texttt{GridWidget} \cite{src/view/LevelScene.py}.
+	\item \textbf{Level View (\texttt{LevelScene}):} This is the primary container for gameplay. It aggregates essential sub-components including the Component Palette, Simulation Controls, and the central \texttt{GridWidget} \texttt{src/view/LevelScene.py}.
 	\item \textbf{Sandbox Mode (\texttt{SandboxModeScene}): } Built in a mostly similar way as the LevelScene, the SandboxMode provides you with more options to build any logic circuit. In the sidebar, there is a seperate drop-down section that contains all the custom components that the user created. In the top right, there is a button to a create custom component from the current state of the Grid. It opens up a \texttt{QMessageBox} in which you can enter all relevant information. Upon submission, this data then gets validated by the \texttt{CustomComponentController} and stored as a json file.
-	\item \textbf{Event-Driven Updates:} To decouple the frontend from the backend logic, the system employs an \texttt{eventBus}. The view components subscribe to specific events (e.g., \texttt{view:components\_updated}) to refresh the state only when necessary, minimizing rendering overhead \cite{src/view/GridWidget.py}.
+	\item \textbf{Event-Driven Updates:} To decouple the frontend from the backend logic, the system employs an \texttt{eventBus}. The view components subscribe to specific events (e.g., \texttt{view:components\_updated}) to refresh the state only when necessary, minimizing rendering overhead \texttt{src/view/GridWidget.py}.
 \end{itemize}
 
 \subsection{The Grid System}
-The core of the simulation visualization is the \texttt{GridWidget}, a custom component inheriting from \texttt{QtWidgets.QWidget}. It implements a dynamic coordinate system that supports zooming via the \texttt{wheelEvent}, scaling the drawing canvas by a \texttt{scale\_factor} \cite{src/view/GridWidget.py}.
-
+The core of the simulation visualization is the \texttt{GridWidget}, a custom component inheriting from \texttt{QtWidgets.QWidget}. It implements a dynamic coordinate system that supports zooming via the \texttt{wheelEvent}, scaling the drawing canvas by a \texttt{scale\_factor} \texttt{src/view/GridWidget.py}.
 The grid renders background lines based on the \texttt{CELL\_SIZE} constant to assist users in aligning components. It acts as the canvas for all \texttt{GridItem} objects and manages complex mouse interactions for placing, moving, and connecting logical elements.
 
 \subsection{Level Loading \& Rendering Pipeline}
 A critical feature of the frontend is the ability to dynamically render educational scenarios defined in external configurations. This process bridges the gap between the static JSON data and the interactive visual grid.
 
 \begin{enumerate}
-	\item \textbf{Data Ingestion:} The process begins in the \texttt{LevelFileController}, which handles file I/O operations. It reads specific level configurations (e.g., \texttt{level\_1.json}) containing component definitions, positions, and connection data \cite{src/control/LevelFileController.py}.
+	\item \textbf{Data Ingestion:} The process begins in the \texttt{LevelFileController}, which handles file I/O operations. It reads specific level configurations (e.g., \texttt{level\_1.json}) containing component definitions, positions, and connection data \texttt{src/control/LevelFileController.py}.
 	
-	\item \textbf{Scene Construction:} The \texttt{LevelController} processes this data via the \texttt{buildLevel} method. It converts string identifiers from the JSON file (e.g., "And", "Or") into runtime \texttt{LogicComponent} objects using the \texttt{COMPONENT\_MAP}. It prepares a structured payload, \texttt{componentInfo}, which links the logic objects to their grid coordinates \cite{src/control/LevelController.py}.
+	\item \textbf{Scene Construction:} The \texttt{LevelController} processes this data via the \texttt{buildLevel} method. It converts string identifiers from the JSON file (e.g., "And", "Or") into runtime \texttt{LogicComponent} objects using the \texttt{COMPONENT\_MAP}. It prepares a structured payload, \texttt{componentInfo}, which links the logic objects to their grid coordinates \texttt{src/control/LevelController.py}.
 	
-	\item \textbf{Decoupled Rendering:} Adhering to the MVC pattern, the controller does not modify the view directly. Instead, it emits a \texttt{view:rebuild\_circuit} event via the global event bus, passing the \texttt{componentInfo} \cite{src/control/LevelController.py}.
+	\item \textbf{Decoupled Rendering:} Adhering to the MVC pattern, the controller does not modify the view directly. Instead, it emits a \texttt{view:rebuild\_circuit} event via the global event bus, passing the \texttt{componentInfo} \texttt{src/control/LevelController.py}.
 	
-	\item \textbf{Visual Instantiation:} The \texttt{GridWidget} subscribes to this event. Upon triggering \texttt{rebuildCircuit}, it clears existing items and uses the \texttt{GridItemFactory} to generate the correct visual representation for each component. Finally, it calls \texttt{\_visuallyAddConnection} to reconstruct the wires between components \cite{src/view/GridWidget.py}.
+	\item \textbf{Visual Instantiation:} The \texttt{GridWidget} subscribes to this event. Upon triggering \texttt{rebuildCircuit}, it clears existing items and uses the \texttt{GridItemFactory} to generate the correct visual representation for each component. Finally, it calls \texttt{\_visuallyAddConnection} to reconstruct the wires between components \texttt{src/view/GridWidget.py}.
 \end{enumerate}
 
 \subsection{Component Rendering}
-Logic gates are visually represented by the \texttt{GridItem} class. Rather than drawing shapes manually, the application renders Scalable Vector Graphics (SVG) loaded from the assets directory (e.g., \texttt{assets/gates/And.svg}). This ensures that components remain crisp at any zoom level \cite{src/view/GridItems/GridItem.py}.
-
-Ports are generated dynamically based on the component's state. To aid debugging, the system implements custom tooltips that reveal the exact bit-value and bit-width of a specific input or output port when hovered \cite{src/view/GridItems/GridItem.py}.
+Logic gates are visually represented by the \texttt{GridItem} class. Rather than drawing shapes manually, the application renders Scalable Vector Graphics (SVG) loaded from the assets directory (e.g., \texttt{assets/gates/And.svg}). This ensures that components remain crisp at any zoom level \texttt{src/view/GridItems/GridItem.py}.
+Ports are generated dynamically based on the component's state. To aid debugging, the system implements custom tooltips that reveal the exact bit-value and bit-width of a specific input or output port when hovered \texttt{src/view/GridItems/GridItem.py}.
 
 \subsection{Intelligent Connection Routing}
 To maintain a clean visual representation of circuits, the application implements a custom wire routing algorithm within \texttt{GridWidget}. Connections are not drawn as direct diagonal lines but follow an orthogonal (Manhattan) path.
 
-The routing logic, encapsulated in the \texttt{intelligentOrthogonalRoute} method, actively avoids visual clutter. It calculates the path for a wire and checks for overlaps with existing connections. If a collision is detected, the algorithm calculates an offset, effectively creating a "detour" for the new wire. This ensures that distinct connections remain visually separable even in complex circuits \cite{src/view/GridWidget.py}.
+The routing logic, encapsulated in the \texttt{intelligentOrthogonalRoute} method, actively avoids visual clutter. It calculates the path for a wire and checks for overlaps with existing connections. If a collision is detected, the algorithm calculates an offset, effectively creating a "detour" for the new wire. This ensures that distinct connections remain visually separable even in complex circuits \texttt{src/view/GridWidget.py}.
 
 This intelligent routing has limitations however. As of now, there are still edge cases in which lines can overlap and create a cluttered look. In case we continue developing this project, we want to improve this routing by either reworking the logic ourselves or by using an external routing library.

@@ -13,7 +13,7 @@ The source code is organized into four primary packages within the \texttt{src} 
 
 The high-level dependencies and relationships between these packages are illustrated in Figure \ref{fig:package_diagram}.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{./assets/package_Diagramm.pdf}
     \caption{Package diagram illustrating the dependencies between the application modules.}
@@ -26,4 +26,4 @@ To maintain loose coupling between components, the project employs the \textbf{E
 
 Additionally, the \textbf{Factory Method} pattern is utilized within the view layer to manage the creation of grid items. The \texttt{GridItemFactory} class provides a static interface for instantiating the appropriate graphical representation (e.g., \texttt{InputGridItem}, \texttt{ALUAdvancedGridItem}) based on the type of \texttt{LogicComponent} provided. This abstraction isolates the \texttt{GridWidget} from the complexity of instantiating specific component subclasses, thereby adhering to the Open/Closed Principle regarding the addition of new component types.
 
-The entry point of the application, \texttt{AppController}, initializes the main window and navigates between the distinct application states (Sandbox, Level Selection, and Level Interaction) by swapping the central widget of the main window, effectively functioning as a high-level state manager.
+The entry point of the application, \texttt{AppController}, initializes the main window and navigates between the distinct application states (Sandbox, Level Selection, and Level Interaction) by swapping the central widget of the main window, effectively functioning as a high-level state manager.   

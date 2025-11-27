@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2025.7.2)  26 NOV 2025 16:40
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2025.7.2)  27 NOV 2025 10:59
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -1789,15 +1789,39 @@ Overfull \hbox (1.07457pt too wide) in paragraph at lines 31--32
  []
 
 [7] [8]
+Underfull \hbox (badness 10000) in paragraph at lines 78--79
+
+ []
+
 LaTeX Font Info:    Trying to load font information for T1+SourceCodePro-TLF on input line 80.
- (/usr/share/texlive/texmf-dist/tex/latex/sourcecodepro/T1SourceCodePro-TLF.fd
+(/usr/share/texlive/texmf-dist/tex/latex/sourcecodepro/T1SourceCodePro-TLF.fd
 File: T1SourceCodePro-TLF.fd 2018/02/18 (autoinst) Font definitions for T1/SourceCodePro-TLF.
 )
 LaTeX Font Info:    Font shape `T1/SourceCodePro-TLF/m/n' will be
 (Font)              scaled to size 10.0pt on input line 80.
 
-Overfull \hbox (8.08168pt too wide) in paragraph at lines 82--83
-\T1/SourceSansPro-TLF/regular/n/10 dis-abled, first ex-e-cute \T1/SourceCodePro-TLF/m/n/10 Set-ExecutionPolicy -ExecutionPolicy Un-re-stricted -Scope Pro-cess\T1/SourceSansPro-TLF/regular/n/10 . 
+Underfull \hbox (badness 10000) in paragraph at lines 80--81
+
+ []
+
+
+Overfull \hbox (16.17235pt too wide) in paragraph at lines 82--84
+\T1/SourceSansPro-TLF/regular/n/10 If Win-dows dis-plays an er-ror about run-ning scripts be-ing dis-abled, \T1/SourceCodePro-TLF/m/n/10 Set-ExecutionPolicy -ExecutionPolicy
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 82--84
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 85--86
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 87--88
+
  []
 
 ) (./modules/groupManagement.tex [9]) (./modules/programStructure.tex
@@ -1995,9 +2019,9 @@ Here is how much of TeX's memory you used:
  65710 multiletter control sequences out of 15000+600000
  583025 words of font info for 101 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 108i,20n,106p,10668b,2235s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 108i,19n,106p,10668b,2235s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/share/texlive/texmf-dist/fonts/enc/dvips/sourcesanspro/a_4jropk.enc}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/sourcecodepro/a_lutrty.enc}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/sourcesanspro/a_5ponh6.enc}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/sourcesanspro/a_emkxm5.enc}</usr/share/texlive/texmf-dist/fonts/type1/public/newtx/NewTXMI.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/newtx/NewTXMI7.pfb></usr/share/texlive/texmf-dist/fonts/type1/adobe/sourcecodepro/SourceCodePro-Bold.pfb></usr/share/texlive/texmf-dist/fonts/type1/adobe/sourcecodepro/SourceCodePro-Regular.pfb></usr/share/texlive/texmf-dist/fonts/type1/adobe/sourcesanspro/SourceSansPro-Bold.pfb></usr/share/texlive/texmf-dist/fonts/type1/adobe/sourcesanspro/SourceSansPro-It.pfb></usr/share/texlive/texmf-dist/fonts/type1/adobe/sourcesanspro/SourceSansPro-Regular.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmss10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmss12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmssbx10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt12.pfb>
-Output written on main.pdf (24 pages, 800063 bytes).
+Output written on main.pdf (24 pages, 800243 bytes).
 PDF statistics:
  671 PDF objects out of 1000 (max. 8388607)
  555 compressed objects within 6 object streams

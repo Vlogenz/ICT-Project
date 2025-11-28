@@ -6,6 +6,10 @@ from PySide6.QtWidgets import QPushButton, QLabel
 from src.constants import APP_NAME, BG_COLOR, PR_COLOR_1, PR_COLOR_2
 from src.infrastructure.eventBus import getBus
 
+# ===== AI NOTE =====
+# Some lines of code in this class were coded using AI to streamline the development process, but never entire code sections.
+# Those lines of code make up less than 10% of the code and everything was peer-reviewed by humans and changes were made for fine-tuning.
+# ===================
 
 class MainScene(QtWidgets.QMainWindow):
     # Main Window to select which mode the user wants use

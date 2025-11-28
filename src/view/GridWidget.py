@@ -15,7 +15,7 @@ import json
 from typing import List, Tuple
 
 # ===== AI NOTE =====
-# In this file, AI was used to generate the basic structure, especially the drag and drop behaviour and the paintEvent.
+# In this file, AI was used to generate the basic structure, particularly the drag and drop behaviour and the paintEvent.
 # Everything was peer-reviewed by humans and changes were made for fine-tuning.
 # ===================
 

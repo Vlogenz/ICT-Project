@@ -20,16 +20,19 @@ class InputGridItem(GridItem):
 
         # Create the button to rotate through bitwidths
         self.bitwidthButton = QPushButton(f"Bitwidth: {self.logicComponent.state["outValue"][1]}")
+        self.bitwidthButton.setProperty("class", "small")
         self.layout.addWidget(self.bitwidthButton)
 
         # Add the toggle for 1 bit
         self.toggleButton = QPushButton(f"Toggle")
+        self.toggleButton.setProperty("class", "small")
         self.layout.addWidget(self.toggleButton)
 
         self.toggleButton.hide()
 
         # Add the text box for 8/32 bits
         self.numberInput = QLineEdit()
+        self.numberInput.setProperty("class", "small")
         # Set the initial value from the component's state
         self.numberInput.insert(str(self.logicComponent.state["outValue"][0]))
         self.numberInput.setMaxLength(10)

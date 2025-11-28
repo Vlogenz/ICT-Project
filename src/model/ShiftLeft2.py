@@ -1,6 +1,11 @@
 import typing
 from .LogicComponent import LogicComponent
 
+# ===== AI NOTE =====
+# Some lines of code in this class were coded using AI to streamline the development process, but never entire code sections.
+# Those lines of code make up less than 10% of the code and everything was peer-reviewed by humans and changes were made for fine-tuning.
+# ===================
+
 class ShiftLeft2(LogicComponent):
     """ ShiftLeft2 component with one input and one output. Shifts the input value left by 2 bits.
     """

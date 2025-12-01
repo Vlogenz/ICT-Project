@@ -6,10 +6,16 @@ from PySide6.QtGui import QAction, QCursor, QBrush, QPalette
 from PySide6.QtWidgets import QMenu, QPushButton, QInputDialog
 
 from src.model.LogicComponent import LogicComponent
-from src.constants import CELL_SIZE, MIME_TYPE, PR_TEXT_COLOR
+from src.constants import CELL_SIZE, MIME_TYPE, PR_TEXT_COLOR, BG_COLOR, PR_COLOR_2
 from src.infrastructure.eventBus import getBus
 from src.view.util.ImageLoader import ImageLoader
 
+
+# ===== AI NOTE =====
+# In this file, AI was used to generate the basic structure, especially the drag and drop behaviour and the paintEvent.
+# Also, the WrapAnywhereLabel was largely AI generated.
+# Everything was peer-reviewed by humans and changes were made for fine-tuning.
+# ===================
 
 class WrapAnywhereLabel(QtWidgets.QWidget):
     """A custom widget that wraps text anywhere, not just at word boundaries."""
@@ -48,12 +54,12 @@ class WrapAnywhereLabel(QtWidgets.QWidget):
 
         painter = QtGui.QPainter(self)
 
-        # Adjust font size based on scale factor (only shrink when scale < 1.0)
+        # Set base font size to 12 and adjust for scale factor
         font = painter.font()
-        if self._scale_factor < 1.0:
-            base_size = font.pointSize() if font.pointSize() > 0 else 12
-            font.setPointSizeF(base_size * self._scale_factor)
-            painter.setFont(font)
+        font.setPointSize(12)
+        if self._scale_factor <= 1.0:
+            font.setPointSizeF(12 * self._scale_factor)
+        painter.setFont(font)
 
         painter.setPen(QtGui.QColor(*PR_TEXT_COLOR))
 
@@ -123,6 +129,8 @@ class GridItem(QtWidgets.QFrame):
 
         self.layout = QtWidgets.QVBoxLayout(self)
         self.layout.setContentsMargins(0,0,0,0)
+
+        self.setStyleSheet("background-color: transparent;")
 
         # Create nameLabel - we'll use a custom widget for wrap-anywhere behavior
         self.nameLabel = WrapAnywhereLabel(self.getName(), self)
@@ -269,6 +277,7 @@ class GridItem(QtWidgets.QFrame):
     def openContextMenu(self):
         """Open a context menu with options like deleting the item."""
         menu = QMenu(self)  # Parent the menu to avoid leaks
+        menu.setStyleSheet("background-color: white; color: black;")
         if not self.immovable:
             renameAction = QAction("Rename", self)
             renameAction.triggered.connect(self.openRenameDialog)
@@ -354,10 +363,15 @@ class GridItem(QtWidgets.QFrame):
                 label.setText("NC")
 
     def openRenameDialog(self):
-        text, ok = QInputDialog.getText(self, "Rename component", "Enter a label:")
-        if ok and text:
-            self.logicComponent.setLabel(text)
-            self.nameLabel.setText(self.getName())
+        dialog = QInputDialog(self)
+        dialog.setWindowTitle("Rename component")
+        dialog.setLabelText("Enter a label:")
+        dialog.setStyleSheet(f"background-color: rgb{BG_COLOR};")
+        if dialog.exec() == QtWidgets.QDialog.Accepted:
+            text = dialog.textValue()
+            if text:
+                self.logicComponent.setLabel(text)
+                self.nameLabel.setText(self.getName())
 
     def showComponentTooltip(self):
         self.setToolTip(f"{self.getName()} ({self.logicComponent.__class__.__name__})")

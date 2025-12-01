@@ -11,7 +11,12 @@ from src.infrastructure.eventBus import getBus
 from src.model.RegisterBlock import RegisterBlock
 from PySide6.QtCore import QTimer, QEventLoop
 
-class LogicComponentController:    
+# ===== AI NOTE =====
+# Some lines of code in this class were coded using AI, but never entire code sections.
+# Those lines of code make up less than 10% of the code and everything was peer-reviewed by humans and changes were made for fine-tuning.
+# ===================
+
+class LogicComponentController:
     
     def __init__(self):
         self.components: typing.List["LogicComponent"] = []
@@ -21,7 +26,7 @@ class LogicComponentController:
         # tickLength defaults to 0, i.e. the evaluation happens instantly
         self.tickLength = 0
         self.bus = getBus()
-        # Registrierung: ab jetzt wird der Handler automatisch aufgerufen
+        # Registration: now the handler is called automatically
         self.bus.subscribe("model:input_changed", self.onModelInputUpdate)
         self.bus.subscribe("newCycle", self.updateRegisters)
         self.registerBlock = None

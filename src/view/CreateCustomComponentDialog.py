@@ -8,6 +8,10 @@ import re
 from src.control.CustomComponentController import CustomComponentController
 from src.control.LogicComponentController import LogicComponentController
 
+# ===== AI NOTE =====
+# Some lines of code in this class were coded using AI to streamline the development process, but never entire code sections.
+# Those lines of code make up less than 10% of the code and everything was peer-reviewed by humans and changes were made for fine-tuning.
+# ===================
 
 class CreateCustomComponentDialog(QDialog):
     """A popup dialog for creating a custom logic component."""

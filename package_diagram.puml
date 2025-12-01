@@ -57,26 +57,4 @@ constants -[hidden]-> algorithms
 control -[hidden]down-> view
 view -[hidden]-> view_griditems
 
-legend right
-|= Dependency |= Meaning |
-| app_main ..> control | application entry starts controllers |
-| control --> view | controllers swap active scenes |
-| control --> model | orchestrates simulation logic |
-| control --> infrastructure | accesses event bus |
-| control .> constants | consumes shared configuration |
-| control .> algorithms | triggers algorithm helpers |
-| view --> control | UI raises controller actions |
-| view --> model | renders logic components |
-| view .> infrastructure | publishes events |
-| view .> constants | uses shared constants |
-| view_griditems --> model | grid widgets wrap model types |
-| view_griditems .> constants | needs layout constants |
-| model --> infrastructure | emits events |
-| model .> constants | reads component map |
-| model .> algorithms | delegates complex evaluation |
-| algorithms --> model | evaluates and updates model |
-| algorithms .> infrastructure | signals via event bus |
-| algorithms .> constants | uses thresholds/constants |
-| constants --> model | export constant definitions |
-endlegend
 @enduml

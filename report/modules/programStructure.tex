@@ -15,10 +15,45 @@ The high-level dependencies and relationships between these packages are illustr
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth]{./assets/package_Diagramm.pdf}
+    \includegraphics[width=0.8\textwidth]{./assets/package_Diagram.pdf}
     \caption{Package diagram illustrating the dependencies between the application modules.}
     \label{fig:package_diagram}
 \end{figure}
+
+\begin{table}[h]
+\centering
+\begin{tblr}{
+  colspec = {|l|X[l]|},
+  hlines,
+  vlines,
+  row{1} = {font=\bfseries},
+}
+Dependency & Meaning \\
+app\_main ..> control & application entry starts controllers \\
+control --> view & controllers swap active scenes \\
+control --> model & orchestrates simulation logic \\
+control --> infrastructure & accesses event bus \\
+control .> constants & consumes shared configuration \\
+control .> algorithms & triggers algorithm helpers \\
+view --> control & UI raises controller actions \\
+view --> model & renders logic components \\
+view .> infrastructure & publishes events \\
+view .> constants & uses shared constants \\
+view\_griditems --> model & grid widgets wrap model types \\
+view\_griditems .> constants & needs layout constants \\
+model --> infrastructure & emits events \\
+model .> constants & reads component map \\
+model .> algorithms & delegates complex evaluation \\
+algorithms --> model & evaluates and updates model \\
+algorithms .> infrastructure & signals via event bus \\
+algorithms .> constants & uses thresholds/constants \\
+constants --> model & export constant definitions \\
+\end{tblr}
+\caption{Package dependency meanings}
+\label{tab:dependencies}
+\end{table}
+
+
 \includepdf[pages=-,fitpaper=true,angle=90]{./assets/classes_ICT-Project} 
 \subsection{Design Patterns and Architectural Decisions}
 

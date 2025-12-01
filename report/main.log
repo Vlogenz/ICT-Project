@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2025.7.2)  1 DEC 2025 12:45
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2025.7.2)  1 DEC 2025 13:09
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -1806,46 +1806,59 @@ Overfull \hbox (3.09865pt too wide) in paragraph at lines 11--12
 
 
 
-pdfTeX warning: pdflatex (file ./assets/package_Diagramm.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
-<./assets/package_Diagramm.pdf, id=267, 612.08263pt x 594.38388pt>
-File: ./assets/package_Diagramm.pdf Graphic file (type pdf)
-<use ./assets/package_Diagramm.pdf>
-Package pdftex.def Info: ./assets/package_Diagramm.pdf  used on input line 18.
-(pdftex.def)             Requested size: 375.57782pt x 364.72311pt.
-<./assets/classes_ICT-Project.pdf, id=268, 7259.55914pt x 1255.4653pt>
-File: ./assets/classes_ICT-Project.pdf Graphic file (type pdf)
-<use ./assets/classes_ICT-Project.pdf>
-Package pdftex.def Info: ./assets/classes_ICT-Project.pdf  used on input line 22.
-(pdftex.def)             Requested size: 7259.54155pt x 1255.46225pt.
-File: ./assets/classes_ICT-Project.pdf Graphic file (type pdf)
-<use ./assets/classes_ICT-Project.pdf>
-Package pdftex.def Info: ./assets/classes_ICT-Project.pdf  used on input line 22.
-(pdftex.def)             Requested size: 7259.54155pt x 1255.46225pt.
-<./assets/classes_ICT-Project.pdf, id=271, page=1, 7259.55914pt x 1255.4653pt>
-File: ./assets/classes_ICT-Project.pdf Graphic file (type pdf)
-<use ./assets/classes_ICT-Project.pdf, page 1>
-Package pdftex.def Info: ./assets/classes_ICT-Project.pdf , page1 used on input line 22.
-(pdftex.def)             Requested size: 7259.54155pt x 1255.46225pt.
-File: ./assets/classes_ICT-Project.pdf Graphic file (type pdf)
-<use ./assets/classes_ICT-Project.pdf, page 1>
-Package pdftex.def Info: ./assets/classes_ICT-Project.pdf , page1 used on input line 22.
-(pdftex.def)             Requested size: 7259.54155pt x 1255.46225pt.
-[11] [12pdfTeX warning (ext4): destination with the same identifier (name{figure.2}) has been already used, duplicate ignored
+pdfTeX warning: pdflatex (file ./assets/package_Diagram.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
+<./assets/package_Diagram.pdf, id=267, 842.22345pt x 570.37708pt>
+File: ./assets/package_Diagram.pdf Graphic file (type pdf)
+<use ./assets/package_Diagram.pdf>
+Package pdftex.def Info: ./assets/package_Diagram.pdf  used on input line 18.
+(pdftex.def)             Requested size: 375.57782pt x 254.35223pt.
+> Step: init table outer spec.
+> Step: parse table options.
+> Step: split table.
+> Step: init table inner spec.
+> Step: parse table inner spec.
+> Step: execute table commands.
+> Step: calculate cell and line sizes.
+> Step: build the whole table.
+[11pdfTeX warning (ext4): destination with the same identifier (name{figure.2}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.22 ...ue,angle=90]{./assets/classes_ICT-Project}
-                                                   <./assets/package_Diagramm.pdf>]
+l.54 \end{table}
+                 <./assets/package_Diagram.pdf>]
+<./assets/classes_ICT-Project.pdf, id=275, 7259.55914pt x 1255.4653pt>
+File: ./assets/classes_ICT-Project.pdf Graphic file (type pdf)
+<use ./assets/classes_ICT-Project.pdf>
+Package pdftex.def Info: ./assets/classes_ICT-Project.pdf  used on input line 57.
+(pdftex.def)             Requested size: 7259.54155pt x 1255.46225pt.
+File: ./assets/classes_ICT-Project.pdf Graphic file (type pdf)
+<use ./assets/classes_ICT-Project.pdf>
+Package pdftex.def Info: ./assets/classes_ICT-Project.pdf  used on input line 57.
+(pdftex.def)             Requested size: 7259.54155pt x 1255.46225pt.
+<./assets/classes_ICT-Project.pdf, id=278, page=1, 7259.55914pt x 1255.4653pt>
 File: ./assets/classes_ICT-Project.pdf Graphic file (type pdf)
 <use ./assets/classes_ICT-Project.pdf, page 1>
-Package pdftex.def Info: ./assets/classes_ICT-Project.pdf , page1 used on input line 22.
+Package pdftex.def Info: ./assets/classes_ICT-Project.pdf , page1 used on input line 57.
 (pdftex.def)             Requested size: 7259.54155pt x 1255.46225pt.
 File: ./assets/classes_ICT-Project.pdf Graphic file (type pdf)
 <use ./assets/classes_ICT-Project.pdf, page 1>
-Package pdftex.def Info: ./assets/classes_ICT-Project.pdf , page1 used on input line 22.
+Package pdftex.def Info: ./assets/classes_ICT-Project.pdf , page1 used on input line 57.
+(pdftex.def)             Requested size: 7259.54155pt x 1255.46225pt.
+ [12pdfTeX warning (ext4): destination with the same identifier (name{table.1}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.57 ...ue,angle=90]{./assets/classes_ICT-Project}
+                                                  ]
+File: ./assets/classes_ICT-Project.pdf Graphic file (type pdf)
+<use ./assets/classes_ICT-Project.pdf, page 1>
+Package pdftex.def Info: ./assets/classes_ICT-Project.pdf , page1 used on input line 57.
 (pdftex.def)             Requested size: 7259.54155pt x 1255.46225pt.
 File: ./assets/classes_ICT-Project.pdf Graphic file (type pdf)
 <use ./assets/classes_ICT-Project.pdf, page 1>
-Package pdftex.def Info: ./assets/classes_ICT-Project.pdf , page1 used on input line 22.
+Package pdftex.def Info: ./assets/classes_ICT-Project.pdf , page1 used on input line 57.
+(pdftex.def)             Requested size: 7259.54155pt x 1255.46225pt.
+File: ./assets/classes_ICT-Project.pdf Graphic file (type pdf)
+<use ./assets/classes_ICT-Project.pdf, page 1>
+Package pdftex.def Info: ./assets/classes_ICT-Project.pdf , page1 used on input line 57.
 (pdftex.def)             Requested size: 7259.54155pt x 1255.46225pt.
  [13 <./assets/classes_ICT-Project.pdf>]) (./modules/backend.tex
 Overfull \hbox (4.68933pt too wide) in paragraph at lines 9--13
@@ -1855,7 +1868,7 @@ Overfull \hbox (4.68933pt too wide) in paragraph at lines 9--13
 
 
 pdfTeX warning: pdflatex (file ./assets/ActivityKhanFrontier.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
-<./assets/ActivityKhanFrontier.pdf, id=335, 614.295pt x 794.97pt>
+<./assets/ActivityKhanFrontier.pdf, id=336, 614.295pt x 794.97pt>
 File: ./assets/ActivityKhanFrontier.pdf Graphic file (type pdf)
 <use ./assets/ActivityKhanFrontier.pdf>
 Package pdftex.def Info: ./assets/ActivityKhanFrontier.pdf  used on input line 37.
@@ -1867,7 +1880,7 @@ l.47 \begin{itemize}
                      <./assets/ActivityKhanFrontier.pdf>]
 
 pdfTeX warning: pdflatex (file ./assets/ActivityEventdriven.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
-<./assets/ActivityEventdriven.pdf, id=358, 614.295pt x 794.97pt>
+<./assets/ActivityEventdriven.pdf, id=359, 614.295pt x 794.97pt>
 File: ./assets/ActivityEventdriven.pdf Graphic file (type pdf)
 <use ./assets/ActivityEventdriven.pdf>
 Package pdftex.def Info: ./assets/ActivityEventdriven.pdf  used on input line 58.
@@ -1924,18 +1937,18 @@ Package logreq Info: Writing requests to 'main.run.xml'.
 
  ) 
 Here is how much of TeX's memory you used:
- 48451 strings out of 478287
- 987497 string characters out of 5849290
- 1856036 words of memory out of 5000000
- 65708 multiletter control sequences out of 15000+600000
- 583025 words of font info for 101 fonts, out of 8000000 for 9000
+ 48716 strings out of 478287
+ 996927 string characters out of 5849290
+ 1874085 words of memory out of 5000000
+ 65972 multiletter control sequences out of 15000+600000
+ 584674 words of font info for 104 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  108i,20n,106p,10668b,2234s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/share/texlive/texmf-dist/fonts/enc/dvips/sourcesanspro/a_4jropk.enc}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/sourcecodepro/a_lutrty.enc}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/sourcesanspro/a_5ponh6.enc}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/sourcesanspro/a_emkxm5.enc}</usr/share/texlive/texmf-dist/fonts/type1/public/newtx/NewTXMI.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/newtx/NewTXMI7.pfb></usr/share/texlive/texmf-dist/fonts/type1/adobe/sourcecodepro/SourceCodePro-Bold.pfb></usr/share/texlive/texmf-dist/fonts/type1/adobe/sourcecodepro/SourceCodePro-Regular.pfb></usr/share/texlive/texmf-dist/fonts/type1/adobe/sourcesanspro/SourceSansPro-Bold.pfb></usr/share/texlive/texmf-dist/fonts/type1/adobe/sourcesanspro/SourceSansPro-It.pfb></usr/share/texlive/texmf-dist/fonts/type1/adobe/sourcesanspro/SourceSansPro-Regular.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmss10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmss12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmssbx10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt12.pfb>
-Output written on main.pdf (25 pages, 797667 bytes).
+Output written on main.pdf (25 pages, 759124 bytes).
 PDF statistics:
- 660 PDF objects out of 1000 (max. 8388607)
- 543 compressed objects within 6 object streams
- 116 named destinations out of 1000 (max. 500000)
+ 661 PDF objects out of 1000 (max. 8388607)
+ 544 compressed objects within 6 object streams
+ 117 named destinations out of 1000 (max. 500000)
  626 words of extra memory for PDF output out of 10000 (max. 10000000)
 

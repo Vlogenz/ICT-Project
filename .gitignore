@@ -27,4 +27,9 @@ meta.json
 # Ignore coverage file
 .coverage
 
+# Ignore build related files
 build
+out
+dist
+python3.dll
+python314.dll
